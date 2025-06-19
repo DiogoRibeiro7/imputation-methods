@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Imputation Showcase"
+version: 0.1.0
+authors:
+  - family-names: Ribeiro
+    given-names: Diogo
+    alias: DiogoRibeiro7
+    email: dfr@esmad.ipp.pt
+    orcid: https://orcid.org/0009-0001-2022-7072
+    affiliation: ESMAD - Instituto Politécnico do Porto
+# personal email: diogo.debastos.ribeiro@gmail.com
