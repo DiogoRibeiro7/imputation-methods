@@ -7,6 +7,8 @@ import pandas as pd
 from abc import ABC, abstractmethod
 from sklearn.impute import KNNImputer
 from sklearn.linear_model import LinearRegression
+from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+from sklearn.impute import IterativeImputer
 
 
 class BaseImputer(ABC):
@@ -49,6 +51,18 @@ class MeanImputer(BaseImputer):
         for column in result.columns:
             mean_val = result[column].mean()
             result[column] = result[column].fillna(mean_val)
+        return result
+
+
+class MedianImputer(BaseImputer):
+    """Impute missing values using column medians."""
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = self._ensure_numeric(df)
+        result = df.copy()
+        for column in result.columns:
+            median_val = result[column].median()
+            result[column] = result[column].fillna(median_val)
         return result
 
 
@@ -130,9 +144,40 @@ class PMMImputer(BaseImputer):
         return result
 
 
+class MICEImputer(BaseImputer):
+    """Impute missing data using Multiple Imputation by Chained Equations (MICE)."""
+
+    def __init__(self, random_state: int | None = 0):
+        """Initialize the imputer.
+
+        Args:
+            random_state: Random seed used by the underlying estimator.
+        """
+        self.random_state = random_state
+        self._imputer = IterativeImputer(random_state=random_state)
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Perform MICE-based imputation.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        imputed_array = self._imputer.fit_transform(df)
+        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+
+
 def mean_impute(df: pd.DataFrame) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MeanImputer`."""
     return MeanImputer().impute(df)
+
+
+def median_impute(df: pd.DataFrame) -> pd.DataFrame:
+    """Backwards-compatible wrapper for :class:`MedianImputer`."""
+    return MedianImputer().impute(df)
 
 
 def knn_impute(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
@@ -143,6 +188,11 @@ def knn_impute(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
 def predictive_mean_matching(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`PMMImputer`."""
     return PMMImputer(k=k).impute(df)
+
+
+def mice_impute(df: pd.DataFrame, random_state: int | None = 0) -> pd.DataFrame:
+    """Backwards-compatible wrapper for :class:`MICEImputer`."""
+    return MICEImputer(random_state=random_state).impute(df)
 
 
 def rmse(true: pd.Series, pred: pd.Series) -> float:
