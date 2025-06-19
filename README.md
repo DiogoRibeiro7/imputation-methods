@@ -9,6 +9,10 @@ This repository demonstrates various techniques for handling missing data.
 - K-Nearest Neighbors (KNN)
 - Predictive Mean Matching (PMM)
 - Multiple Imputation by Chained Equations (MICE)
+- Regression imputation
+- Stochastic regression imputation
+- Last Observation Carried Forward (LOCF)
+- Next Observation Carried Backward (NOCB)
 
 ## Usage
 
@@ -21,6 +25,10 @@ from src.imputation_methods import (
     KNNImputerMethod,
     PMMImputer,
     MICEImputer,
+    RegressionImputer,
+    StochasticRegressionImputer,
+    LOCFImputer,
+    NOCBImputer,
 )
 
 df = pd.read_csv("data/example.csv")

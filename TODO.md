@@ -25,9 +25,9 @@ This file outlines tasks to enhance the imputation-showcase repository.
   - [x] Write pytest tests for mean and KNN imputers.
   - [x] Test edge cases (all missing, no missing, single column).
 
-- **CI Setup**  
-  - Add GitHub Actions workflow for linting and tests.  
-  - Enforce code quality with `flake8` or `pylint`.
+- **CI Setup**
+  - [x] Add GitHub Actions workflow for linting and tests.
+  - [x] Enforce code quality with `flake8`.
 
 - **Examples and visuals**
   - [x] Add example CSV dataset in `data/`.
@@ -38,11 +38,11 @@ This file outlines tasks to enhance the imputation-showcase repository.
 Add and demonstrate the following methods:
 
 - [x] **Median Imputation**: Replace missing values with the median of observed data.
-- [ ] **Regression Imputation**: Fit regression models per feature to predict missing entries.
-- [ ] **Stochastic Regression Imputation**: Add random error term to regression predictions.
+- [x] **Regression Imputation**: Fit regression models per feature to predict missing entries.
+- [x] **Stochastic Regression Imputation**: Add random error term to regression predictions.
 - [ ] **Hot Deck Imputation**: Randomly draw donors from similar records based on categorical bins.
-- [ ] **Last Observation Carried Forward (LOCF)**: For time-series data, fill with the last known value.
-- [ ] **Next Observation Carried Backward (NOCB)**: Fill with the next known value in a sequence.
+- [x] **Last Observation Carried Forward (LOCF)**: For time-series data, fill with the last known value.
+- [x] **Next Observation Carried Backward (NOCB)**: Fill with the next known value in a sequence.
 - [x] **Multiple Imputation (e.g., MICE with multiple draws)**: Generate multiple complete datasets and pool results.
 - [ ] **MissForest**: Random Forest–based iterative imputation for nonlinear relationships.
 - [ ] **Matrix Factorization (SoftImpute)**: Low-rank matrix completion via SVD.
@@ -63,4 +63,4 @@ Start an interactive notebook that:
 2. [x] Visualizes missingness patterns.
 3. [x] Applies each imputation function.
 4. [x] Compares distributions before and after imputation.
-5. [ ] Discusses pros and cons in markdown cells.
+5. [x] Discusses pros and cons in markdown cells.

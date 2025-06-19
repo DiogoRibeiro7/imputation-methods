@@ -170,6 +170,114 @@ class MICEImputer(BaseImputer):
         return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
 
 
+class RegressionImputer(BaseImputer):
+    """Impute missing values via linear regression."""
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Predict missing entries using other columns as features.
+
+        Args:
+            df: Dataframe with potential NaN values.
+
+        Returns:
+            Imputed dataframe with missing values filled by regression predictions.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                predictors = result.columns.difference([column])
+                observed = result[result[column].notna()]
+                missing = result[result[column].isna()]
+
+                if predictors.size == 0 or observed.empty:
+                    continue
+
+                reg = LinearRegression()
+                reg.fit(observed[predictors], observed[column])
+                predicted = reg.predict(missing[predictors])
+                result.loc[missing.index, column] = predicted
+
+        return result
+
+
+class StochasticRegressionImputer(BaseImputer):
+    """Impute missing values with regression plus random noise."""
+
+    def __init__(self, random_state: int | None = 0):
+        """Initialize the imputer.
+
+        Args:
+            random_state: Seed controlling the noise generation.
+        """
+        self.random_state = random_state
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Predict missing entries and add Gaussian noise.
+
+        Args:
+            df: Dataframe with potential NaN values.
+
+        Returns:
+            Imputed dataframe with stochastic regression predictions.
+        """
+        rng = np.random.default_rng(self.random_state)
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                predictors = result.columns.difference([column])
+                observed = result[result[column].notna()]
+                missing = result[result[column].isna()]
+
+                if predictors.size == 0 or observed.empty:
+                    continue
+
+                reg = LinearRegression()
+                reg.fit(observed[predictors], observed[column])
+                predicted = reg.predict(missing[predictors])
+                residuals = observed[column] - reg.predict(observed[predictors])
+                std = residuals.std(ddof=0)
+                noise = rng.normal(0, std, size=predicted.shape)
+                result.loc[missing.index, column] = predicted + noise
+
+        return result
+
+
+class LOCFImputer(BaseImputer):
+    """Impute using Last Observation Carried Forward (LOCF)."""
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Fill missing values forward along each column.
+
+        Args:
+            df: Dataframe with potential NaN values.
+
+        Returns:
+            Dataframe where NaNs are replaced by the last seen observation.
+        """
+        df = self._ensure_numeric(df)
+        return df.fillna(method="ffill")
+
+
+class NOCBImputer(BaseImputer):
+    """Impute using Next Observation Carried Backward (NOCB)."""
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Fill missing values backward along each column.
+
+        Args:
+            df: Dataframe with potential NaN values.
+
+        Returns:
+            Dataframe where NaNs are replaced by the next observed value.
+        """
+        df = self._ensure_numeric(df)
+        return df.fillna(method="bfill")
+
+
 def mean_impute(df: pd.DataFrame) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MeanImputer`."""
     return MeanImputer().impute(df)
@@ -193,6 +301,28 @@ def predictive_mean_matching(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
 def mice_impute(df: pd.DataFrame, random_state: int | None = 0) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MICEImputer`."""
     return MICEImputer(random_state=random_state).impute(df)
+
+
+def regression_impute(df: pd.DataFrame) -> pd.DataFrame:
+    """Backwards-compatible wrapper for :class:`RegressionImputer`."""
+    return RegressionImputer().impute(df)
+
+
+def stochastic_regression_impute(
+    df: pd.DataFrame, random_state: int | None = 0
+) -> pd.DataFrame:
+    """Wrapper for :class:`StochasticRegressionImputer`."""
+    return StochasticRegressionImputer(random_state=random_state).impute(df)
+
+
+def locf_impute(df: pd.DataFrame) -> pd.DataFrame:
+    """Backwards-compatible wrapper for :class:`LOCFImputer`."""
+    return LOCFImputer().impute(df)
+
+
+def nocb_impute(df: pd.DataFrame) -> pd.DataFrame:
+    """Backwards-compatible wrapper for :class:`NOCBImputer`."""
+    return NOCBImputer().impute(df)
 
 
 def rmse(true: pd.Series, pred: pd.Series) -> float:
