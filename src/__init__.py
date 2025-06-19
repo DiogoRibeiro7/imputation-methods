@@ -3,11 +3,15 @@
 from .imputation_methods import (
     BaseImputer,
     MeanImputer,
+    MedianImputer,
     KNNImputerMethod,
     PMMImputer,
+    MICEImputer,
     mean_impute,
+    median_impute,
     knn_impute,
     predictive_mean_matching,
+    mice_impute,
     rmse,
     mae,
 )
@@ -15,11 +19,15 @@ from .imputation_methods import (
 __all__ = [
     "BaseImputer",
     "MeanImputer",
+    "MedianImputer",
     "KNNImputerMethod",
     "PMMImputer",
+    "MICEImputer",
     "mean_impute",
+    "median_impute",
     "knn_impute",
     "predictive_mean_matching",
+    "mice_impute",
     "rmse",
     "mae",
 ]
