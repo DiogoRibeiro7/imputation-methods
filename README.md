@@ -44,7 +44,8 @@ The module also provides `rmse` and `mae` helpers to evaluate imputation quality
 
 ## Continuous Integration
 
-Linting and unit tests run automatically via GitHub Actions on each push.
+Linting and unit tests run automatically via GitHub Actions when changes are
+merged into the `main` branch.
 
 An example dataset is available in the `data/` directory for quick experimentation.
 
