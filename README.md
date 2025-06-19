@@ -38,4 +38,14 @@ df_imputed = MeanImputer().impute(df)
 The imputers expect all columns to be numeric. Provide only numerical data or
 encode categorical features before calling the imputation routines.
 
+## Evaluation Metrics
+
+The module also provides `rmse` and `mae` helpers to evaluate imputation quality.
+
+## Continuous Integration
+
+Linting and unit tests run automatically via GitHub Actions on each push.
+
+An example dataset is available in the `data/` directory for quick experimentation.
+
 Tests can be executed with `pytest`.

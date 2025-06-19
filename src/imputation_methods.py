@@ -26,7 +26,9 @@ class BaseImputer(ABC):
         Raises:
             TypeError: If ``df`` includes any non-numeric columns.
         """
-        if not all(pd.api.types.is_numeric_dtype(dtype) for dtype in df.dtypes):
+        if not all(
+            pd.api.types.is_numeric_dtype(dtype) for dtype in df.dtypes
+        ):
             raise TypeError("All columns must be numeric")
         return df
 
@@ -138,14 +140,19 @@ class PMMImputer(BaseImputer):
                     distances = np.abs(observed_pred - pred)
                     nearest_idx = np.argsort(distances)[: self.k]
                     donors = observed.iloc[nearest_idx]
-                    imputed_val = donors[column].sample(1, random_state=self.random_state).iloc[0]
+                    imputed_val = donors[column].sample(
+                        1, random_state=self.random_state
+                    ).iloc[0]
                     result.at[i, column] = imputed_val
 
         return result
 
 
 class MICEImputer(BaseImputer):
-    """Impute missing data using Multiple Imputation by Chained Equations (MICE)."""
+    """Impute missing data using Multiple Imputation by Chained Equations.
+
+    This method is commonly abbreviated as MICE.
+    """
 
     def __init__(self, random_state: int | None = 0):
         """Initialize the imputer.
@@ -180,7 +187,8 @@ class RegressionImputer(BaseImputer):
             df: Dataframe with potential NaN values.
 
         Returns:
-            Imputed dataframe with missing values filled by regression predictions.
+            Imputed dataframe with missing values filled by regression
+            predictions.
         """
         df = self._ensure_numeric(df)
         result = df.copy()
@@ -238,7 +246,9 @@ class StochasticRegressionImputer(BaseImputer):
                 reg = LinearRegression()
                 reg.fit(observed[predictors], observed[column])
                 predicted = reg.predict(missing[predictors])
-                residuals = observed[column] - reg.predict(observed[predictors])
+                residuals = observed[column] - reg.predict(
+                    observed[predictors]
+                )
                 std = residuals.std(ddof=0)
                 noise = rng.normal(0, std, size=predicted.shape)
                 result.loc[missing.index, column] = predicted + noise
@@ -293,12 +303,16 @@ def knn_impute(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
     return KNNImputerMethod(k=k).impute(df)
 
 
-def predictive_mean_matching(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
+def predictive_mean_matching(
+    df: pd.DataFrame, k: int = 5
+) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`PMMImputer`."""
     return PMMImputer(k=k).impute(df)
 
 
-def mice_impute(df: pd.DataFrame, random_state: int | None = 0) -> pd.DataFrame:
+def mice_impute(
+    df: pd.DataFrame, random_state: int | None = 0
+) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MICEImputer`."""
     return MICEImputer(random_state=random_state).impute(df)
 
@@ -349,4 +363,3 @@ def mae(true: pd.Series, pred: pd.Series) -> float:
         The MAE value.
     """
     return float(np.mean(np.abs(true - pred)))
-
