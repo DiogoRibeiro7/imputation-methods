@@ -10,6 +10,10 @@ from src.imputation_methods import (
     KNNImputerMethod,
     PMMImputer,
     MICEImputer,
+    RegressionImputer,
+    StochasticRegressionImputer,
+    LOCFImputer,
+    NOCBImputer,
 )
 
 
@@ -70,3 +74,25 @@ def test_single_column():
     df = pd.DataFrame({"a": [1, np.nan, 3]})
     imputed = MedianImputer().impute(df)
     assert not imputed.isna().any().any()
+
+
+def test_regression_imputer():
+    df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, 6, 7, 8]})
+    imputed = RegressionImputer().impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_stochastic_regression_imputer():
+    df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, 6, 7, 8]})
+    imputed = StochasticRegressionImputer(random_state=0).impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_locf_nocb():
+    df = pd.DataFrame({"a": [np.nan, 1, np.nan, 3, np.nan]})
+    locf = LOCFImputer().impute(df)
+    assert pd.isna(locf.loc[0, "a"])
+    assert locf.loc[2, "a"] == 1
+    nocb = NOCBImputer().impute(df)
+    assert nocb.loc[0, "a"] == 1
+    assert nocb.loc[2, "a"] == 3
