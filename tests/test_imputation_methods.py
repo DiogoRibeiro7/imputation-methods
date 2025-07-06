@@ -19,6 +19,13 @@ from src.imputation_methods import (  # noqa: E402
     StochasticRegressionImputer,
     LOCFImputer,
     NOCBImputer,
+    HotDeckImputer,
+    MissForestImputer,
+    SoftImputeImputer,
+    BayesianPCAImputer,
+    AutoencoderImputer,
+    GAINImputer,
+    GaussianProcessImputer,
 )
 
 
@@ -101,3 +108,54 @@ def test_locf_nocb():
     nocb = NOCBImputer().impute(df)
     assert nocb.loc[0, "a"] == 1
     assert nocb.loc[2, "a"] == 3
+
+
+def test_hot_deck_imputer():
+    df = pd.DataFrame({
+        "group": [0, 0, 1, 1],
+        "a": [1.0, np.nan, 3.0, np.nan],
+    })
+    imputed = HotDeckImputer(
+        stratify_cols=["group"],
+        random_state=0,
+    ).impute(df)
+    assert not imputed["a"].isna().any()
+
+
+def test_miss_forest_imputer():
+    df = pd.DataFrame({
+        "a": [1, 2, np.nan, 4],
+        "b": [5, 6, 7, np.nan],
+    })
+    imputed = MissForestImputer(random_state=0).impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_soft_impute():
+    df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
+    imputed = SoftImputeImputer().impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_bayesian_pca_imputer():
+    df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
+    imputed = BayesianPCAImputer().impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_autoencoder_imputer():
+    df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
+    imputed = AutoencoderImputer(random_state=0, max_iter=100).impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_gain_imputer():
+    df = pd.DataFrame({"a": [1, 2, np.nan], "b": [4, np.nan, 6]})
+    imputed = GAINImputer(random_state=0).impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_gaussian_process_imputer():
+    df = pd.DataFrame({"a": [1, 2, np.nan], "b": [4, 5, 6]})
+    imputed = GaussianProcessImputer(random_state=0).impute(df)
+    assert not imputed.isna().any().any()

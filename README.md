@@ -14,6 +14,13 @@ All methods operate on numeric pandas dataframes.
 - Stochastic regression imputation
 - Last Observation Carried Forward (LOCF)
 - Next Observation Carried Backward (NOCB)
+- Hot Deck imputation
+- MissForest imputation
+- SoftImpute matrix completion
+- Bayesian PCA imputation
+- Autoencoder imputation
+- Generative Adversarial Imputation (GAIN)
+- Gaussian Process imputation
 
 ## Usage
 
@@ -30,6 +37,13 @@ from src.imputation_methods import (
     StochasticRegressionImputer,
     LOCFImputer,
     NOCBImputer,
+    HotDeckImputer,
+    MissForestImputer,
+    SoftImputeImputer,
+    BayesianPCAImputer,
+    AutoencoderImputer,
+    GAINImputer,
+    GaussianProcessImputer,
 )
 
 df = pd.read_csv("data/example.csv")
