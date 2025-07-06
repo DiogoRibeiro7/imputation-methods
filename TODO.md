@@ -40,16 +40,16 @@ Add and demonstrate the following methods:
 - [x] **Median Imputation**: Replace missing values with the median of observed data.
 - [x] **Regression Imputation**: Fit regression models per feature to predict missing entries.
 - [x] **Stochastic Regression Imputation**: Add random error term to regression predictions.
-- [ ] **Hot Deck Imputation**: Randomly draw donors from similar records based on categorical bins.
+- [x] **Hot Deck Imputation**: Randomly draw donors from similar records based on categorical bins.
 - [x] **Last Observation Carried Forward (LOCF)**: For time-series data, fill with the last known value.
 - [x] **Next Observation Carried Backward (NOCB)**: Fill with the next known value in a sequence.
 - [x] **Multiple Imputation (e.g., MICE with multiple draws)**: Generate multiple complete datasets and pool results.
-- [ ] **MissForest**: Random Forest–based iterative imputation for nonlinear relationships.
-- [ ] **Matrix Factorization (SoftImpute)**: Low-rank matrix completion via SVD.
-- [ ] **Bayesian PCA Imputation**: Probabilistic PCA to infer missing entries.
-- [ ] **Autoencoder Imputation**: Use neural networks to reconstruct missing data.
-- [ ] **Generative Adversarial Imputation (GAIN)**: GAN-based approach for missing data imputation.
-- [ ] **Kriging / Gaussian Process Imputation**: Spatial interpolation using covariance structure.
+- [x] **MissForest**: Random Forest–based iterative imputation for nonlinear relationships.
+- [x] **Matrix Factorization (SoftImpute)**: Low-rank matrix completion via SVD.
+- [x] **Bayesian PCA Imputation**: Probabilistic PCA to infer missing entries.
+- [x] **Autoencoder Imputation**: Use neural networks to reconstruct missing data.
+- [x] **Generative Adversarial Imputation (GAIN)**: GAN-based approach for missing data imputation.
+- [x] **Kriging / Gaussian Process Imputation**: Spatial interpolation using covariance structure.
 
 For each technique:
 - Implement the method or wrap an existing library call.
