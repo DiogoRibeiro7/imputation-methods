@@ -3,7 +3,7 @@
 This file outlines tasks to enhance the imputation-showcase repository.
 
 - **Define and implement PMM**
-  - [x] Write full predictive_mean_matching implementation in `src/imputation_methods.py`.
+  - [x] Write full predictive_mean_matching implementation in `imputation_showcase/imputation_methods.py`.
   - [x] Add unit tests for various missingness patterns.
 
 - **Notebook enhancements**
