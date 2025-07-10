@@ -32,9 +32,13 @@ class BaseImputer(ABC):
         Raises:
             TypeError: If ``df`` includes any non-numeric columns.
         """
-        if not all(
-            pd.api.types.is_numeric_dtype(dtype) for dtype in df.dtypes
-        ):
+        # fmt: off
+        numeric_flags = [
+            pd.api.types.is_numeric_dtype(dtype)
+            for dtype in df.dtypes
+        ]
+        # fmt: on
+        if not all(numeric_flags):
             raise TypeError("All columns must be numeric")
         return df
 
@@ -146,9 +150,14 @@ class PMMImputer(BaseImputer):
                     distances = np.abs(observed_pred - pred)
                     nearest_idx = np.argsort(distances)[: self.k]
                     donors = observed.iloc[nearest_idx]
-                    imputed_val = donors[column].sample(
-                        1, random_state=self.random_state
-                    ).iloc[0]
+                    imputed_val = (
+                        donors[column]
+                        .sample(
+                            1,
+                            random_state=self.random_state,
+                        )
+                        .iloc[0]
+                    )
                     result.at[i, column] = imputed_val
 
         return result
@@ -252,9 +261,11 @@ class StochasticRegressionImputer(BaseImputer):
                 reg = LinearRegression()
                 reg.fit(observed[predictors], observed[column])
                 predicted = reg.predict(missing[predictors])
+                # fmt: off
                 residuals = observed[column] - reg.predict(
                     observed[predictors]
                 )
+                # fmt: on
                 std = residuals.std(ddof=0)
                 noise = rng.normal(0, std, size=predicted.shape)
                 result.loc[missing.index, column] = predicted + noise
@@ -466,9 +477,12 @@ class BayesianPCAImputer(BaseImputer):
                 d=d,
                 min_obs=self.min_obs,
             )
+            # fmt: off
             imputed_array = (
-                self._ppca.data * self._ppca.stds + self._ppca.means
+                self._ppca.data * self._ppca.stds
+                + self._ppca.means
             )
+            # fmt: on
             return pd.DataFrame(
                 imputed_array,
                 columns=df.columns,
@@ -620,15 +634,14 @@ def knn_impute(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
     return KNNImputerMethod(k=k).impute(df)
 
 
-def predictive_mean_matching(
-    df: pd.DataFrame, k: int = 5
-) -> pd.DataFrame:
+def predictive_mean_matching(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`PMMImputer`."""
     return PMMImputer(k=k).impute(df)
 
 
 def mice_impute(
-    df: pd.DataFrame, random_state: int | None = 0
+    df: pd.DataFrame,
+    random_state: int | None = 0,
 ) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MICEImputer`."""
     return MICEImputer(random_state=random_state).impute(df)
@@ -712,7 +725,8 @@ def autoencoder_impute(
 
 
 def gain_impute(
-    df: pd.DataFrame, random_state: int | None = None
+    df: pd.DataFrame,
+    random_state: int | None = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`GAINImputer`."""
     return GAINImputer(random_state=random_state).impute(df)

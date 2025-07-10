@@ -24,10 +24,10 @@ All methods operate on numeric pandas dataframes.
 
 ## Usage
 
-The imputation classes are implemented in `src/imputation_methods.py` and can be imported directly.
+The imputation classes are implemented in `imputation_showcase/imputation_methods.py` and can be imported directly.
 
 ```python
-from src.imputation_methods import (
+from imputation_showcase.imputation_methods import (
     MeanImputer,
     MedianImputer,
     KNNImputerMethod,
@@ -64,8 +64,10 @@ poetry install
 Run tests and style checks using Poetry:
 
 ```bash
-poetry run flake8 src tests
+poetry run flake8 .
 poetry run pytest -q
+poetry run coverage run -m pytest
+poetry run coverage report
 ```
 
 ## Evaluation Metrics

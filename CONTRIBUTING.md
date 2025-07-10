@@ -9,7 +9,7 @@ welcomes bug reports, feature requests, and pull requests.
 2. Clone the repository and run `poetry install` to create a virtual environment
    with all dependencies.
 3. Activate the shell with `poetry shell` or run commands using `poetry run`.
-4. Run `flake8 src tests` and `pytest -q` before submitting a pull request.
+4. Run `flake8 imputation_showcase tests` and `pytest -q` before submitting a pull request.
 
 ## Pull Requests
 
