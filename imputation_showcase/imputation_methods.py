@@ -479,7 +479,8 @@ class BayesianPCAImputer(BaseImputer):
             )
             # fmt: off
             imputed_array = (
-                self._ppca.data * self._ppca.stds + self._ppca.means
+                self._ppca.data * self._ppca.stds
+                + self._ppca.means
             )
             # fmt: on
             return pd.DataFrame(
