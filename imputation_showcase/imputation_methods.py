@@ -32,9 +32,13 @@ class BaseImputer(ABC):
         Raises:
             TypeError: If ``df`` includes any non-numeric columns.
         """
-        if not all(
-            pd.api.types.is_numeric_dtype(dtype) for dtype in df.dtypes
-        ):  # noqa: E501
+        # fmt: off
+        numeric_flags = [
+            pd.api.types.is_numeric_dtype(dtype)
+            for dtype in df.dtypes
+        ]
+        # fmt: on
+        if not all(numeric_flags):
             raise TypeError("All columns must be numeric")
         return df
 
@@ -257,9 +261,11 @@ class StochasticRegressionImputer(BaseImputer):
                 reg = LinearRegression()
                 reg.fit(observed[predictors], observed[column])
                 predicted = reg.predict(missing[predictors])
+                # fmt: off
                 residuals = observed[column] - reg.predict(
                     observed[predictors]
-                )  # noqa: E501
+                )
+                # fmt: on
                 std = residuals.std(ddof=0)
                 noise = rng.normal(0, std, size=predicted.shape)
                 result.loc[missing.index, column] = predicted + noise
@@ -471,9 +477,11 @@ class BayesianPCAImputer(BaseImputer):
                 d=d,
                 min_obs=self.min_obs,
             )
+            # fmt: off
             imputed_array = (
                 self._ppca.data * self._ppca.stds + self._ppca.means
-            )  # noqa: E501
+            )
+            # fmt: on
             return pd.DataFrame(
                 imputed_array,
                 columns=df.columns,
