@@ -1,15 +1,8 @@
-import os
-import sys
 import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(
-    0,
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "..")),
-)
-
-from src.imputation_methods import (  # noqa: E402
+from imputation_showcase.imputation_methods import (
     MeanImputer,
     MedianImputer,
     KNNImputerMethod,
@@ -50,10 +43,7 @@ def test_knn_impute_basic():
 
 
 def test_pmm_impute_basic():
-    df = pd.DataFrame({
-        "x": [1, 2, 3, 4, np.nan],
-        "y": [5, 6, 7, 8, 9],
-    })
+    df = pd.DataFrame({"x": [1, 2, 3, 4, np.nan], "y": [5, 6, 7, 8, 9]})
     imputed = PMMImputer(k=2, random_state=0).impute(df)
     assert not imputed.isna().any().any()
 
@@ -111,10 +101,7 @@ def test_locf_nocb():
 
 
 def test_hot_deck_imputer():
-    df = pd.DataFrame({
-        "group": [0, 0, 1, 1],
-        "a": [1.0, np.nan, 3.0, np.nan],
-    })
+    df = pd.DataFrame({"group": [0, 0, 1, 1], "a": [1.0, np.nan, 3.0, np.nan]})
     imputed = HotDeckImputer(
         stratify_cols=["group"],
         random_state=0,
@@ -123,10 +110,7 @@ def test_hot_deck_imputer():
 
 
 def test_miss_forest_imputer():
-    df = pd.DataFrame({
-        "a": [1, 2, np.nan, 4],
-        "b": [5, 6, 7, np.nan],
-    })
+    df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, 6, 7, np.nan]})
     imputed = MissForestImputer(random_state=0).impute(df)
     assert not imputed.isna().any().any()
 
