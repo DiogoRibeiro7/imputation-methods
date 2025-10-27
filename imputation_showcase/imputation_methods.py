@@ -770,4 +770,3 @@ def mae(true: pd.Series, pred: pd.Series) -> float:
         The MAE value.
     """
     return float(np.mean(np.abs(true - pred)))
-
