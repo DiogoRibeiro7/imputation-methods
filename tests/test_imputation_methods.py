@@ -348,3 +348,34 @@ def test_autoencoder_different_architectures() -> None:
     ).impute(df)
     assert not imputed_small.isna().any().any()
     assert not imputed_large.isna().any().any()
+
+
+# Input validation tests
+
+
+def test_knn_invalid_k_type() -> None:
+    """Test KNN imputer rejects non-integer k values."""
+    with pytest.raises(TypeError, match="k must be an integer"):
+        KNNImputerMethod(k=2.5)  # type: ignore
+
+
+def test_knn_invalid_k_value() -> None:
+    """Test KNN imputer rejects non-positive k values."""
+    with pytest.raises(ValueError, match="k must be positive"):
+        KNNImputerMethod(k=0)
+    with pytest.raises(ValueError, match="k must be positive"):
+        KNNImputerMethod(k=-1)
+
+
+def test_pmm_invalid_k_type() -> None:
+    """Test PMM imputer rejects non-integer k values."""
+    with pytest.raises(TypeError, match="k must be an integer"):
+        PMMImputer(k=3.5)  # type: ignore
+
+
+def test_pmm_invalid_k_value() -> None:
+    """Test PMM imputer rejects non-positive k values."""
+    with pytest.raises(ValueError, match="k must be positive"):
+        PMMImputer(k=0)
+    with pytest.raises(ValueError, match="k must be positive"):
+        PMMImputer(k=-2)

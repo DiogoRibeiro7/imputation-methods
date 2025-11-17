@@ -55,7 +55,18 @@ class BaseImputer(ABC):
 
 
 class MeanImputer(BaseImputer):
-    """Impute missing values using column means."""
+    """Impute missing values using column means.
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import MeanImputer
+        >>> df = pd.DataFrame({"a": [1, 2, np.nan, 4]})
+        >>> imputer = MeanImputer()
+        >>> imputed = imputer.impute(df)
+        >>> print(imputed.loc[2, "a"])  # Mean of [1, 2, 4]
+        2.333...
+    """
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         df = self._ensure_numeric(df)
@@ -67,7 +78,18 @@ class MeanImputer(BaseImputer):
 
 
 class MedianImputer(BaseImputer):
-    """Impute missing values using column medians."""
+    """Impute missing values using column medians.
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import MedianImputer
+        >>> df = pd.DataFrame({"a": [1, 2, np.nan, 10]})
+        >>> imputer = MedianImputer()
+        >>> imputed = imputer.impute(df)
+        >>> print(imputed.loc[2, "a"])  # Median of [1, 2, 10]
+        2.0
+    """
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         df = self._ensure_numeric(df)
@@ -79,14 +101,31 @@ class MedianImputer(BaseImputer):
 
 
 class KNNImputerMethod(BaseImputer):
-    """Impute missing values using K-nearest neighbors."""
+    """Impute missing values using K-nearest neighbors.
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import KNNImputerMethod
+        >>> df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, np.nan, 7, 8]})
+        >>> imputer = KNNImputerMethod(k=2)
+        >>> imputed = imputer.impute(df)
+        >>> assert not imputed.isna().any().any()
+    """
 
     def __init__(self, k: int = 5):
         """Initialize the imputer.
 
         Args:
             k: Number of neighbors to consider.
+
+        Raises:
+            ValueError: If k is not a positive integer.
         """
+        if not isinstance(k, int):
+            raise TypeError(f"k must be an integer, got {type(k).__name__}")
+        if k <= 0:
+            raise ValueError(f"k must be positive, got {k}")
         self.k = k
         self._imputer = KNNImputer(n_neighbors=k)
 
@@ -107,13 +146,20 @@ class KNNImputerMethod(BaseImputer):
 class PMMImputer(BaseImputer):
     """Impute missing values using predictive mean matching (PMM)."""
 
-    def __init__(self, k: int = 5, random_state: int | None = 0):
+    def __init__(self, k: int = 5, random_state: int | None = None):
         """Initialize the imputer.
 
         Args:
             k: Number of donor candidates to consider.
             random_state: Seed for donor selection randomness.
+
+        Raises:
+            ValueError: If k is not a positive integer.
         """
+        if not isinstance(k, int):
+            raise TypeError(f"k must be an integer, got {type(k).__name__}")
+        if k <= 0:
+            raise ValueError(f"k must be positive, got {k}")
         self.k = k
         self.random_state = random_state
 
@@ -169,7 +215,7 @@ class MICEImputer(BaseImputer):
     This method is commonly abbreviated as MICE.
     """
 
-    def __init__(self, random_state: int | None = 0):
+    def __init__(self, random_state: int | None = None):
         """Initialize the imputer.
 
         Args:
@@ -228,7 +274,7 @@ class RegressionImputer(BaseImputer):
 class StochasticRegressionImputer(BaseImputer):
     """Impute missing values with regression plus random noise."""
 
-    def __init__(self, random_state: int | None = 0):
+    def __init__(self, random_state: int | None = None):
         """Initialize the imputer.
 
         Args:
@@ -641,7 +687,7 @@ def predictive_mean_matching(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
 
 def mice_impute(
     df: pd.DataFrame,
-    random_state: int | None = 0,
+    random_state: int | None = None,
 ) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MICEImputer`."""
     return MICEImputer(random_state=random_state).impute(df)
@@ -653,7 +699,7 @@ def regression_impute(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def stochastic_regression_impute(
-    df: pd.DataFrame, random_state: int | None = 0
+    df: pd.DataFrame, random_state: int | None = None
 ) -> pd.DataFrame:
     """Wrapper for :class:`StochasticRegressionImputer`."""
     return StochasticRegressionImputer(random_state=random_state).impute(df)
