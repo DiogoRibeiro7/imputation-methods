@@ -286,7 +286,7 @@ class LOCFImputer(BaseImputer):
             Dataframe where NaNs are replaced by the last seen observation.
         """
         df = self._ensure_numeric(df)
-        return df.fillna(method="ffill")
+        return df.ffill()
 
 
 class NOCBImputer(BaseImputer):
@@ -302,7 +302,7 @@ class NOCBImputer(BaseImputer):
             Dataframe where NaNs are replaced by the next observed value.
         """
         df = self._ensure_numeric(df)
-        return df.fillna(method="bfill")
+        return df.bfill()
 
 
 class HotDeckImputer(BaseImputer):
