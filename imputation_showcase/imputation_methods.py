@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
@@ -15,6 +16,9 @@ from ppca import PPCA
 from sklearn.neural_network import MLPRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
+
+# Configure module logger
+logger = logging.getLogger(__name__)
 
 
 class BaseImputer(ABC):
@@ -70,10 +74,16 @@ class MeanImputer(BaseImputer):
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         df = self._ensure_numeric(df)
+        logger.info(f"Imputing {df.shape[0]} rows, {df.shape[1]} columns")
+        missing_count = df.isna().sum().sum()
+        logger.info(f"Total missing values: {missing_count}")
+
         result = df.copy()
         for column in result.columns:
             mean_val = result[column].mean()
             result[column] = result[column].fillna(mean_val)
+
+        logger.info("Mean imputation completed successfully")
         return result
 
 
@@ -139,7 +149,15 @@ class KNNImputerMethod(BaseImputer):
             Imputed dataframe.
         """
         df = self._ensure_numeric(df)
+        logger.info(f"KNN imputation with k={self.k} on {df.shape} dataframe")
+        missing_count = df.isna().sum().sum()
+        logger.info(f"Missing values: {missing_count}")
+
+        if missing_count == 0:
+            logger.warning("No missing values found, returning copy")
+
         imputed_array = self._imputer.fit_transform(df)
+        logger.info("KNN imputation completed")
         return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
 
 

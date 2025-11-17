@@ -54,3 +54,11 @@ jobs:
         with:
           files: ./coverage.xml
           fail_ci_if_error: false
+
+      - name: Test Notebooks
+        run: |
+          poetry run jupyter nbconvert \
+            --to notebook \
+            --execute \
+            --inplace \
+            notebooks/demo_imputation.ipynb
