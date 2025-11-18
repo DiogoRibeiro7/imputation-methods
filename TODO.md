@@ -31,7 +31,7 @@ This file outlines tasks to enhance the imputation-showcase repository.
 
 - **Examples and visuals**
   - [x] Add example CSV dataset in `data/`.
-  - [ ] Generate and save plots in `figures/` for static presentation.
+  - [x] Generate and save plots in `figures/` for static presentation.
  
 ## Additional Imputation Techniques to Showcase
 
