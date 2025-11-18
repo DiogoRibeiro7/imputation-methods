@@ -1,10 +1,38 @@
 [tool.poetry]
 name = "imputation-showcase"
 version = "0.1.0"
-description = "Showcase of imputation techniques"
+description = "Comprehensive showcase of 16+ imputation techniques for handling missing data in Python"
 authors = ["Diogo Ribeiro <dfr@esmad.ipp.pt>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/DiogoRibeiro7/imputation-showcase"
+repository = "https://github.com/DiogoRibeiro7/imputation-showcase"
+documentation = "https://github.com/DiogoRibeiro7/imputation-showcase#readme"
+keywords = [
+    "imputation",
+    "missing-data",
+    "data-science",
+    "machine-learning",
+    "pandas",
+    "sklearn",
+    "data-preprocessing",
+    "statistics",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
 packages = [{include = "imputation_showcase"}]
 
 [tool.poetry.dependencies]
@@ -20,6 +48,11 @@ pytest = "^7.0"
 flake8 = "^6.0"
 mypy = "^1.16.1"
 coverage = "^7.9.2"
+nbconvert = "^7.0"
+jupyter = "^1.0"
+# Security: minimum versions to address known vulnerabilities
+setuptools = ">=78.1.1"
+cryptography = ">=43.0.1"
 
 [build-system]
 requires = ["poetry-core"]
