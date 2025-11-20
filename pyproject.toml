@@ -52,6 +52,9 @@ mypy = "^1.16.1"
 coverage = "^7.9.2"
 nbconvert = "^7.0"
 jupyter = "^1.0"
+mkdocs = "^1.5"
+mkdocs-material = "^9.5"
+mkdocstrings = {extras = ["python"], version = "^0.24"}
 # Security: minimum versions to address known vulnerabilities
 setuptools = ">=78.1.1"
 cryptography = ">=43.0.1"
