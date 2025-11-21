@@ -1,0 +1,110 @@
+site_name: Imputation Showcase
+site_description: Comprehensive library for handling missing data with 16+ imputation techniques
+site_author: Diogo Ribeiro
+site_url: https://DiogoRibeiro7.github.io/imputation-showcase
+
+repo_name: DiogoRibeiro7/imputation-showcase
+repo_url: https://github.com/DiogoRibeiro7/imputation-showcase
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2024 Diogo Ribeiro
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/DiogoRibeiro7
+    - icon: fontawesome/solid/envelope
+      link: mailto:diogo.debastos.ribeiro@gmail.com
+  version:
+    provider: mike
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+      - Basic Concepts: getting-started/concepts.md
+  - User Guide:
+      - Imputation Methods: user-guide/methods.md
+      - Method Selection: user-guide/selection.md
+      - Evaluation Metrics: user-guide/evaluation.md
+      - Best Practices: user-guide/best-practices.md
+  - Examples:
+      - Time Series: examples/time-series.md
+      - ML Pipelines: examples/ml-pipeline.md
+      - Custom Imputers: examples/custom-imputers.md
+  - API Reference:
+      - Imputation Methods: api/methods.md
+      - Evaluation: api/evaluation.md
+  - Contributing:
+      - Guidelines: contributing/guidelines.md
+      - Development Setup: contributing/development.md
+      - Code Style: contributing/code-style.md
+  - Changelog: changelog.md

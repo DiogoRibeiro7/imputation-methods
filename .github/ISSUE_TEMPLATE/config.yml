@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & Discussions
+    url: https://github.com/DiogoRibeiro7/imputation-showcase/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: Email Support
+    url: mailto:diogo.debastos.ribeiro@gmail.com
+    about: Contact the maintainer directly for private inquiries
