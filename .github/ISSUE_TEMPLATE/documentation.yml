@@ -1,0 +1,82 @@
+name: Documentation Improvement
+description: Suggest improvements to documentation
+title: "[Docs]: "
+labels: ["documentation"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation!
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation needs improvement?
+      options:
+        - README
+        - API documentation
+        - Tutorial/Notebook
+        - Example code
+        - Contributing guide
+        - Code comments
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Where is the documentation issue? (file path or URL)
+      placeholder: e.g., README.md, notebooks/01_getting_started.ipynb
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue Description
+      description: What's wrong or unclear with the current documentation?
+      placeholder: The documentation for X is unclear because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve it?
+      placeholder: I suggest changing it to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example (if applicable)
+      description: Provide an example of better documentation
+      placeholder: |
+        ```markdown
+        # Better documentation example
+        ```
+      render: markdown
+
+  - type: checkboxes
+    id: willing-to-contribute
+    attributes:
+      label: Contribution
+      description: Would you be willing to submit a PR for this improvement?
+      options:
+        - label: I'm willing to submit a PR for this documentation improvement
+          required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
