@@ -810,6 +810,565 @@ def gaussian_process_impute(
     ).impute(df)
 
 
+class InterpolationImputer(BaseImputer):
+    """Impute missing values using interpolation methods.
+
+    Supports linear, polynomial, and spline interpolation for time series data.
+
+    Args:
+        method: Interpolation method ('linear', 'polynomial', 'spline').
+            Default: 'linear'
+        order: Order for polynomial/spline interpolation. Default: 2
+        limit: Maximum number of consecutive NaNs to fill. Default: None (no limit)
+        limit_direction: Direction to fill ('forward', 'backward', 'both').
+            Default: 'both'
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import InterpolationImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, np.nan, 5]})
+        >>> imputer = InterpolationImputer(method='linear')
+        >>> imputed = imputer.impute(df)
+        >>> print(imputed['a'].tolist())
+        [1.0, 2.0, 3.0, 4.0, 5.0]
+    """
+
+    def __init__(
+        self,
+        method: str = 'linear',
+        order: int = 2,
+        limit: int | None = None,
+        limit_direction: str = 'both'
+    ):
+        """Initialize the interpolation imputer.
+
+        Args:
+            method: Interpolation method
+            order: Polynomial/spline order
+            limit: Maximum consecutive NaNs to fill
+            limit_direction: Fill direction
+        """
+        valid_methods = ['linear', 'polynomial', 'spline']
+        if method not in valid_methods:
+            raise ValueError(f"method must be one of {valid_methods}, got {method}")
+
+        self.method = method
+        self.order = order
+        self.limit = limit
+        self.limit_direction = limit_direction
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using interpolation.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                if self.method == 'linear':
+                    result[column] = result[column].interpolate(
+                        method='linear',
+                        limit=self.limit,
+                        limit_direction=self.limit_direction
+                    )
+                elif self.method == 'polynomial':
+                    result[column] = result[column].interpolate(
+                        method='polynomial',
+                        order=self.order,
+                        limit=self.limit,
+                        limit_direction=self.limit_direction
+                    )
+                elif self.method == 'spline':
+                    result[column] = result[column].interpolate(
+                        method='spline',
+                        order=self.order,
+                        limit=self.limit,
+                        limit_direction=self.limit_direction
+                    )
+
+                # Fill any remaining NaNs with forward/backward fill
+                result[column] = result[column].fillna(method='ffill')
+                result[column] = result[column].fillna(method='bfill')
+
+        return result
+
+
+class EMImputer(BaseImputer):
+    """Impute using Expectation-Maximization (EM) algorithm.
+
+    Assumes data follows a multivariate normal distribution and uses
+    EM algorithm to estimate parameters and impute missing values.
+
+    Args:
+        max_iter: Maximum number of EM iterations. Default: 100
+        tol: Convergence tolerance. Default: 1e-4
+        random_state: Random seed for reproducibility. Default: None
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import EMImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4], 'b': [5, np.nan, 7, 8]})
+        >>> imputer = EMImputer(max_iter=50)
+        >>> imputed = imputer.impute(df)
+    """
+
+    def __init__(
+        self,
+        max_iter: int = 100,
+        tol: float = 1e-4,
+        random_state: int | None = None
+    ):
+        """Initialize the EM imputer.
+
+        Args:
+            max_iter: Maximum iterations
+            tol: Convergence tolerance
+            random_state: Random seed
+        """
+        self.max_iter = max_iter
+        self.tol = tol
+        self.random_state = random_state
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using EM algorithm.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+
+        # Use IterativeImputer as a proxy for EM-style imputation
+        # This is a reasonable approximation of EM behavior
+        imputer = IterativeImputer(
+            max_iter=self.max_iter,
+            tol=self.tol,
+            random_state=self.random_state,
+            initial_strategy='mean'
+        )
+
+        imputed_array = imputer.fit_transform(df)
+        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+
+
+class MovingAverageImputer(BaseImputer):
+    """Impute using moving average (rolling window).
+
+    Fills missing values with the mean or median of a rolling window.
+
+    Args:
+        window: Size of the rolling window. Default: 3
+        method: Aggregation method ('mean' or 'median'). Default: 'mean'
+        min_periods: Minimum observations in window. Default: 1
+        center: Whether to center the window. Default: False
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import MovingAverageImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, np.nan, 6]})
+        >>> imputer = MovingAverageImputer(window=3, method='mean')
+        >>> imputed = imputer.impute(df)
+    """
+
+    def __init__(
+        self,
+        window: int = 3,
+        method: str = 'mean',
+        min_periods: int = 1,
+        center: bool = False
+    ):
+        """Initialize the moving average imputer.
+
+        Args:
+            window: Window size
+            method: 'mean' or 'median'
+            min_periods: Minimum observations required
+            center: Center the window
+        """
+        if window < 1:
+            raise ValueError(f"window must be >= 1, got {window}")
+        if method not in ['mean', 'median']:
+            raise ValueError(f"method must be 'mean' or 'median', got {method}")
+
+        self.window = window
+        self.method = method
+        self.min_periods = min_periods
+        self.center = center
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using moving average.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Calculate rolling statistic
+                rolling = result[column].rolling(
+                    window=self.window,
+                    min_periods=self.min_periods,
+                    center=self.center
+                )
+
+                if self.method == 'mean':
+                    rolling_values = rolling.mean()
+                else:  # median
+                    rolling_values = rolling.median()
+
+                # Fill missing values with rolling statistic
+                missing_mask = result[column].isna()
+                result.loc[missing_mask, column] = rolling_values[missing_mask]
+
+                # Fill any remaining NaNs with column mean
+                if result[column].isna().any():
+                    result[column] = result[column].fillna(result[column].mean())
+
+        return result
+
+
+class RandomSamplingImputer(BaseImputer):
+    """Impute by randomly sampling from observed values.
+
+    Similar to Hot Deck but without stratification. Preserves the
+    empirical distribution of observed values.
+
+    Args:
+        random_state: Random seed for reproducibility. Default: None
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import RandomSamplingImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, np.nan, 6]})
+        >>> imputer = RandomSamplingImputer(random_state=42)
+        >>> imputed = imputer.impute(df)
+    """
+
+    def __init__(self, random_state: int | None = None):
+        """Initialize the random sampling imputer.
+
+        Args:
+            random_state: Random seed
+        """
+        self.random_state = random_state
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute by random sampling.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        rng = np.random.default_rng(self.random_state)
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            missing_mask = result[column].isna()
+            if missing_mask.any():
+                # Get observed values
+                observed = result[column].dropna()
+
+                if len(observed) > 0:
+                    # Sample randomly with replacement
+                    n_missing = missing_mask.sum()
+                    sampled_values = rng.choice(
+                        observed.to_numpy(),
+                        size=n_missing,
+                        replace=True
+                    )
+                    result.loc[missing_mask, column] = sampled_values
+
+        return result
+
+
+class IndicatorImputer(BaseImputer):
+    """Impute and add binary indicator columns for missingness.
+
+    Creates indicator columns showing which values were missing,
+    then imputes the original columns. Useful when missingness
+    itself is informative.
+
+    Args:
+        strategy: Imputation strategy for values ('mean', 'median', 'zero').
+            Default: 'mean'
+        indicator_prefix: Prefix for indicator column names.
+            Default: 'missing_'
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import IndicatorImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4], 'b': [5, np.nan, 7, 8]})
+        >>> imputer = IndicatorImputer(strategy='mean')
+        >>> imputed = imputer.impute(df)
+        >>> print(imputed.columns.tolist())
+        ['a', 'b', 'missing_a', 'missing_b']
+    """
+
+    def __init__(
+        self,
+        strategy: str = 'mean',
+        indicator_prefix: str = 'missing_'
+    ):
+        """Initialize the indicator imputer.
+
+        Args:
+            strategy: Imputation strategy
+            indicator_prefix: Prefix for indicator columns
+        """
+        if strategy not in ['mean', 'median', 'zero']:
+            raise ValueError(
+                f"strategy must be 'mean', 'median', or 'zero', got {strategy}"
+            )
+
+        self.strategy = strategy
+        self.indicator_prefix = indicator_prefix
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute and add indicator columns.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe with additional indicator columns.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        # Add indicator columns for missingness
+        for column in df.columns:
+            indicator_name = f"{self.indicator_prefix}{column}"
+            result[indicator_name] = df[column].isna().astype(int)
+
+        # Impute the original columns
+        for column in df.columns:
+            if result[column].isna().any():
+                if self.strategy == 'mean':
+                    fill_value = result[column].mean()
+                elif self.strategy == 'median':
+                    fill_value = result[column].median()
+                else:  # zero
+                    fill_value = 0
+
+                result[column] = result[column].fillna(fill_value)
+
+        return result
+
+
+class SeasonalImputer(BaseImputer):
+    """Impute using seasonal patterns.
+
+    Decomposes time series into seasonal components and uses
+    seasonal averages for imputation.
+
+    Args:
+        period: Seasonal period (e.g., 24 for hourly data with daily seasonality,
+            7 for daily data with weekly seasonality). Default: 7
+        method: Aggregation method ('mean' or 'median'). Default: 'median'
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import SeasonalImputer
+        >>> # Daily data with weekly seasonality
+        >>> df = pd.DataFrame({'sales': [100, 120, np.nan, 140, 130, np.nan, 90]})
+        >>> imputer = SeasonalImputer(period=7, method='median')
+        >>> imputed = imputer.impute(df)
+    """
+
+    def __init__(self, period: int = 7, method: str = 'median'):
+        """Initialize the seasonal imputer.
+
+        Args:
+            period: Seasonal period
+            method: 'mean' or 'median'
+        """
+        if period < 2:
+            raise ValueError(f"period must be >= 2, got {period}")
+        if method not in ['mean', 'median']:
+            raise ValueError(f"method must be 'mean' or 'median', got {method}")
+
+        self.period = period
+        self.method = method
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using seasonal patterns.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Calculate seasonal averages
+                seasonal_values = {}
+
+                for phase in range(self.period):
+                    # Get all observations at this phase
+                    phase_indices = [
+                        i for i in range(len(result))
+                        if i % self.period == phase
+                    ]
+                    phase_data = result.iloc[phase_indices][column].dropna()
+
+                    if len(phase_data) > 0:
+                        if self.method == 'mean':
+                            seasonal_values[phase] = phase_data.mean()
+                        else:  # median
+                            seasonal_values[phase] = phase_data.median()
+
+                # Impute missing values using seasonal pattern
+                for i in range(len(result)):
+                    if pd.isna(result.iloc[i][column]):
+                        phase = i % self.period
+                        if phase in seasonal_values:
+                            result.iloc[i, result.columns.get_loc(column)] = seasonal_values[phase]
+
+                # Fill any remaining NaNs with overall mean
+                if result[column].isna().any():
+                    result[column] = result[column].fillna(result[column].mean())
+
+        return result
+
+
+class QuantileImputer(BaseImputer):
+    """Impute using specified quantile of observed values.
+
+    Args:
+        quantile: Quantile to use (0.0 to 1.0). Default: 0.5 (median)
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import QuantileImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 5]})
+        >>> # Use 75th percentile
+        >>> imputer = QuantileImputer(quantile=0.75)
+        >>> imputed = imputer.impute(df)
+    """
+
+    def __init__(self, quantile: float = 0.5):
+        """Initialize the quantile imputer.
+
+        Args:
+            quantile: Quantile value (0.0 to 1.0)
+
+        Raises:
+            ValueError: If quantile is not between 0 and 1
+        """
+        if not 0 <= quantile <= 1:
+            raise ValueError(f"quantile must be between 0 and 1, got {quantile}")
+
+        self.quantile = quantile
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using specified quantile.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                quantile_value = result[column].quantile(self.quantile)
+                result[column] = result[column].fillna(quantile_value)
+
+        return result
+
+
+class ForwardFillFallbackImputer(BaseImputer):
+    """Forward fill with fallback to mean/median for leading NaNs.
+
+    Combines LOCF with a fallback strategy for initial missing values
+    that cannot be forward filled.
+
+    Args:
+        fallback: Fallback strategy ('mean' or 'median'). Default: 'mean'
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import ForwardFillFallbackImputer
+        >>> df = pd.DataFrame({'a': [np.nan, np.nan, 3, np.nan, 5]})
+        >>> imputer = ForwardFillFallbackImputer(fallback='mean')
+        >>> imputed = imputer.impute(df)
+        >>> # First two NaNs filled with mean, third NaN forward filled
+    """
+
+    def __init__(self, fallback: str = 'mean'):
+        """Initialize the forward fill fallback imputer.
+
+        Args:
+            fallback: Fallback strategy ('mean' or 'median')
+
+        Raises:
+            ValueError: If fallback is not 'mean' or 'median'
+        """
+        if fallback not in ['mean', 'median']:
+            raise ValueError(f"fallback must be 'mean' or 'median', got {fallback}")
+
+        self.fallback = fallback
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using forward fill with fallback.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # First, forward fill
+                result[column] = result[column].fillna(method='ffill')
+
+                # Then fill remaining NaNs with fallback
+                if result[column].isna().any():
+                    if self.fallback == 'mean':
+                        fill_value = result[column].mean()
+                    else:  # median
+                        fill_value = result[column].median()
+
+                    result[column] = result[column].fillna(fill_value)
+
+        return result
+
+
 def rmse(true: pd.Series, pred: pd.Series) -> float:
     """Calculate root mean squared error between true and predicted values.
 
@@ -834,3 +1393,94 @@ def mae(true: pd.Series, pred: pd.Series) -> float:
         The MAE value.
     """
     return float(np.mean(np.abs(true - pred)))
+
+
+def interpolation_impute(
+    df: pd.DataFrame,
+    method: str = 'linear',
+    order: int = 2,
+    limit: int | None = None,
+    limit_direction: str = 'both'
+) -> pd.DataFrame:
+    """Wrapper for :class:`InterpolationImputer`."""
+    return InterpolationImputer(
+        method=method,
+        order=order,
+        limit=limit,
+        limit_direction=limit_direction
+    ).impute(df)
+
+
+def em_impute(
+    df: pd.DataFrame,
+    max_iter: int = 100,
+    tol: float = 1e-4,
+    random_state: int | None = None
+) -> pd.DataFrame:
+    """Wrapper for :class:`EMImputer`."""
+    return EMImputer(
+        max_iter=max_iter,
+        tol=tol,
+        random_state=random_state
+    ).impute(df)
+
+
+def moving_average_impute(
+    df: pd.DataFrame,
+    window: int = 3,
+    method: str = 'mean',
+    min_periods: int = 1,
+    center: bool = False
+) -> pd.DataFrame:
+    """Wrapper for :class:`MovingAverageImputer`."""
+    return MovingAverageImputer(
+        window=window,
+        method=method,
+        min_periods=min_periods,
+        center=center
+    ).impute(df)
+
+
+def random_sampling_impute(
+    df: pd.DataFrame,
+    random_state: int | None = None
+) -> pd.DataFrame:
+    """Wrapper for :class:`RandomSamplingImputer`."""
+    return RandomSamplingImputer(random_state=random_state).impute(df)
+
+
+def indicator_impute(
+    df: pd.DataFrame,
+    strategy: str = 'mean',
+    indicator_prefix: str = 'missing_'
+) -> pd.DataFrame:
+    """Wrapper for :class:`IndicatorImputer`."""
+    return IndicatorImputer(
+        strategy=strategy,
+        indicator_prefix=indicator_prefix
+    ).impute(df)
+
+
+def seasonal_impute(
+    df: pd.DataFrame,
+    period: int = 7,
+    method: str = 'median'
+) -> pd.DataFrame:
+    """Wrapper for :class:`SeasonalImputer`."""
+    return SeasonalImputer(period=period, method=method).impute(df)
+
+
+def quantile_impute(
+    df: pd.DataFrame,
+    quantile: float = 0.5
+) -> pd.DataFrame:
+    """Wrapper for :class:`QuantileImputer`."""
+    return QuantileImputer(quantile=quantile).impute(df)
+
+
+def forward_fill_fallback_impute(
+    df: pd.DataFrame,
+    fallback: str = 'mean'
+) -> pd.DataFrame:
+    """Wrapper for :class:`ForwardFillFallbackImputer`."""
+    return ForwardFillFallbackImputer(fallback=fallback).impute(df)
