@@ -1369,6 +1369,801 @@ class ForwardFillFallbackImputer(BaseImputer):
         return result
 
 
+class ModeImputer(BaseImputer):
+    """Impute missing values with the mode (most frequent value).
+
+    Particularly useful for categorical data or discrete numeric data.
+    For continuous data with no repeated values, falls back to median.
+
+    Args:
+        dropna: Whether to exclude NaN values when computing mode. Default: True
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import ModeImputer
+        >>> df = pd.DataFrame({'a': [1, 2, 2, np.nan, 2, 3]})
+        >>> imputer = ModeImputer()
+        >>> imputed = imputer.impute(df)
+        >>> # Missing value filled with 2 (most frequent)
+
+    References:
+        Standard statistical technique for categorical/discrete data.
+    """
+
+    def __init__(self, dropna: bool = True):
+        """Initialize the mode imputer.
+
+        Args:
+            dropna: Whether to exclude NaN values when computing mode
+        """
+        self.dropna = dropna
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using the mode of each column.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Get mode (most frequent value)
+                mode_values = result[column].mode(dropna=self.dropna)
+
+                if len(mode_values) > 0:
+                    # If multiple modes exist, take the first one
+                    fill_value = mode_values[0]
+                else:
+                    # Fallback to median if no mode found
+                    fill_value = result[column].median()
+
+                result[column] = result[column].fillna(fill_value)
+
+        return result
+
+
+class ConstantImputer(BaseImputer):
+    """Impute missing values with a user-specified constant.
+
+    Allows different constants for different columns or a single constant
+    for all columns. Useful for domain-specific imputation strategies.
+
+    Args:
+        fill_value: Constant value(s) to use for imputation. Can be:
+            - A scalar (applied to all columns)
+            - A dict mapping column names to fill values
+            Default: 0
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import ConstantImputer
+        >>> df = pd.DataFrame({'a': [1, np.nan, 3], 'b': [np.nan, 2, 3]})
+        >>> # Single value for all columns
+        >>> imputer = ConstantImputer(fill_value=-999)
+        >>> imputed = imputer.impute(df)
+        >>>
+        >>> # Different values per column
+        >>> imputer = ConstantImputer(fill_value={'a': 0, 'b': 100})
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Common practice in many domains (e.g., -999 for missing sensor data).
+    """
+
+    def __init__(self, fill_value: float | dict[str, float] = 0):
+        """Initialize the constant imputer.
+
+        Args:
+            fill_value: Constant value(s) for imputation
+        """
+        self.fill_value = fill_value
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using constant value(s).
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+
+        Raises:
+            ValueError: If fill_value dict contains unknown column names
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        if isinstance(self.fill_value, dict):
+            # Check that all keys in fill_value are valid column names
+            unknown_cols = set(self.fill_value.keys()) - set(df.columns)
+            if unknown_cols:
+                raise ValueError(
+                    f"fill_value contains unknown columns: {unknown_cols}"
+                )
+
+            # Fill each column with its specific value
+            for column, value in self.fill_value.items():
+                if column in result.columns and result[column].isna().any():
+                    result[column] = result[column].fillna(value)
+        else:
+            # Fill all columns with the same value
+            result = result.fillna(self.fill_value)
+
+        return result
+
+
+class EndOfDistributionImputer(BaseImputer):
+    """Impute at the edges of the distribution (mean ± k*std).
+
+    Useful for flagging or handling extreme/suspicious values.
+    Can impute at low end (mean - k*std) or high end (mean + k*std).
+
+    Args:
+        position: Where to impute ('low' or 'high'). Default: 'high'
+        k: Number of standard deviations from mean. Default: 3.0
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import EndOfDistributionImputer
+        >>> df = pd.DataFrame({'a': [1, 2, 3, np.nan, 5]})
+        >>> imputer = EndOfDistributionImputer(position='high', k=2)
+        >>> imputed = imputer.impute(df)
+        >>> # Missing value filled with mean + 2*std
+
+    References:
+        Used in outlier detection and robust imputation strategies.
+    """
+
+    def __init__(self, position: str = 'high', k: float = 3.0):
+        """Initialize the end-of-distribution imputer.
+
+        Args:
+            position: 'low' (mean - k*std) or 'high' (mean + k*std)
+            k: Number of standard deviations
+
+        Raises:
+            ValueError: If position is not 'low' or 'high'
+        """
+        if position not in ['low', 'high']:
+            raise ValueError(f"position must be 'low' or 'high', got {position}")
+
+        self.position = position
+        self.k = k
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute at distribution edges.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                mean = result[column].mean()
+                std = result[column].std()
+
+                if self.position == 'low':
+                    fill_value = mean - self.k * std
+                else:  # high
+                    fill_value = mean + self.k * std
+
+                result[column] = result[column].fillna(fill_value)
+
+        return result
+
+
+class GroupMeanImputer(BaseImputer):
+    """Group-wise mean or median imputation.
+
+    Imputes missing values using statistics computed within groups.
+    Useful for panel data, time series with categories, etc.
+
+    Args:
+        group_col: Column name to group by (must be in the dataframe)
+        method: Aggregation method ('mean' or 'median'). Default: 'mean'
+        global_fallback: Use global statistic if group has no data. Default: True
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import GroupMeanImputer
+        >>> df = pd.DataFrame({
+        ...     'category': [1, 1, 2, 2, 1],
+        ...     'value': [10, np.nan, 20, np.nan, 12]
+        ... })
+        >>> imputer = GroupMeanImputer(group_col='category', method='mean')
+        >>> imputed = imputer.impute(df)
+        >>> # Row 1 filled with mean of category 1, row 3 with mean of category 2
+
+    References:
+        Common in hierarchical data and panel data analysis.
+    """
+
+    def __init__(
+        self,
+        group_col: str,
+        method: str = 'mean',
+        global_fallback: bool = True
+    ):
+        """Initialize the group mean imputer.
+
+        Args:
+            group_col: Column name to group by
+            method: 'mean' or 'median'
+            global_fallback: Use global statistic for groups with no data
+
+        Raises:
+            ValueError: If method is not 'mean' or 'median'
+        """
+        if method not in ['mean', 'median']:
+            raise ValueError(f"method must be 'mean' or 'median', got {method}")
+
+        self.group_col = group_col
+        self.method = method
+        self.global_fallback = global_fallback
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using group-wise statistics.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+
+        Raises:
+            ValueError: If group_col is not in dataframe columns
+        """
+        if self.group_col not in df.columns:
+            raise ValueError(
+                f"group_col '{self.group_col}' not found in dataframe columns"
+            )
+
+        result = df.copy()
+
+        # Get numeric columns (excluding group column)
+        numeric_cols = [
+            col for col in result.columns
+            if col != self.group_col and pd.api.types.is_numeric_dtype(result[col])
+        ]
+
+        for column in numeric_cols:
+            if result[column].isna().any():
+                # Compute group-wise statistics
+                if self.method == 'mean':
+                    group_stats = result.groupby(self.group_col)[column].mean()
+                else:  # median
+                    group_stats = result.groupby(self.group_col)[column].median()
+
+                # Fill using group statistics
+                result[column] = result.apply(
+                    lambda row: (
+                        group_stats.get(row[self.group_col], np.nan)
+                        if pd.isna(row[column])
+                        else row[column]
+                    ),
+                    axis=1
+                )
+
+                # Handle any remaining NaNs with global fallback
+                if self.global_fallback and result[column].isna().any():
+                    if self.method == 'mean':
+                        global_stat = df[column].mean()
+                    else:  # median
+                        global_stat = df[column].median()
+
+                    result[column] = result[column].fillna(global_stat)
+
+        return result
+
+
+class WeightedMovingAverageImputer(BaseImputer):
+    """Exponentially weighted moving average imputation for time series.
+
+    Uses exponential weighting to give more importance to recent values.
+    More sophisticated than simple moving average for trending data.
+
+    Args:
+        alpha: Smoothing factor (0 < alpha <= 1). Higher = more weight to recent.
+            Default: 0.5
+        min_periods: Minimum observations needed. Default: 1
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import WeightedMovingAverageImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, np.nan, 6]})
+        >>> imputer = WeightedMovingAverageImputer(alpha=0.7)
+        >>> imputed = imputer.impute(df)
+        >>> # Missing values filled using exponentially weighted average
+
+    References:
+        Commonly used in financial time series and sensor data analysis.
+    """
+
+    def __init__(self, alpha: float = 0.5, min_periods: int = 1):
+        """Initialize the weighted moving average imputer.
+
+        Args:
+            alpha: Smoothing factor (0 < alpha <= 1)
+            min_periods: Minimum observations required
+
+        Raises:
+            ValueError: If alpha is not in (0, 1]
+        """
+        if not (0 < alpha <= 1):
+            raise ValueError(f"alpha must be in (0, 1], got {alpha}")
+
+        self.alpha = alpha
+        self.min_periods = min_periods
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using exponentially weighted moving average.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Calculate EWMA
+                ewma = result[column].ewm(
+                    alpha=self.alpha,
+                    min_periods=self.min_periods,
+                    ignore_na=True
+                ).mean()
+
+                # Fill NaNs with EWMA values
+                result[column] = result[column].fillna(ewma)
+
+                # If still NaNs (at the beginning), use backward fill then mean
+                if result[column].isna().any():
+                    result[column] = result[column].bfill()
+                if result[column].isna().any():
+                    result[column] = result[column].fillna(result[column].mean())
+
+        return result
+
+
+class LinearTrendImputer(BaseImputer):
+    """Linear trend imputation for time series data.
+
+    Fits a linear trend to observed data and uses it to fill missing values.
+    Suitable for data with clear linear trends.
+
+    Args:
+        use_index: Use dataframe index as x-values. If False, use integer positions.
+            Default: False
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import LinearTrendImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, np.nan, 6]})
+        >>> imputer = LinearTrendImputer()
+        >>> imputed = imputer.impute(df)
+        >>> # Missing values filled based on linear trend
+
+    References:
+        Standard technique for trending time series data.
+    """
+
+    def __init__(self, use_index: bool = False):
+        """Initialize the linear trend imputer.
+
+        Args:
+            use_index: Whether to use dataframe index as x-values
+        """
+        self.use_index = use_index
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using linear trend.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Get observed values and their positions
+                mask = ~result[column].isna()
+                observed_values = result.loc[mask, column].values
+
+                if self.use_index:
+                    observed_positions = result.loc[mask].index.values
+                    all_positions = result.index.values
+                else:
+                    observed_positions = np.where(mask)[0]
+                    all_positions = np.arange(len(result))
+
+                if len(observed_values) > 0:
+                    # Fit linear model
+                    if len(observed_values) == 1:
+                        # Can't fit a line with one point, use constant
+                        predictions = np.full(len(all_positions), observed_values[0])
+                    else:
+                        model = LinearRegression()
+                        X = observed_positions.reshape(-1, 1)
+                        y = observed_values
+                        model.fit(X, y)
+
+                        # Predict for all positions
+                        predictions = model.predict(all_positions.reshape(-1, 1))
+
+                    # Fill missing values
+                    result.loc[result[column].isna(), column] = predictions[result[column].isna()]
+
+        return result
+
+
+class PolynomialTrendImputer(BaseImputer):
+    """Polynomial trend imputation for time series data.
+
+    Fits polynomial curve to observed data for non-linear trends.
+    More flexible than linear trend for complex patterns.
+
+    Args:
+        degree: Polynomial degree (1=linear, 2=quadratic, 3=cubic, etc.).
+            Default: 2
+        use_index: Use dataframe index as x-values. Default: False
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import PolynomialTrendImputer
+        >>> df = pd.DataFrame({'a': [1, 4, np.nan, 16, np.nan, 36]})
+        >>> imputer = PolynomialTrendImputer(degree=2)
+        >>> imputed = imputer.impute(df)
+        >>> # Missing values filled based on quadratic trend
+
+    References:
+        Used for time series with non-linear but smooth trends.
+    """
+
+    def __init__(self, degree: int = 2, use_index: bool = False):
+        """Initialize the polynomial trend imputer.
+
+        Args:
+            degree: Polynomial degree (must be >= 1)
+            use_index: Whether to use dataframe index as x-values
+
+        Raises:
+            ValueError: If degree < 1
+        """
+        if degree < 1:
+            raise ValueError(f"degree must be >= 1, got {degree}")
+
+        self.degree = degree
+        self.use_index = use_index
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using polynomial trend.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Get observed values and their positions
+                mask = ~result[column].isna()
+                observed_values = result.loc[mask, column].values
+
+                if self.use_index:
+                    observed_positions = result.loc[mask].index.values
+                    all_positions = result.index.values
+                else:
+                    observed_positions = np.where(mask)[0]
+                    all_positions = np.arange(len(result))
+
+                if len(observed_values) > 0:
+                    # Ensure we have enough points for the polynomial degree
+                    effective_degree = min(self.degree, len(observed_values) - 1)
+
+                    if effective_degree == 0:
+                        # Only one point, use constant
+                        predictions = np.full(len(all_positions), observed_values[0])
+                    else:
+                        # Fit polynomial
+                        coefficients = np.polyfit(
+                            observed_positions,
+                            observed_values,
+                            effective_degree
+                        )
+                        predictions = np.polyval(coefficients, all_positions)
+
+                    # Fill missing values
+                    result.loc[result[column].isna(), column] = predictions[result[column].isna()]
+
+        return result
+
+
+class KalmanFilterImputer(BaseImputer):
+    """Kalman filter imputation for time series with uncertainty.
+
+    Uses Kalman filtering to impute missing values while accounting for
+    measurement noise and process uncertainty. Ideal for sensor data.
+
+    Args:
+        process_variance: Process noise variance (Q). Default: 1.0
+        measurement_variance: Measurement noise variance (R). Default: 1.0
+        initial_state: Initial state estimate. If None, uses first observed value.
+            Default: None
+        initial_covariance: Initial error covariance (P). Default: 1.0
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import KalmanFilterImputer
+        >>> df = pd.DataFrame({'a': [1, np.nan, 3, np.nan, 5]})
+        >>> imputer = KalmanFilterImputer()
+        >>> imputed = imputer.impute(df)
+        >>> # Missing values filled using Kalman filter estimates
+
+    References:
+        Kalman, R. E. (1960). A new approach to linear filtering and prediction.
+        Widely used in sensor fusion and state estimation.
+    """
+
+    def __init__(
+        self,
+        process_variance: float = 1.0,
+        measurement_variance: float = 1.0,
+        initial_state: float | None = None,
+        initial_covariance: float = 1.0
+    ):
+        """Initialize the Kalman filter imputer.
+
+        Args:
+            process_variance: Process noise variance (Q)
+            measurement_variance: Measurement noise variance (R)
+            initial_state: Initial state estimate (None = use first observed)
+            initial_covariance: Initial error covariance (P)
+        """
+        self.process_variance = process_variance
+        self.measurement_variance = measurement_variance
+        self.initial_state = initial_state
+        self.initial_covariance = initial_covariance
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using Kalman filter.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                values = result[column].values.copy()
+
+                # Initialize Kalman filter state
+                first_obs_idx = np.where(~np.isnan(values))[0]
+                if len(first_obs_idx) == 0:
+                    continue  # No observed values
+
+                if self.initial_state is None:
+                    x_est = values[first_obs_idx[0]]  # Initial state estimate
+                else:
+                    x_est = self.initial_state
+
+                p_est = self.initial_covariance  # Initial error covariance
+
+                # Run Kalman filter
+                for i in range(len(values)):
+                    # Prediction step
+                    x_pred = x_est  # State transition (simple: x_k = x_{k-1})
+                    p_pred = p_est + self.process_variance
+
+                    if not np.isnan(values[i]):
+                        # Update step (measurement available)
+                        kalman_gain = p_pred / (p_pred + self.measurement_variance)
+                        x_est = x_pred + kalman_gain * (values[i] - x_pred)
+                        p_est = (1 - kalman_gain) * p_pred
+                    else:
+                        # No measurement, use prediction
+                        values[i] = x_pred
+                        x_est = x_pred
+                        p_est = p_pred
+
+                result[column] = values
+
+        return result
+
+
+class ColdDeckImputer(BaseImputer):
+    """Cold deck imputation using predetermined reference values.
+
+    Uses values from a reference dataset or predetermined mapping to fill
+    missing values. Useful when you have historical or domain knowledge.
+
+    Args:
+        reference_values: Dictionary mapping column names to reference values
+            or a reference DataFrame. If dict, can map to scalar or array.
+            Default: None (uses column median as fallback)
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import ColdDeckImputer
+        >>> df = pd.DataFrame({'a': [1, np.nan, 3], 'b': [np.nan, 2, 3]})
+        >>> # Use predetermined values
+        >>> imputer = ColdDeckImputer(reference_values={'a': 2.5, 'b': 2.0})
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Traditional imputation method predating hot deck imputation.
+        Uses external/historical data rather than current dataset.
+    """
+
+    def __init__(self, reference_values: dict[str, float | np.ndarray] | pd.DataFrame | None = None):
+        """Initialize the cold deck imputer.
+
+        Args:
+            reference_values: Reference values for imputation
+        """
+        self.reference_values = reference_values
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using cold deck reference values.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        if self.reference_values is None:
+            # Fallback to median
+            for column in result.columns:
+                if result[column].isna().any():
+                    result[column] = result[column].fillna(result[column].median())
+        elif isinstance(self.reference_values, pd.DataFrame):
+            # Use reference DataFrame
+            for column in result.columns:
+                if column in self.reference_values.columns and result[column].isna().any():
+                    ref_mean = self.reference_values[column].mean()
+                    result[column] = result[column].fillna(ref_mean)
+        elif isinstance(self.reference_values, dict):
+            # Use dictionary of reference values
+            for column in result.columns:
+                if result[column].isna().any():
+                    if column in self.reference_values:
+                        ref_value = self.reference_values[column]
+                        if isinstance(ref_value, (int, float, np.number)):
+                            # Scalar reference value
+                            result[column] = result[column].fillna(ref_value)
+                        else:
+                            # Array reference value - sample randomly
+                            fill_values = np.random.choice(
+                                ref_value,
+                                size=result[column].isna().sum()
+                            )
+                            result.loc[result[column].isna(), column] = fill_values
+                    else:
+                        # Fallback to median if column not in reference
+                        result[column] = result[column].fillna(result[column].median())
+
+        return result
+
+
+class HybridImputer(BaseImputer):
+    """Hybrid imputation combining multiple methods with fallback chain.
+
+    Tries multiple imputation methods in sequence, falling back to simpler
+    methods if earlier methods fail or produce NaNs. Robust for diverse data.
+
+    Args:
+        methods: List of imputer instances to try in order.
+            Default: [InterpolationImputer(), MeanImputer()]
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import (
+        ...     HybridImputer, InterpolationImputer,
+        ...     MovingAverageImputer, MeanImputer
+        ... )
+        >>> df = pd.DataFrame({'a': [1, np.nan, np.nan, 4, np.nan]})
+        >>> # Try interpolation, then moving average, then mean
+        >>> imputer = HybridImputer(methods=[
+        ...     InterpolationImputer(),
+        ...     MovingAverageImputer(window=2),
+        ...     MeanImputer()
+        ... ])
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Combines strengths of multiple methods for robust imputation.
+    """
+
+    def __init__(self, methods: list[BaseImputer] | None = None):
+        """Initialize the hybrid imputer.
+
+        Args:
+            methods: List of imputer instances to try in order
+        """
+        if methods is None:
+            # Default fallback chain
+            methods = [InterpolationImputer(), MeanImputer()]
+
+        self.methods = methods
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using hybrid method chain.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        # Try each method in sequence
+        for method in self.methods:
+            if result.isna().any().any():
+                try:
+                    result = method.impute(result)
+                except Exception as e:
+                    # If a method fails, continue to next method
+                    logger.warning(
+                        f"Method {method.__class__.__name__} failed: {e}. "
+                        "Trying next method."
+                    )
+                    continue
+            else:
+                # All values imputed, no need for further methods
+                break
+
+        # Final fallback if still have NaNs
+        if result.isna().any().any():
+            for column in result.columns:
+                if result[column].isna().any():
+                    # Use mean as last resort
+                    result[column] = result[column].fillna(result[column].mean())
+                    # If mean is NaN (all values missing), use 0
+                    result[column] = result[column].fillna(0)
+
+        return result
+
+
 def rmse(true: pd.Series, pred: pd.Series) -> float:
     """Calculate root mean squared error between true and predicted values.
 
@@ -1484,3 +2279,103 @@ def forward_fill_fallback_impute(
 ) -> pd.DataFrame:
     """Wrapper for :class:`ForwardFillFallbackImputer`."""
     return ForwardFillFallbackImputer(fallback=fallback).impute(df)
+
+
+def mode_impute(
+    df: pd.DataFrame,
+    dropna: bool = True
+) -> pd.DataFrame:
+    """Wrapper for :class:`ModeImputer`."""
+    return ModeImputer(dropna=dropna).impute(df)
+
+
+def constant_impute(
+    df: pd.DataFrame,
+    fill_value: float | dict[str, float] = 0
+) -> pd.DataFrame:
+    """Wrapper for :class:`ConstantImputer`."""
+    return ConstantImputer(fill_value=fill_value).impute(df)
+
+
+def end_of_distribution_impute(
+    df: pd.DataFrame,
+    position: str = 'high',
+    k: float = 3.0
+) -> pd.DataFrame:
+    """Wrapper for :class:`EndOfDistributionImputer`."""
+    return EndOfDistributionImputer(position=position, k=k).impute(df)
+
+
+def group_mean_impute(
+    df: pd.DataFrame,
+    group_col: str,
+    method: str = 'mean',
+    global_fallback: bool = True
+) -> pd.DataFrame:
+    """Wrapper for :class:`GroupMeanImputer`."""
+    return GroupMeanImputer(
+        group_col=group_col,
+        method=method,
+        global_fallback=global_fallback
+    ).impute(df)
+
+
+def weighted_moving_average_impute(
+    df: pd.DataFrame,
+    alpha: float = 0.5,
+    min_periods: int = 1
+) -> pd.DataFrame:
+    """Wrapper for :class:`WeightedMovingAverageImputer`."""
+    return WeightedMovingAverageImputer(
+        alpha=alpha,
+        min_periods=min_periods
+    ).impute(df)
+
+
+def linear_trend_impute(
+    df: pd.DataFrame,
+    use_index: bool = False
+) -> pd.DataFrame:
+    """Wrapper for :class:`LinearTrendImputer`."""
+    return LinearTrendImputer(use_index=use_index).impute(df)
+
+
+def polynomial_trend_impute(
+    df: pd.DataFrame,
+    degree: int = 2,
+    use_index: bool = False
+) -> pd.DataFrame:
+    """Wrapper for :class:`PolynomialTrendImputer`."""
+    return PolynomialTrendImputer(degree=degree, use_index=use_index).impute(df)
+
+
+def kalman_filter_impute(
+    df: pd.DataFrame,
+    process_variance: float = 1.0,
+    measurement_variance: float = 1.0,
+    initial_state: float | None = None,
+    initial_covariance: float = 1.0
+) -> pd.DataFrame:
+    """Wrapper for :class:`KalmanFilterImputer`."""
+    return KalmanFilterImputer(
+        process_variance=process_variance,
+        measurement_variance=measurement_variance,
+        initial_state=initial_state,
+        initial_covariance=initial_covariance
+    ).impute(df)
+
+
+def cold_deck_impute(
+    df: pd.DataFrame,
+    reference_values: dict[str, float | np.ndarray] | pd.DataFrame | None = None
+) -> pd.DataFrame:
+    """Wrapper for :class:`ColdDeckImputer`."""
+    return ColdDeckImputer(reference_values=reference_values).impute(df)
+
+
+def hybrid_impute(
+    df: pd.DataFrame,
+    methods: list[BaseImputer] | None = None
+) -> pd.DataFrame:
+    """Wrapper for :class:`HybridImputer`."""
+    return HybridImputer(methods=methods).impute(df)
