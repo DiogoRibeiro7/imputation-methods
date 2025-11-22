@@ -5,7 +5,7 @@
 [![Code style: flake8](https://img.shields.io/badge/code%20style-flake8-black.svg)](https://flake8.pycqa.org/)
 [![CI](https://github.com/DiogoRibeiro7/imputation-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/DiogoRibeiro7/imputation-showcase/actions)
 
-A comprehensive Python library showcasing **33 state-of-the-art imputation techniques** for handling missing data in numerical datasets. Built with pandas and scikit-learn, this library provides a unified interface for comparing and evaluating different imputation strategies.
+A comprehensive Python library showcasing **41 state-of-the-art imputation techniques** for handling missing data in numerical datasets. Built with pandas and scikit-learn, this library provides a unified interface for comparing and evaluating different imputation strategies.
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ A comprehensive Python library showcasing **33 state-of-the-art imputation techn
 
 ## Features
 
-- **33 imputation methods** ranging from simple statistical approaches to advanced machine learning techniques
+- **41 imputation methods** ranging from simple statistical approaches to advanced machine learning and robust techniques
 - **Unified API** with consistent interface across all imputation methods
 - **Type-safe** implementation with proper type hints
 - **Comprehensive testing** with pytest and coverage reporting

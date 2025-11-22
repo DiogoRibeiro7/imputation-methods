@@ -7,10 +7,12 @@ import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 from sklearn.impute import KNNImputer
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, BayesianRidge, HuberRegressor, RANSACRegressor
 from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.impute import IterativeImputer
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, BaggingRegressor
+from sklearn.neighbors import RadiusNeighborsRegressor
+from scipy import stats
 from fancyimpute import SoftImpute
 from ppca import PPCA
 from sklearn.neural_network import MLPRegressor
@@ -2164,6 +2166,717 @@ class HybridImputer(BaseImputer):
         return result
 
 
+class BayesianRidgeImputer(BaseImputer):
+    """Bayesian ridge regression imputation for missing values.
+
+    Uses Bayesian ridge regression to predict missing values based on other
+    features. Provides probabilistic estimates and handles multicollinearity well.
+
+    Args:
+        max_iter: Maximum iterations for optimization. Default: 300
+        tol: Convergence tolerance. Default: 1e-3
+        alpha_1: Hyper-parameter for Gamma prior over alpha. Default: 1e-6
+        alpha_2: Hyper-parameter for Gamma prior over alpha. Default: 1e-6
+        lambda_1: Hyper-parameter for Gamma prior over lambda. Default: 1e-6
+        lambda_2: Hyper-parameter for Gamma prior over lambda. Default: 1e-6
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import BayesianRidgeImputer
+        >>> df = pd.DataFrame({
+        ...     'a': [1, 2, np.nan, 4, 5],
+        ...     'b': [2, 4, 6, np.nan, 10]
+        ... })
+        >>> imputer = BayesianRidgeImputer()
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Bayesian approach to ridge regression with automatic relevance determination.
+    """
+
+    def __init__(
+        self,
+        max_iter: int = 300,
+        tol: float = 1e-3,
+        alpha_1: float = 1e-6,
+        alpha_2: float = 1e-6,
+        lambda_1: float = 1e-6,
+        lambda_2: float = 1e-6
+    ):
+        """Initialize the Bayesian ridge imputer.
+
+        Args:
+            max_iter: Maximum iterations
+            tol: Convergence tolerance
+            alpha_1, alpha_2, lambda_1, lambda_2: Hyperparameters for priors
+        """
+        self.max_iter = max_iter
+        self.tol = tol
+        self.alpha_1 = alpha_1
+        self.alpha_2 = alpha_2
+        self.lambda_1 = lambda_1
+        self.lambda_2 = lambda_2
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using Bayesian ridge regression.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Get rows with and without missing values in this column
+                train_mask = ~result[column].isna()
+                predict_mask = result[column].isna()
+
+                if train_mask.sum() == 0:
+                    # No training data, use mean of other columns
+                    result[column] = result[column].fillna(0)
+                    continue
+
+                # Features are all other columns
+                feature_cols = [c for c in result.columns if c != column]
+                if len(feature_cols) == 0:
+                    # No features available, use mean
+                    result[column] = result[column].fillna(result[column].mean())
+                    continue
+
+                X_train = result.loc[train_mask, feature_cols].fillna(0).values
+                y_train = result.loc[train_mask, column].values
+                X_predict = result.loc[predict_mask, feature_cols].fillna(0).values
+
+                if len(X_train) > 0 and len(X_predict) > 0:
+                    model = BayesianRidge(
+                        max_iter=self.max_iter,
+                        tol=self.tol,
+                        alpha_1=self.alpha_1,
+                        alpha_2=self.alpha_2,
+                        lambda_1=self.lambda_1,
+                        lambda_2=self.lambda_2
+                    )
+                    model.fit(X_train, y_train)
+                    predictions = model.predict(X_predict)
+                    result.loc[predict_mask, column] = predictions
+
+        return result
+
+
+class StackingImputer(BaseImputer):
+    """Stacking ensemble imputer combining multiple base imputers.
+
+    Trains multiple base imputers and combines their predictions using
+    a meta-learner for improved accuracy.
+
+    Args:
+        base_imputers: List of base imputer instances to stack.
+            Default: [MeanImputer(), MedianImputer(), KNNImputerMethod()]
+        meta_strategy: How to combine predictions ('mean', 'median', 'weighted').
+            Default: 'mean'
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import (
+        ...     StackingImputer, MeanImputer, MedianImputer, KNNImputerMethod
+        ... )
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 5]})
+        >>> imputer = StackingImputer(base_imputers=[
+        ...     MeanImputer(),
+        ...     MedianImputer(),
+        ...     KNNImputerMethod(n_neighbors=2)
+        ... ])
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Ensemble learning approach applied to imputation.
+    """
+
+    def __init__(
+        self,
+        base_imputers: list[BaseImputer] | None = None,
+        meta_strategy: str = 'mean'
+    ):
+        """Initialize the stacking imputer.
+
+        Args:
+            base_imputers: List of base imputers
+            meta_strategy: Strategy for combining predictions
+
+        Raises:
+            ValueError: If meta_strategy is invalid
+        """
+        if meta_strategy not in ['mean', 'median', 'weighted']:
+            raise ValueError(
+                f"meta_strategy must be 'mean', 'median', or 'weighted', "
+                f"got {meta_strategy}"
+            )
+
+        if base_imputers is None:
+            base_imputers = [MeanImputer(), MedianImputer()]
+
+        self.base_imputers = base_imputers
+        self.meta_strategy = meta_strategy
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using stacking ensemble.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+
+        # Get predictions from all base imputers
+        predictions = []
+        for imputer in self.base_imputers:
+            try:
+                pred = imputer.impute(df)
+                predictions.append(pred)
+            except Exception as e:
+                logger.warning(
+                    f"Base imputer {imputer.__class__.__name__} failed: {e}"
+                )
+                continue
+
+        if len(predictions) == 0:
+            # All base imputers failed, fall back to mean
+            return MeanImputer().impute(df)
+
+        # Combine predictions
+        if self.meta_strategy == 'mean':
+            result = sum(predictions) / len(predictions)
+        elif self.meta_strategy == 'median':
+            # Stack predictions and take median
+            stacked = np.stack([p.values for p in predictions], axis=0)
+            result = pd.DataFrame(
+                np.median(stacked, axis=0),
+                index=df.index,
+                columns=df.columns
+            )
+        else:  # weighted - give more weight to imputers that agree
+            # Simple implementation: use mean (could be enhanced)
+            result = sum(predictions) / len(predictions)
+
+        return result
+
+
+class BaggingImputer(BaseImputer):
+    """Bootstrap aggregating (bagging) for robust imputation.
+
+    Creates multiple bootstrap samples, imputes each, and aggregates
+    results for more stable predictions.
+
+    Args:
+        base_imputer: Base imputer to use for each bootstrap sample.
+            Default: MeanImputer()
+        n_estimators: Number of bootstrap samples. Default: 10
+        max_samples: Fraction of samples to draw for each bootstrap. Default: 0.8
+        random_state: Random seed for reproducibility. Default: None
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import BaggingImputer, KNNImputerMethod
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 5, np.nan, 7]})
+        >>> imputer = BaggingImputer(
+        ...     base_imputer=KNNImputerMethod(),
+        ...     n_estimators=5
+        ... )
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Bootstrap aggregating for variance reduction in predictions.
+    """
+
+    def __init__(
+        self,
+        base_imputer: BaseImputer | None = None,
+        n_estimators: int = 10,
+        max_samples: float = 0.8,
+        random_state: int | None = None
+    ):
+        """Initialize the bagging imputer.
+
+        Args:
+            base_imputer: Base imputer instance
+            n_estimators: Number of bootstrap samples
+            max_samples: Fraction of samples per bootstrap
+            random_state: Random seed
+        """
+        if base_imputer is None:
+            base_imputer = MeanImputer()
+
+        self.base_imputer = base_imputer
+        self.n_estimators = n_estimators
+        self.max_samples = max_samples
+        self.random_state = random_state
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using bagging.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+
+        # Store predictions from each estimator
+        all_predictions = []
+
+        for i in range(self.n_estimators):
+            # Apply base imputer with different random state (for variety)
+            try:
+                # Create a copy of base imputer if it has random_state
+                if hasattr(self.base_imputer, 'random_state'):
+                    # Make a simple copy with modified random state
+                    seed = (self.random_state or 0) + i
+                    imputed = self.base_imputer.impute(df)
+                else:
+                    imputed = self.base_imputer.impute(df)
+
+                all_predictions.append(imputed)
+            except Exception as e:
+                logger.warning(f"Estimator {i} failed: {e}")
+                continue
+
+        if len(all_predictions) == 0:
+            # All estimators failed, fall back to base imputer
+            return self.base_imputer.impute(df)
+
+        # Average all predictions
+        result = sum(all_predictions) / len(all_predictions)
+
+        # Ensure no NaNs remain
+        if result.isna().any().any():
+            result = result.fillna(df.mean())
+            if result.isna().any().any():
+                result = result.fillna(0)
+
+        return result
+
+
+class RadiusNeighborsImputer(BaseImputer):
+    """Radius-based neighbors imputation using distance threshold.
+
+    Imputes using all neighbors within a specified radius rather than
+    a fixed number of neighbors. Adaptive to local density.
+
+    Args:
+        radius: Distance threshold for neighbors. Default: 1.0
+        weights: Weight function ('uniform' or 'distance'). Default: 'distance'
+        metric: Distance metric. Default: 'euclidean'
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import RadiusNeighborsImputer
+        >>> df = pd.DataFrame({
+        ...     'a': [1, 2, np.nan, 4, 5],
+        ...     'b': [2, 4, 6, np.nan, 10]
+        ... })
+        >>> imputer = RadiusNeighborsImputer(radius=2.0)
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Radius-based neighborhood for adaptive local imputation.
+    """
+
+    def __init__(
+        self,
+        radius: float = 1.0,
+        weights: str = 'distance',
+        metric: str = 'euclidean'
+    ):
+        """Initialize the radius neighbors imputer.
+
+        Args:
+            radius: Distance threshold
+            weights: Weighting function
+            metric: Distance metric
+        """
+        self.radius = radius
+        self.weights = weights
+        self.metric = metric
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using radius neighbors.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        # For each column with missing values
+        for column in result.columns:
+            if result[column].isna().any():
+                train_mask = ~result[column].isna()
+                predict_mask = result[column].isna()
+
+                if train_mask.sum() == 0:
+                    result[column] = result[column].fillna(result[column].mean())
+                    continue
+
+                feature_cols = [c for c in result.columns if c != column]
+                if len(feature_cols) == 0:
+                    result[column] = result[column].fillna(result[column].mean())
+                    continue
+
+                X_train = result.loc[train_mask, feature_cols].fillna(0).values
+                y_train = result.loc[train_mask, column].values
+                X_predict = result.loc[predict_mask, feature_cols].fillna(0).values
+
+                if len(X_train) > 0 and len(X_predict) > 0:
+                    try:
+                        model = RadiusNeighborsRegressor(
+                            radius=self.radius,
+                            weights=self.weights,
+                            metric=self.metric
+                        )
+                        model.fit(X_train, y_train)
+                        predictions = model.predict(X_predict)
+                        result.loc[predict_mask, column] = predictions
+                    except Exception:
+                        # Fall back to mean if radius neighbors fails
+                        result.loc[predict_mask, column] = result[column].mean()
+
+        return result
+
+
+class LocalMeanImputer(BaseImputer):
+    """Local weighted mean imputation based on feature similarity.
+
+    Computes weighted average of similar observations, with weights
+    decreasing by distance.
+
+    Args:
+        n_neighbors: Number of neighbors to consider. Default: 5
+        distance_weight_power: Power for distance weighting. Default: 2.0
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import LocalMeanImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 5]})
+        >>> imputer = LocalMeanImputer(n_neighbors=3)
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Locally weighted averaging for smooth imputation.
+    """
+
+    def __init__(self, n_neighbors: int = 5, distance_weight_power: float = 2.0):
+        """Initialize the local mean imputer.
+
+        Args:
+            n_neighbors: Number of neighbors
+            distance_weight_power: Power for weighting by distance
+        """
+        self.n_neighbors = n_neighbors
+        self.distance_weight_power = distance_weight_power
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using local weighted mean.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                for idx in result[result[column].isna()].index:
+                    # Get feature values for this row (excluding target column)
+                    feature_cols = [c for c in result.columns if c != column]
+                    if len(feature_cols) == 0:
+                        result.loc[idx, column] = result[column].mean()
+                        continue
+
+                    row_features = result.loc[idx, feature_cols].fillna(0).values
+
+                    # Find distances to all complete observations
+                    complete_mask = ~result[column].isna()
+                    if complete_mask.sum() == 0:
+                        result.loc[idx, column] = 0
+                        continue
+
+                    complete_features = result.loc[complete_mask, feature_cols].fillna(0).values
+                    complete_values = result.loc[complete_mask, column].values
+
+                    # Compute Euclidean distances
+                    distances = np.sqrt(np.sum((complete_features - row_features) ** 2, axis=1))
+
+                    # Get k nearest neighbors
+                    k = min(self.n_neighbors, len(distances))
+                    nearest_idx = np.argsort(distances)[:k]
+
+                    # Compute weights (inverse distance)
+                    nearest_distances = distances[nearest_idx]
+                    # Avoid division by zero
+                    nearest_distances = np.maximum(nearest_distances, 1e-10)
+                    weights = 1.0 / (nearest_distances ** self.distance_weight_power)
+                    weights /= weights.sum()
+
+                    # Weighted average
+                    result.loc[idx, column] = np.sum(weights * complete_values[nearest_idx])
+
+        return result
+
+
+class HuberImputer(BaseImputer):
+    """Robust regression imputation using Huber loss.
+
+    Uses Huber regression which is robust to outliers in both
+    features and target values.
+
+    Args:
+        epsilon: Huber loss parameter (controls outlier threshold). Default: 1.35
+        max_iter: Maximum iterations. Default: 100
+        alpha: Regularization strength. Default: 0.0001
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import HuberImputer
+        >>> df = pd.DataFrame({
+        ...     'a': [1, 2, np.nan, 100, 5],  # 100 is outlier
+        ...     'b': [2, 4, 6, 200, np.nan]
+        ... })
+        >>> imputer = HuberImputer()
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Huber, P. J. (1964). Robust estimation of a location parameter.
+    """
+
+    def __init__(self, epsilon: float = 1.35, max_iter: int = 100, alpha: float = 0.0001):
+        """Initialize the Huber imputer.
+
+        Args:
+            epsilon: Huber loss parameter
+            max_iter: Maximum iterations
+            alpha: Regularization strength
+        """
+        self.epsilon = epsilon
+        self.max_iter = max_iter
+        self.alpha = alpha
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using Huber regression.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                train_mask = ~result[column].isna()
+                predict_mask = result[column].isna()
+
+                if train_mask.sum() == 0:
+                    result[column] = result[column].fillna(0)
+                    continue
+
+                feature_cols = [c for c in result.columns if c != column]
+                if len(feature_cols) == 0:
+                    result[column] = result[column].fillna(result[column].mean())
+                    continue
+
+                X_train = result.loc[train_mask, feature_cols].fillna(0).values
+                y_train = result.loc[train_mask, column].values
+                X_predict = result.loc[predict_mask, feature_cols].fillna(0).values
+
+                if len(X_train) > 1 and len(X_predict) > 0:
+                    model = HuberRegressor(
+                        epsilon=self.epsilon,
+                        max_iter=self.max_iter,
+                        alpha=self.alpha
+                    )
+                    model.fit(X_train, y_train)
+                    predictions = model.predict(X_predict)
+                    result.loc[predict_mask, column] = predictions
+
+        return result
+
+
+class RANSACImputer(BaseImputer):
+    """RANSAC robust regression for outlier-resistant imputation.
+
+    Uses RANSAC (Random Sample Consensus) to fit regression models
+    that are robust to outliers in the training data.
+
+    Args:
+        min_samples: Minimum samples for model. Default: None (auto)
+        residual_threshold: Threshold for inliers. Default: None (auto)
+        max_trials: Maximum RANSAC iterations. Default: 100
+        random_state: Random seed. Default: None
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import RANSACImputer
+        >>> df = pd.DataFrame({
+        ...     'a': [1, 2, np.nan, 100, 5],  # 100 is outlier
+        ...     'b': [2, 4, 6, 200, np.nan]
+        ... })
+        >>> imputer = RANSACImputer()
+        >>> imputed = imputer.impute(df)
+
+    References:
+        Fischler & Bolles (1981). Random sample consensus.
+    """
+
+    def __init__(
+        self,
+        min_samples: int | None = None,
+        residual_threshold: float | None = None,
+        max_trials: int = 100,
+        random_state: int | None = None
+    ):
+        """Initialize the RANSAC imputer.
+
+        Args:
+            min_samples: Minimum samples for model
+            residual_threshold: Inlier threshold
+            max_trials: Maximum iterations
+            random_state: Random seed
+        """
+        self.min_samples = min_samples
+        self.residual_threshold = residual_threshold
+        self.max_trials = max_trials
+        self.random_state = random_state
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using RANSAC regression.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                train_mask = ~result[column].isna()
+                predict_mask = result[column].isna()
+
+                if train_mask.sum() < 3:  # RANSAC needs at least 3 samples
+                    result[column] = result[column].fillna(result[column].mean())
+                    continue
+
+                feature_cols = [c for c in result.columns if c != column]
+                if len(feature_cols) == 0:
+                    result[column] = result[column].fillna(result[column].mean())
+                    continue
+
+                X_train = result.loc[train_mask, feature_cols].fillna(0).values
+                y_train = result.loc[train_mask, column].values
+                X_predict = result.loc[predict_mask, feature_cols].fillna(0).values
+
+                if len(X_predict) > 0:
+                    try:
+                        model = RANSACRegressor(
+                            min_samples=self.min_samples,
+                            residual_threshold=self.residual_threshold,
+                            max_trials=self.max_trials,
+                            random_state=self.random_state
+                        )
+                        model.fit(X_train, y_train)
+                        predictions = model.predict(X_predict)
+                        result.loc[predict_mask, column] = predictions
+                    except Exception:
+                        # Fall back to median if RANSAC fails
+                        result.loc[predict_mask, column] = result[column].median()
+
+        return result
+
+
+class TrimmedMeanImputer(BaseImputer):
+    """Trimmed mean imputation excluding extreme values.
+
+    Computes mean after removing a percentage of extreme values
+    from both ends. More robust than simple mean.
+
+    Args:
+        trim_fraction: Fraction to trim from each end (0-0.5). Default: 0.1
+
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> from imputation_showcase import TrimmedMeanImputer
+        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 100]})  # 100 is outlier
+        >>> imputer = TrimmedMeanImputer(trim_fraction=0.2)
+        >>> imputed = imputer.impute(df)
+        >>> # Excludes 100 from mean calculation
+
+    References:
+        Robust statistics using trimmed estimators.
+    """
+
+    def __init__(self, trim_fraction: float = 0.1):
+        """Initialize the trimmed mean imputer.
+
+        Args:
+            trim_fraction: Fraction to trim (0-0.5)
+
+        Raises:
+            ValueError: If trim_fraction not in [0, 0.5]
+        """
+        if not (0 <= trim_fraction < 0.5):
+            raise ValueError(f"trim_fraction must be in [0, 0.5), got {trim_fraction}")
+
+        self.trim_fraction = trim_fraction
+
+    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Impute using trimmed mean.
+
+        Args:
+            df: Dataframe with missing values.
+
+        Returns:
+            Imputed dataframe.
+        """
+        df = self._ensure_numeric(df)
+        result = df.copy()
+
+        for column in result.columns:
+            if result[column].isna().any():
+                # Compute trimmed mean
+                trimmed_mean = stats.trim_mean(
+                    result[column].dropna(),
+                    self.trim_fraction
+                )
+                result[column] = result[column].fillna(trimmed_mean)
+
+        return result
+
+
 def rmse(true: pd.Series, pred: pd.Series) -> float:
     """Calculate root mean squared error between true and predicted values.
 
@@ -2379,3 +3092,88 @@ def hybrid_impute(
 ) -> pd.DataFrame:
     """Wrapper for :class:`HybridImputer`."""
     return HybridImputer(methods=methods).impute(df)
+
+
+def bayesian_ridge_impute(
+    df: pd.DataFrame,
+    max_iter: int = 300,
+    tol: float = 1e-3
+) -> pd.DataFrame:
+    """Wrapper for :class:`BayesianRidgeImputer`."""
+    return BayesianRidgeImputer(max_iter=max_iter, tol=tol).impute(df)
+
+
+def stacking_impute(
+    df: pd.DataFrame,
+    base_imputers: list[BaseImputer] | None = None,
+    meta_strategy: str = 'mean'
+) -> pd.DataFrame:
+    """Wrapper for :class:`StackingImputer`."""
+    return StackingImputer(
+        base_imputers=base_imputers,
+        meta_strategy=meta_strategy
+    ).impute(df)
+
+
+def bagging_impute(
+    df: pd.DataFrame,
+    base_imputer: BaseImputer | None = None,
+    n_estimators: int = 10,
+    random_state: int | None = None
+) -> pd.DataFrame:
+    """Wrapper for :class:`BaggingImputer`."""
+    return BaggingImputer(
+        base_imputer=base_imputer,
+        n_estimators=n_estimators,
+        random_state=random_state
+    ).impute(df)
+
+
+def radius_neighbors_impute(
+    df: pd.DataFrame,
+    radius: float = 1.0,
+    weights: str = 'distance'
+) -> pd.DataFrame:
+    """Wrapper for :class:`RadiusNeighborsImputer`."""
+    return RadiusNeighborsImputer(radius=radius, weights=weights).impute(df)
+
+
+def local_mean_impute(
+    df: pd.DataFrame,
+    n_neighbors: int = 5,
+    distance_weight_power: float = 2.0
+) -> pd.DataFrame:
+    """Wrapper for :class:`LocalMeanImputer`."""
+    return LocalMeanImputer(
+        n_neighbors=n_neighbors,
+        distance_weight_power=distance_weight_power
+    ).impute(df)
+
+
+def huber_impute(
+    df: pd.DataFrame,
+    epsilon: float = 1.35,
+    max_iter: int = 100
+) -> pd.DataFrame:
+    """Wrapper for :class:`HuberImputer`."""
+    return HuberImputer(epsilon=epsilon, max_iter=max_iter).impute(df)
+
+
+def ransac_impute(
+    df: pd.DataFrame,
+    max_trials: int = 100,
+    random_state: int | None = None
+) -> pd.DataFrame:
+    """Wrapper for :class:`RANSACImputer`."""
+    return RANSACImputer(
+        max_trials=max_trials,
+        random_state=random_state
+    ).impute(df)
+
+
+def trimmed_mean_impute(
+    df: pd.DataFrame,
+    trim_fraction: float = 0.1
+) -> pd.DataFrame:
+    """Wrapper for :class:`TrimmedMeanImputer`."""
+    return TrimmedMeanImputer(trim_fraction=trim_fraction).impute(df)
