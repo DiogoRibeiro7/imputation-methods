@@ -125,7 +125,7 @@ class KNNImputerMethod(BaseImputer):
         >>> assert not imputed.isna().any().any()
     """
 
-    def __init__(self, k: int = 5):
+    def __init__(self, k: int = 5) -> None:
         """Initialize the imputer.
 
         Args:
@@ -166,7 +166,7 @@ class KNNImputerMethod(BaseImputer):
 class PMMImputer(BaseImputer):
     """Impute missing values using predictive mean matching (PMM)."""
 
-    def __init__(self, k: int = 5, random_state: int | None = None):
+    def __init__(self, k: int = 5, random_state: int | None = None) -> None:
         """Initialize the imputer.
 
         Args:
@@ -235,7 +235,7 @@ class MICEImputer(BaseImputer):
     This method is commonly abbreviated as MICE.
     """
 
-    def __init__(self, random_state: int | None = None):
+    def __init__(self, random_state: int | None = None) -> None:
         """Initialize the imputer.
 
         Args:
@@ -294,7 +294,7 @@ class RegressionImputer(BaseImputer):
 class StochasticRegressionImputer(BaseImputer):
     """Impute missing values with regression plus random noise."""
 
-    def __init__(self, random_state: int | None = None):
+    def __init__(self, random_state: int | None = None) -> None:
         """Initialize the imputer.
 
         Args:
@@ -444,7 +444,7 @@ class MissForestImputer(BaseImputer):
     ``RandomForestRegressor`` estimator to approximate the MissForest method.
     """
 
-    def __init__(self, random_state: int | None = None):
+    def __init__(self, random_state: int | None = None) -> None:
         """Initialize the imputer.
 
         Args:
@@ -473,7 +473,7 @@ class MissForestImputer(BaseImputer):
 class SoftImputeImputer(BaseImputer):
     """Impute missing values using matrix factorization."""
 
-    def __init__(self, max_iters: int = 100, init_fill_method: str = "zero"):
+    def __init__(self, max_iters: int = 100, init_fill_method: str = "zero") -> None:
         """Initialize the imputer.
 
         Args:
@@ -842,7 +842,7 @@ class InterpolationImputer(BaseImputer):
         order: int = 2,
         limit: int | None = None,
         limit_direction: str = 'both'
-    ):
+    ) -> None:
         """Initialize the interpolation imputer.
 
         Args:
@@ -973,7 +973,7 @@ class EMImputer(BaseImputer):
         max_iter: int = 100,
         tol: float = 1e-4,
         random_state: int | None = None
-    ):
+    ) -> None:
         """Initialize the EM imputer.
 
         Args:
@@ -1064,7 +1064,7 @@ class MovingAverageImputer(BaseImputer):
         method: str = 'mean',
         min_periods: int = 1,
         center: bool = False
-    ):
+    ) -> None:
         """Initialize the moving average imputer.
 
         Args:
@@ -1138,7 +1138,7 @@ class RandomSamplingImputer(BaseImputer):
         >>> imputed = imputer.impute(df)
     """
 
-    def __init__(self, random_state: int | None = None):
+    def __init__(self, random_state: int | None = None) -> None:
         """Initialize the random sampling imputer.
 
         Args:
@@ -1206,7 +1206,7 @@ class IndicatorImputer(BaseImputer):
         self,
         strategy: str = 'mean',
         indicator_prefix: str = 'missing_'
-    ):
+    ) -> None:
         """Initialize the indicator imputer.
 
         Args:
@@ -1274,7 +1274,7 @@ class SeasonalImputer(BaseImputer):
         >>> imputed = imputer.impute(df)
     """
 
-    def __init__(self, period: int = 7, method: str = 'median'):
+    def __init__(self, period: int = 7, method: str = 'median') -> None:
         """Initialize the seasonal imputer.
 
         Args:
@@ -1350,7 +1350,7 @@ class QuantileImputer(BaseImputer):
         >>> imputed = imputer.impute(df)
     """
 
-    def __init__(self, quantile: float = 0.5):
+    def __init__(self, quantile: float = 0.5) -> None:
         """Initialize the quantile imputer.
 
         Args:
@@ -1403,7 +1403,7 @@ class ForwardFillFallbackImputer(BaseImputer):
         >>> # First two NaNs filled with mean, third NaN forward filled
     """
 
-    def __init__(self, fallback: str = 'mean'):
+    def __init__(self, fallback: str = 'mean') -> None:
         """Initialize the forward fill fallback imputer.
 
         Args:
@@ -1468,7 +1468,7 @@ class ModeImputer(BaseImputer):
         Standard statistical technique for categorical/discrete data.
     """
 
-    def __init__(self, dropna: bool = True):
+    def __init__(self, dropna: bool = True) -> None:
         """Initialize the mode imputer.
 
         Args:
@@ -1534,7 +1534,7 @@ class ConstantImputer(BaseImputer):
         Common practice in many domains (e.g., -999 for missing sensor data).
     """
 
-    def __init__(self, fill_value: float | dict[str, float] = 0):
+    def __init__(self, fill_value: float | dict[str, float] = 0) -> None:
         """Initialize the constant imputer.
 
         Args:
@@ -1599,7 +1599,7 @@ class EndOfDistributionImputer(BaseImputer):
         Used in outlier detection and robust imputation strategies.
     """
 
-    def __init__(self, position: str = 'high', k: float = 3.0):
+    def __init__(self, position: str = 'high', k: float = 3.0) -> None:
         """Initialize the end-of-distribution imputer.
 
         Args:
@@ -1674,7 +1674,7 @@ class GroupMeanImputer(BaseImputer):
         group_col: str,
         method: str = 'mean',
         global_fallback: bool = True
-    ):
+    ) -> None:
         """Initialize the group mean imputer.
 
         Args:
@@ -1771,7 +1771,7 @@ class WeightedMovingAverageImputer(BaseImputer):
         Commonly used in financial time series and sensor data analysis.
     """
 
-    def __init__(self, alpha: float = 0.5, min_periods: int = 1):
+    def __init__(self, alpha: float = 0.5, min_periods: int = 1) -> None:
         """Initialize the weighted moving average imputer.
 
         Args:
@@ -1843,7 +1843,7 @@ class LinearTrendImputer(BaseImputer):
         Standard technique for trending time series data.
     """
 
-    def __init__(self, use_index: bool = False):
+    def __init__(self, use_index: bool = False) -> None:
         """Initialize the linear trend imputer.
 
         Args:
@@ -1920,7 +1920,7 @@ class PolynomialTrendImputer(BaseImputer):
         Used for time series with non-linear but smooth trends.
     """
 
-    def __init__(self, degree: int = 2, use_index: bool = False):
+    def __init__(self, degree: int = 2, use_index: bool = False) -> None:
         """Initialize the polynomial trend imputer.
 
         Args:
@@ -2043,7 +2043,7 @@ class KalmanFilterImputer(BaseImputer):
         measurement_variance: float = 1.0,
         initial_state: float | None = None,
         initial_covariance: float = 1.0
-    ):
+    ) -> None:
         """Initialize the Kalman filter imputer.
 
         Args:
@@ -2179,7 +2179,7 @@ class ColdDeckImputer(BaseImputer):
         Uses external/historical data rather than current dataset.
     """
 
-    def __init__(self, reference_values: dict[str, float | np.ndarray] | pd.DataFrame | None = None):
+    def __init__(self, reference_values: dict[str, float | np.ndarray] | pd.DataFrame | None = None) -> None:
         """Initialize the cold deck imputer.
 
         Args:
@@ -2216,16 +2216,19 @@ class ColdDeckImputer(BaseImputer):
                 if result[column].isna().any():
                     if column in self.reference_values:
                         ref_value = self.reference_values[column]
-                        if isinstance(ref_value, (int, float, np.number)):
+                        if isinstance(ref_value, (int, float)):
                             # Scalar reference value
                             result[column] = result[column].fillna(ref_value)
-                        else:
+                        elif isinstance(ref_value, np.ndarray):
                             # Array reference value - sample randomly
                             fill_values = np.random.choice(
                                 ref_value,
                                 size=result[column].isna().sum()
                             )
                             result.loc[result[column].isna(), column] = fill_values
+                        else:
+                            # Numpy scalar types
+                            result[column] = result[column].fillna(float(ref_value))
                     else:
                         # Fallback to median if column not in reference
                         result[column] = result[column].fillna(result[column].median())
@@ -2294,7 +2297,7 @@ class HybridImputer(BaseImputer):
         Ensemble and cascading strategies for robust machine learning.
     """
 
-    def __init__(self, methods: list[BaseImputer] | None = None):
+    def __init__(self, methods: list[BaseImputer] | None = None) -> None:
         """Initialize the hybrid imputer.
 
         Args:
@@ -2455,7 +2458,7 @@ class BayesianRidgeImputer(BaseImputer):
         alpha_2: float = 1e-6,
         lambda_1: float = 1e-6,
         lambda_2: float = 1e-6
-    ):
+    ) -> None:
         """Initialize the Bayesian ridge imputer.
 
         Args:
@@ -2607,7 +2610,7 @@ class StackingImputer(BaseImputer):
         self,
         base_imputers: list[BaseImputer] | None = None,
         meta_strategy: str = 'mean'
-    ):
+    ) -> None:
         """Initialize the stacking imputer.
 
         Args:
@@ -2765,7 +2768,7 @@ class BaggingImputer(BaseImputer):
         n_estimators: int = 10,
         max_samples: float = 0.8,
         random_state: int | None = None
-    ):
+    ) -> None:
         """Initialize the bagging imputer.
 
         Args:
@@ -2882,7 +2885,7 @@ class RadiusNeighborsImputer(BaseImputer):
         radius: float = 1.0,
         weights: str = 'distance',
         metric: str = 'euclidean'
-    ):
+    ) -> None:
         """Initialize the radius neighbors imputer.
 
         Args:
@@ -2964,7 +2967,7 @@ class LocalMeanImputer(BaseImputer):
         Locally weighted averaging for smooth imputation.
     """
 
-    def __init__(self, n_neighbors: int = 5, distance_weight_power: float = 2.0):
+    def __init__(self, n_neighbors: int = 5, distance_weight_power: float = 2.0) -> None:
         """Initialize the local mean imputer.
 
         Args:
@@ -3052,7 +3055,7 @@ class HuberImputer(BaseImputer):
         Huber, P. J. (1964). Robust estimation of a location parameter.
     """
 
-    def __init__(self, epsilon: float = 1.35, max_iter: int = 100, alpha: float = 0.0001):
+    def __init__(self, epsilon: float = 1.35, max_iter: int = 100, alpha: float = 0.0001) -> None:
         """Initialize the Huber imputer.
 
         Args:
@@ -3140,7 +3143,7 @@ class RANSACImputer(BaseImputer):
         residual_threshold: float | None = None,
         max_trials: int = 100,
         random_state: int | None = None
-    ):
+    ) -> None:
         """Initialize the RANSAC imputer.
 
         Args:
@@ -3224,7 +3227,7 @@ class TrimmedMeanImputer(BaseImputer):
         Robust statistics using trimmed estimators.
     """
 
-    def __init__(self, trim_fraction: float = 0.1):
+    def __init__(self, trim_fraction: float = 0.1) -> None:
         """Initialize the trimmed mean imputer.
 
         Args:
