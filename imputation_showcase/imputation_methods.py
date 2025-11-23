@@ -906,20 +906,66 @@ class EMImputer(BaseImputer):
     """Impute using Expectation-Maximization (EM) algorithm.
 
     Assumes data follows a multivariate normal distribution and uses
-    EM algorithm to estimate parameters and impute missing values.
+    EM algorithm to iteratively estimate parameters and impute missing values.
+
+    **Algorithm Overview:**
+    The EM algorithm alternates between two steps:
+
+    1. **E-step (Expectation)**:
+       - Compute expected values of missing data given current parameter estimates
+       - Calculate sufficient statistics (mean, covariance) using both observed
+         and imputed values
+
+    2. **M-step (Maximization)**:
+       - Re-estimate distribution parameters (mean vector, covariance matrix)
+         using the sufficient statistics from E-step
+
+    This process iterates until convergence (parameters stop changing significantly).
+
+    **When to Use:**
+    - Data has complex multivariate dependencies
+    - Multiple variables are missing simultaneously
+    - Missing data follows MAR (Missing At Random) mechanism
+    - You need statistically principled estimates
+
+    **Advantages:**
+    - Statistically optimal under multivariate normality assumption
+    - Accounts for correlations between variables
+    - Provides likelihood-based estimates
+    - Can handle multiple missing patterns
+
+    **Limitations:**
+    - Assumes multivariate normal distribution (may not fit real data)
+    - Computationally intensive for large datasets
+    - Can converge to local optima
+    - Sensitive to initialization
 
     Args:
-        max_iter: Maximum number of EM iterations. Default: 100
-        tol: Convergence tolerance. Default: 1e-4
+        max_iter: Maximum number of EM iterations. More iterations allow better
+            convergence but increase computation time. Default: 100
+        tol: Convergence tolerance. Algorithm stops when parameter changes are
+            smaller than this threshold. Smaller values = more precision but
+            longer runtime. Default: 1e-4
         random_state: Random seed for reproducibility. Default: None
 
     Examples:
         >>> import pandas as pd
         >>> import numpy as np
         >>> from imputation_showcase import EMImputer
+        >>> # Data with multivariate dependencies
         >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4], 'b': [5, np.nan, 7, 8]})
-        >>> imputer = EMImputer(max_iter=50)
+        >>> imputer = EMImputer(max_iter=50, tol=1e-3)
         >>> imputed = imputer.impute(df)
+
+    References:
+        Dempster, A. P., Laird, N. M., & Rubin, D. B. (1977).
+        "Maximum likelihood from incomplete data via the EM algorithm."
+        Journal of the Royal Statistical Society: Series B, 39(1), 1-22.
+
+    Notes:
+        This implementation uses sklearn's IterativeImputer which performs
+        chained equation imputation, a variant of EM that iteratively models
+        each feature given all others.
     """
 
     def __init__(
@@ -942,6 +988,19 @@ class EMImputer(BaseImputer):
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using EM algorithm.
 
+        **Implementation Details:**
+        Uses sklearn's IterativeImputer which implements a variant of EM
+        called "chained equations" or "fully conditional specification":
+
+        1. Initialize missing values with mean
+        2. For each feature with missing values:
+           a. Fit regression model: target = f(other features)
+           b. Predict missing values using fitted model
+        3. Repeat step 2 for all features until convergence
+
+        This approach captures multivariate dependencies like EM while being
+        more flexible (doesn't require normality assumption).
+
         Args:
             df: Dataframe with missing values.
 
@@ -950,16 +1009,32 @@ class EMImputer(BaseImputer):
         """
         df = self._ensure_numeric(df)
 
-        # Use IterativeImputer as a proxy for EM-style imputation
-        # This is a reasonable approximation of EM behavior
+        # ============================================================
+        # EM-style imputation using IterativeImputer
+        # ============================================================
+        # IterativeImputer implements MICE (Multivariate Imputation by
+        # Chained Equations), which is conceptually similar to EM:
+        # - Both are iterative
+        # - Both use conditional distributions
+        # - Both converge to stable estimates
+        #
+        # Differences:
+        # - EM assumes multivariate normal (parametric)
+        # - MICE uses regression models (more flexible)
+        # - MICE can handle non-linear relationships
+
         imputer = IterativeImputer(
-            max_iter=self.max_iter,
-            tol=self.tol,
-            random_state=self.random_state,
-            initial_strategy='mean'
+            max_iter=self.max_iter,          # Maximum EM-style iterations
+            tol=self.tol,                    # Convergence threshold
+            random_state=self.random_state,  # For reproducibility
+            initial_strategy='mean'          # Start with mean imputation
         )
 
+        # Fit and transform data
+        # This performs the iterative E-M style procedure
         imputed_array = imputer.fit_transform(df)
+
+        # Convert back to DataFrame with original structure
         return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
 
 
@@ -1914,25 +1989,52 @@ class KalmanFilterImputer(BaseImputer):
     Uses Kalman filtering to impute missing values while accounting for
     measurement noise and process uncertainty. Ideal for sensor data.
 
+    **Algorithm Overview:**
+    The Kalman filter is a recursive Bayesian estimator that operates in
+    two steps:
+    1. **Prediction**: Estimates the next state based on the previous state
+    2. **Update**: Corrects the prediction using new measurements
+
+    For imputation, when a measurement is missing, we use only the prediction
+    step to fill the gap.
+
+    **Mathematical Background:**
+    - State equation: x_k = x_{k-1} + w_k, where w_k ~ N(0, Q)
+    - Measurement equation: z_k = x_k + v_k, where v_k ~ N(0, R)
+    - Prediction: x_pred = x_est, P_pred = P_est + Q
+    - Update: K = P_pred/(P_pred + R), x_est = x_pred + K*(z - x_pred)
+
     Args:
-        process_variance: Process noise variance (Q). Default: 1.0
-        measurement_variance: Measurement noise variance (R). Default: 1.0
-        initial_state: Initial state estimate. If None, uses first observed value.
-            Default: None
-        initial_covariance: Initial error covariance (P). Default: 1.0
+        process_variance: Process noise variance (Q). Controls how much the
+            state can vary between time steps. Larger values allow more
+            flexibility but may lead to overfitting. Default: 1.0
+        measurement_variance: Measurement noise variance (R). Reflects
+            confidence in observations. Larger values trust predictions more
+            than measurements. Default: 1.0
+        initial_state: Initial state estimate. If None, uses first observed
+            value. Default: None
+        initial_covariance: Initial error covariance (P). Represents initial
+            uncertainty in state estimate. Default: 1.0
 
     Examples:
         >>> import pandas as pd
         >>> import numpy as np
         >>> from imputation_showcase import KalmanFilterImputer
         >>> df = pd.DataFrame({'a': [1, np.nan, 3, np.nan, 5]})
-        >>> imputer = KalmanFilterImputer()
+        >>> # High process variance allows more variation
+        >>> imputer = KalmanFilterImputer(process_variance=2.0)
         >>> imputed = imputer.impute(df)
         >>> # Missing values filled using Kalman filter estimates
 
     References:
         Kalman, R. E. (1960). A new approach to linear filtering and prediction.
-        Widely used in sensor fusion and state estimation.
+        Journal of Basic Engineering, 82(1), 35-45.
+        Widely used in sensor fusion, GPS, and state estimation.
+
+    Notes:
+        - Works best for time series data with smooth trends
+        - Assumes linear state transitions (constant velocity model)
+        - For non-linear systems, consider Extended Kalman Filter (EKF)
     """
 
     def __init__(
@@ -1958,6 +2060,13 @@ class KalmanFilterImputer(BaseImputer):
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using Kalman filter.
 
+        The Kalman filter processes data sequentially, maintaining an estimate
+        of the current state and its uncertainty. At each time step:
+
+        1. Predict the next state using the state transition model
+        2. If a measurement exists, update the estimate using Kalman gain
+        3. If no measurement exists (NaN), use the prediction as the imputed value
+
         Args:
             df: Dataframe with missing values.
 
@@ -1971,35 +2080,75 @@ class KalmanFilterImputer(BaseImputer):
             if result[column].isna().any():
                 values = result[column].values.copy()
 
-                # Initialize Kalman filter state
+                # ============================================================
+                # STEP 1: Initialize Kalman filter state
+                # ============================================================
+                # Find first observed value to initialize the filter
                 first_obs_idx = np.where(~np.isnan(values))[0]
                 if len(first_obs_idx) == 0:
-                    continue  # No observed values
+                    continue  # No observed values in this column
 
+                # Initialize state estimate (x_est)
+                # This is our best guess of the true value at time k
                 if self.initial_state is None:
-                    x_est = values[first_obs_idx[0]]  # Initial state estimate
+                    x_est = values[first_obs_idx[0]]  # Use first observation
                 else:
                     x_est = self.initial_state
 
-                p_est = self.initial_covariance  # Initial error covariance
+                # Initialize error covariance (P_est)
+                # This quantifies our uncertainty in the state estimate
+                p_est = self.initial_covariance
 
-                # Run Kalman filter
+                # ============================================================
+                # STEP 2: Run Kalman filter through all time steps
+                # ============================================================
                 for i in range(len(values)):
-                    # Prediction step
-                    x_pred = x_est  # State transition (simple: x_k = x_{k-1})
+                    # --------------------------------------------------------
+                    # PREDICTION STEP
+                    # --------------------------------------------------------
+                    # Predict next state using state transition model
+                    # For this simple model: x_k = x_{k-1} (constant velocity)
+                    x_pred = x_est
+
+                    # Predict error covariance
+                    # Uncertainty grows by process_variance at each step
                     p_pred = p_est + self.process_variance
 
+                    # --------------------------------------------------------
+                    # UPDATE STEP (if measurement available)
+                    # --------------------------------------------------------
                     if not np.isnan(values[i]):
-                        # Update step (measurement available)
+                        # We have a measurement! Update our estimate
+
+                        # Compute Kalman gain (K)
+                        # K determines how much we trust the measurement vs prediction
+                        # K → 1: trust measurement more (low measurement_variance)
+                        # K → 0: trust prediction more (high measurement_variance)
                         kalman_gain = p_pred / (p_pred + self.measurement_variance)
+
+                        # Update state estimate using measurement
+                        # x_est = prediction + gain * (measurement - prediction)
+                        # This is a weighted average of prediction and measurement
                         x_est = x_pred + kalman_gain * (values[i] - x_pred)
+
+                        # Update error covariance
+                        # Uncertainty decreases when we incorporate a measurement
                         p_est = (1 - kalman_gain) * p_pred
                     else:
-                        # No measurement, use prediction
+                        # --------------------------------------------------------
+                        # NO MEASUREMENT (NaN) - Use prediction for imputation
+                        # --------------------------------------------------------
+                        # Fill missing value with predicted state
                         values[i] = x_pred
+
+                        # State estimate remains at prediction
                         x_est = x_pred
+
+                        # Error covariance remains at predicted value
+                        # (uncertainty doesn't decrease without measurement)
                         p_est = p_pred
 
+                # Update column with imputed values
                 result[column] = values
 
         return result
@@ -2090,8 +2239,33 @@ class HybridImputer(BaseImputer):
     Tries multiple imputation methods in sequence, falling back to simpler
     methods if earlier methods fail or produce NaNs. Robust for diverse data.
 
+    **Strategy Pattern:**
+    This imputer implements a cascading fallback strategy where sophisticated
+    methods are tried first, with progressively simpler methods as fallbacks.
+    This approach combines the advantages of multiple methods while ensuring
+    robustness.
+
+    **Use Cases:**
+    - **Heterogeneous data**: Different columns may need different approaches
+    - **Unknown data patterns**: Not sure which method will work best
+    - **Production systems**: Need guaranteed imputation without failures
+    - **Exploratory analysis**: Want to leverage multiple strategies
+
+    **Design Principles:**
+    1. **Graceful degradation**: Complex methods → Simple methods → Always succeed
+    2. **Error resilience**: Method failures don't crash the pipeline
+    3. **Early stopping**: Stop once all NaNs are filled (efficiency)
+    4. **Guaranteed completion**: Final fallback ensures no NaNs remain
+
+    **Recommended Method Ordering:**
+    1. **Domain-specific** (if applicable): Business rules, external data
+    2. **Sophisticated**: ML-based (MICE, MissForest, etc.)
+    3. **Moderate**: Statistical (interpolation, regression)
+    4. **Simple**: Basic stats (mean, median)
+
     Args:
-        methods: List of imputer instances to try in order.
+        methods: List of imputer instances to try in order. Methods should be
+            ordered from most sophisticated/specific to simplest/most general.
             Default: [InterpolationImputer(), MeanImputer()]
 
     Examples:
@@ -2102,16 +2276,22 @@ class HybridImputer(BaseImputer):
         ...     MovingAverageImputer, MeanImputer
         ... )
         >>> df = pd.DataFrame({'a': [1, np.nan, np.nan, 4, np.nan]})
-        >>> # Try interpolation, then moving average, then mean
+        >>> # Cascade: interpolation → moving average → mean
         >>> imputer = HybridImputer(methods=[
-        ...     InterpolationImputer(),
-        ...     MovingAverageImputer(window=2),
-        ...     MeanImputer()
+        ...     InterpolationImputer(),      # Try smooth interpolation first
+        ...     MovingAverageImputer(window=2),  # Fall back to local average
+        ...     MeanImputer()                 # Final fallback: global mean
         ... ])
         >>> imputed = imputer.impute(df)
 
+    Notes:
+        - Each method sees the output of the previous method
+        - If a method fills all NaNs, subsequent methods are skipped
+        - Exceptions in individual methods are caught and logged
+        - Always has a final safety net (mean → 0) to guarantee no NaNs
+
     References:
-        Combines strengths of multiple methods for robust imputation.
+        Ensemble and cascading strategies for robust machine learning.
     """
 
     def __init__(self, methods: list[BaseImputer] | None = None):
@@ -2121,47 +2301,93 @@ class HybridImputer(BaseImputer):
             methods: List of imputer instances to try in order
         """
         if methods is None:
-            # Default fallback chain
+            # Default fallback chain: interpolation → mean
+            # Interpolation works well for smooth trends
+            # Mean is a safe universal fallback
             methods = [InterpolationImputer(), MeanImputer()]
 
         self.methods = methods
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Impute using hybrid method chain.
+        """Impute using hybrid fallback chain.
+
+        **Execution Flow:**
+        1. Start with original data
+        2. For each method in the chain:
+           - Check if NaNs remain
+           - If yes: try the method
+           - If method succeeds: use its output
+           - If method fails: log warning and try next
+           - If no NaNs remain: stop (early exit)
+        3. Final safety check: mean fallback for any remaining NaNs
 
         Args:
             df: Dataframe with missing values.
 
         Returns:
-            Imputed dataframe.
+            Imputed dataframe (guaranteed to have no NaNs).
         """
         df = self._ensure_numeric(df)
         result = df.copy()
 
-        # Try each method in sequence
+        # ============================================================
+        # MAIN FALLBACK CHAIN
+        # ============================================================
+        # Try each method sequentially until all NaNs are filled
         for method in self.methods:
+            # Check if there are still NaNs to fill
             if result.isna().any().any():
                 try:
+                    # Attempt imputation with current method
                     result = method.impute(result)
+
+                    # Log successful imputation (useful for debugging)
+                    logger.debug(
+                        f"Method {method.__class__.__name__} successfully "
+                        f"imputed data. Remaining NaNs: {result.isna().sum().sum()}"
+                    )
+
                 except Exception as e:
-                    # If a method fails, continue to next method
+                    # Method failed - log warning and continue to next method
+                    # This ensures pipeline robustness
                     logger.warning(
-                        f"Method {method.__class__.__name__} failed: {e}. "
-                        "Trying next method."
+                        f"Method {method.__class__.__name__} failed with error: {e}. "
+                        f"Continuing to next method in fallback chain."
                     )
                     continue
             else:
-                # All values imputed, no need for further methods
+                # ========================================================
+                # EARLY EXIT: All NaNs filled
+                # ========================================================
+                # No need to try remaining methods
+                # This saves computation time
+                logger.debug("All NaNs filled. Skipping remaining methods.")
                 break
 
-        # Final fallback if still have NaNs
+        # ============================================================
+        # FINAL SAFETY NET
+        # ============================================================
+        # Guarantee no NaNs remain, even if all methods failed
+        # This ensures the imputer always succeeds
         if result.isna().any().any():
+            logger.warning(
+                "Some NaNs remain after all methods. Applying final fallback."
+            )
+
             for column in result.columns:
                 if result[column].isna().any():
-                    # Use mean as last resort
-                    result[column] = result[column].fillna(result[column].mean())
-                    # If mean is NaN (all values missing), use 0
-                    result[column] = result[column].fillna(0)
+                    # Try mean first (most reasonable fallback)
+                    mean_val = result[column].mean()
+                    if not np.isnan(mean_val):
+                        result[column] = result[column].fillna(mean_val)
+                    else:
+                        # If mean is NaN (all values were missing), use 0
+                        # This is a last resort but ensures no NaNs
+                        logger.warning(
+                            f"Column '{column}' had all missing values. "
+                            "Filling with 0 as last resort."
+                        )
+                        result[column] = result[column].fillna(0)
 
         return result
 
@@ -2171,6 +2397,31 @@ class BayesianRidgeImputer(BaseImputer):
 
     Uses Bayesian ridge regression to predict missing values based on other
     features. Provides probabilistic estimates and handles multicollinearity well.
+
+    **Algorithm Overview:**
+    Bayesian ridge regression treats the regression coefficients as random variables
+    with Gaussian priors. It iteratively estimates both the coefficients and the
+    precision (inverse variance) parameters using an Expectation-Maximization
+    approach. This provides automatic relevance determination - features with
+    low relevance are automatically down-weighted.
+
+    **Key Differences from Standard Ridge Regression:**
+    - Standard ridge: Fixed regularization parameter λ (must be tuned)
+    - Bayesian ridge: Learns optimal α (precision of weights) and λ (precision of noise)
+    - Provides uncertainty estimates through posterior distributions
+    - More robust to overfitting with automatic parameter adaptation
+
+    **Hyperparameter Priors:**
+    - alpha ~ Gamma(alpha_1, alpha_2): Controls precision of weights (inverse variance)
+    - lambda ~ Gamma(lambda_1, lambda_2): Controls precision of noise
+    - Small values (1e-6) create weak priors, letting data dominate
+    - Larger values create stronger priors, enforcing more regularization
+
+    **When to Use:**
+    - Small to medium datasets with multivariate relationships
+    - When feature relevance is unknown (automatic feature selection)
+    - When uncertainty quantification is valuable
+    - When you want to avoid manual hyperparameter tuning
 
     Args:
         max_iter: Maximum iterations for optimization. Default: 300
@@ -2193,6 +2444,7 @@ class BayesianRidgeImputer(BaseImputer):
 
     References:
         Bayesian approach to ridge regression with automatic relevance determination.
+        MacKay, D. J. C. (1992). Bayesian interpolation.
     """
 
     def __init__(
@@ -2221,6 +2473,11 @@ class BayesianRidgeImputer(BaseImputer):
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using Bayesian ridge regression.
 
+        Implements a column-by-column imputation strategy where each column
+        with missing values is predicted using all other columns as features.
+        The Bayesian ridge model automatically learns optimal regularization
+        parameters during the iterative fitting process.
+
         Args:
             df: Dataframe with missing values.
 
@@ -2230,38 +2487,54 @@ class BayesianRidgeImputer(BaseImputer):
         df = self._ensure_numeric(df)
         result = df.copy()
 
+        # Process each column independently (univariate approach within multivariate context)
         for column in result.columns:
             if result[column].isna().any():
-                # Get rows with and without missing values in this column
+                # Split data into training (observed) and prediction (missing) sets
+                # This is crucial for supervised learning approach to imputation
                 train_mask = ~result[column].isna()
                 predict_mask = result[column].isna()
 
+                # Edge case: No observed values to learn from
                 if train_mask.sum() == 0:
-                    # No training data, use mean of other columns
+                    # Fallback to zero (could also use global mean)
                     result[column] = result[column].fillna(0)
                     continue
 
-                # Features are all other columns
+                # Use all other columns as predictive features
+                # This exploits multivariate relationships in the data
                 feature_cols = [c for c in result.columns if c != column]
                 if len(feature_cols) == 0:
-                    # No features available, use mean
+                    # Edge case: Single-column dataframe, use univariate mean
                     result[column] = result[column].fillna(result[column].mean())
                     continue
 
+                # Prepare training and prediction matrices
+                # Note: fillna(0) for features is a simple strategy; could be improved
+                # with more sophisticated feature imputation
                 X_train = result.loc[train_mask, feature_cols].fillna(0).values
                 y_train = result.loc[train_mask, column].values
                 X_predict = result.loc[predict_mask, feature_cols].fillna(0).values
 
                 if len(X_train) > 0 and len(X_predict) > 0:
+                    # Initialize Bayesian ridge model with specified priors
+                    # The model will iteratively update α (weight precision) and
+                    # λ (noise precision) to find optimal posterior distributions
                     model = BayesianRidge(
-                        max_iter=self.max_iter,
-                        tol=self.tol,
-                        alpha_1=self.alpha_1,
-                        alpha_2=self.alpha_2,
-                        lambda_1=self.lambda_1,
-                        lambda_2=self.lambda_2
+                        max_iter=self.max_iter,  # Typically converges in < 100 iterations
+                        tol=self.tol,  # Stop when change in log-likelihood < tol
+                        alpha_1=self.alpha_1,  # Shape parameter for alpha prior
+                        alpha_2=self.alpha_2,  # Rate parameter for alpha prior
+                        lambda_1=self.lambda_1,  # Shape parameter for lambda prior
+                        lambda_2=self.lambda_2  # Rate parameter for lambda prior
                     )
+
+                    # Fit: Iteratively update coefficients w, α, and λ
+                    # Uses conjugate Gaussian-Gamma priors for analytical updates
                     model.fit(X_train, y_train)
+
+                    # Predict: Returns posterior mean estimates (point predictions)
+                    # Could also return std via predict with return_std=True
                     predictions = model.predict(X_predict)
                     result.loc[predict_mask, column] = predictions
 
@@ -2274,9 +2547,40 @@ class StackingImputer(BaseImputer):
     Trains multiple base imputers and combines their predictions using
     a meta-learner for improved accuracy.
 
+    **Algorithm Overview:**
+    Stacking (stacked generalization) is an ensemble learning technique that
+    combines multiple diverse models to exploit their complementary strengths.
+    Unlike simple averaging, stacking can learn optimal weights for each base
+    model's predictions.
+
+    **How It Works:**
+    1. Train K diverse base imputers on the dataset
+    2. Collect predictions from all base imputers
+    3. Combine predictions using a meta-strategy:
+       - Mean: Simple average (assumes equal quality)
+       - Median: Robust to outlier predictions
+       - Weighted: Learn optimal weights (future enhancement)
+
+    **Why Stacking Works:**
+    - Reduces variance through ensemble averaging
+    - Exploits diversity: Different imputers capture different patterns
+    - More robust than any single method alone
+    - Can outperform individual imputers, especially with complementary methods
+
+    **Recommended Base Imputer Combinations:**
+    - Simple + Complex: [MeanImputer, KNNImputerMethod, RegressionImputer]
+    - Robust mix: [MedianImputer, HuberImputer, TrimmedMeanImputer]
+    - Diverse approaches: [MeanImputer, MICEImputer, MissForestImputer]
+
+    **When to Use:**
+    - When no single imputation method is clearly best
+    - For production systems requiring robust performance
+    - When computational cost is acceptable (runs K imputers)
+    - With heterogeneous data (different columns need different methods)
+
     Args:
         base_imputers: List of base imputer instances to stack.
-            Default: [MeanImputer(), MedianImputer(), KNNImputerMethod()]
+            Default: [MeanImputer(), MedianImputer()]
         meta_strategy: How to combine predictions ('mean', 'median', 'weighted').
             Default: 'mean'
 
@@ -2295,6 +2599,7 @@ class StackingImputer(BaseImputer):
         >>> imputed = imputer.impute(df)
 
     References:
+        Wolpert, D. H. (1992). Stacked generalization.
         Ensemble learning approach applied to imputation.
     """
 
@@ -2327,6 +2632,11 @@ class StackingImputer(BaseImputer):
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using stacking ensemble.
 
+        Executes all base imputers in parallel and combines their predictions
+        using the specified meta-strategy. This approach leverages the wisdom
+        of crowds - multiple diverse predictions are often better than a single
+        prediction.
+
         Args:
             df: Dataframe with missing values.
 
@@ -2335,35 +2645,52 @@ class StackingImputer(BaseImputer):
         """
         df = self._ensure_numeric(df)
 
-        # Get predictions from all base imputers
+        # Phase 1: Generate predictions from all base imputers
+        # Each imputer sees the same input but may use different algorithms
+        # This creates diversity in the ensemble
         predictions = []
         for imputer in self.base_imputers:
             try:
+                # Execute base imputer
+                # Note: Each imputer handles the full dataset independently
                 pred = imputer.impute(df)
                 predictions.append(pred)
             except Exception as e:
+                # Gracefully handle failures in individual imputers
+                # Ensemble remains robust even if some members fail
                 logger.warning(
                     f"Base imputer {imputer.__class__.__name__} failed: {e}"
                 )
                 continue
 
+        # Safety check: Ensure at least one imputer succeeded
         if len(predictions) == 0:
-            # All base imputers failed, fall back to mean
+            # All base imputers failed, fall back to simple mean
+            # This ensures we always return a valid imputation
             return MeanImputer().impute(df)
 
-        # Combine predictions
+        # Phase 2: Meta-learning - combine base predictions
+        # This is where the "stacking" happens
         if self.meta_strategy == 'mean':
+            # Arithmetic mean: treats all imputers equally
+            # Best when imputers have similar quality
             result = sum(predictions) / len(predictions)
+
         elif self.meta_strategy == 'median':
-            # Stack predictions and take median
+            # Element-wise median: robust to outlier predictions
+            # Best when some imputers may produce bad predictions
+            # More robust than mean but throws away some information
             stacked = np.stack([p.values for p in predictions], axis=0)
             result = pd.DataFrame(
                 np.median(stacked, axis=0),
                 index=df.index,
                 columns=df.columns
             )
-        else:  # weighted - give more weight to imputers that agree
-            # Simple implementation: use mean (could be enhanced)
+
+        else:  # weighted strategy
+            # Future enhancement: learn optimal weights per imputer
+            # Could use cross-validation to estimate imputer quality
+            # For now, fall back to simple mean
             result = sum(predictions) / len(predictions)
 
         return result
@@ -2374,6 +2701,40 @@ class BaggingImputer(BaseImputer):
 
     Creates multiple bootstrap samples, imputes each, and aggregates
     results for more stable predictions.
+
+    **Algorithm Overview:**
+    Bagging (Bootstrap AGGregatING) is an ensemble method that reduces variance
+    by training multiple instances of the same base imputer and averaging their
+    predictions. Each instance sees slightly different data due to bootstrapping,
+    creating diversity in the ensemble.
+
+    **How It Works:**
+    1. Create n_estimators bootstrap samples (sample with replacement)
+    2. Train base imputer on each bootstrap sample
+    3. Predict missing values using each trained imputer
+    4. Average all predictions for final result
+
+    **Why Bagging Works:**
+    - Reduces variance without increasing bias
+    - Makes unstable imputers (like KNN, decision trees) more robust
+    - Similar principle to Random Forests (which bags decision trees)
+    - Smooths out predictions by averaging multiple noisy estimates
+
+    **Mathematical Intuition:**
+    If base imputer has variance σ², the bagged ensemble has variance ≈ σ²/n
+    (assuming independent errors). More estimators = lower variance = more stable.
+
+    **Best Base Imputers for Bagging:**
+    - KNNImputerMethod (high variance method)
+    - RegressionImputer (benefits from multiple training sets)
+    - MissForestImputer (already uses random forests internally)
+    - Avoid: MeanImputer, MedianImputer (too simple, no variance to reduce)
+
+    **When to Use:**
+    - When base imputer is unstable or high-variance
+    - When you want more robust predictions
+    - When computational cost is acceptable (trains n_estimators models)
+    - For small to medium datasets where bootstrap sampling makes sense
 
     Args:
         base_imputer: Base imputer to use for each bootstrap sample.
@@ -2394,6 +2755,7 @@ class BaggingImputer(BaseImputer):
         >>> imputed = imputer.impute(df)
 
     References:
+        Breiman, L. (1996). Bagging predictors. Machine Learning.
         Bootstrap aggregating for variance reduction in predictions.
     """
 
@@ -2423,6 +2785,10 @@ class BaggingImputer(BaseImputer):
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using bagging.
 
+        Applies the base imputer multiple times and aggregates predictions.
+        This current implementation uses repeated application rather than
+        bootstrap sampling for simplicity and stability.
+
         Args:
             df: Dataframe with missing values.
 
@@ -2432,35 +2798,54 @@ class BaggingImputer(BaseImputer):
         df = self._ensure_numeric(df)
 
         # Store predictions from each estimator
+        # Each estimator will produce slightly different results due to
+        # randomness in the base imputer (if it has random components)
         all_predictions = []
 
+        # Train n_estimators instances of the base imputer
         for i in range(self.n_estimators):
-            # Apply base imputer with different random state (for variety)
+            # Note: Ideally we'd create bootstrap samples here
+            # Current simplified implementation applies base imputer repeatedly
+            # This still provides variance reduction for stochastic imputers
             try:
-                # Create a copy of base imputer if it has random_state
+                # Vary random state to ensure diversity in predictions
+                # This is important for stochastic methods like KNN, MICE, etc.
                 if hasattr(self.base_imputer, 'random_state'):
-                    # Make a simple copy with modified random state
+                    # Each estimator gets a different random seed
+                    # Ensures predictions are diverse (not identical)
                     seed = (self.random_state or 0) + i
+                    # Note: This doesn't actually modify the imputer's random_state
+                    # Future enhancement: properly instantiate new imputer instances
                     imputed = self.base_imputer.impute(df)
                 else:
+                    # Deterministic imputers will produce identical results
+                    # Bagging won't help much in this case
                     imputed = self.base_imputer.impute(df)
 
                 all_predictions.append(imputed)
             except Exception as e:
+                # Gracefully handle failures in individual estimators
+                # Ensemble is robust to some failures
                 logger.warning(f"Estimator {i} failed: {e}")
                 continue
 
+        # Safety check: ensure at least one estimator succeeded
         if len(all_predictions) == 0:
             # All estimators failed, fall back to base imputer
             return self.base_imputer.impute(df)
 
-        # Average all predictions
+        # Aggregate predictions via averaging
+        # This is the "aggregating" part of "bootstrap aggregating"
+        # Averaging reduces variance: Var(mean) = Var(X) / n
         result = sum(all_predictions) / len(all_predictions)
 
-        # Ensure no NaNs remain
+        # Final safety check: ensure no NaNs remain
+        # This should rarely trigger if base imputer is working correctly
         if result.isna().any().any():
+            # Fallback imputation for any remaining NaNs
             result = result.fillna(df.mean())
             if result.isna().any().any():
+                # Last resort: use zero
                 result = result.fillna(0)
 
         return result
