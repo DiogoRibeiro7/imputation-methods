@@ -149,6 +149,10 @@ class KNNImputerMethod(BaseImputer):
 
         Returns:
             Imputed dataframe.
+
+        Raises:
+            ValueError: If dataframe is empty or has insufficient data for KNN.
+            RuntimeError: If KNN imputation fails.
         """
         df = self._ensure_numeric(df)
         logger.info(f"KNN imputation with k={self.k} on {df.shape} dataframe")
@@ -157,10 +161,19 @@ class KNNImputerMethod(BaseImputer):
 
         if missing_count == 0:
             logger.warning("No missing values found, returning copy")
+            return df.copy()
 
-        imputed_array = self._imputer.fit_transform(df)
-        logger.info("KNN imputation completed")
-        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        try:
+            imputed_array = self._imputer.fit_transform(df)
+            logger.info("KNN imputation completed")
+            return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        except ValueError as e:
+            logger.error(f"KNN imputation failed due to data issue: {e}")
+            logger.warning("Falling back to mean imputation")
+            return MeanImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during KNN imputation: {e}")
+            raise RuntimeError(f"KNN imputation failed: {e}") from e
 
 
 class PMMImputer(BaseImputer):
@@ -191,6 +204,9 @@ class PMMImputer(BaseImputer):
 
         Returns:
             Imputed dataframe.
+
+        Raises:
+            RuntimeError: If PMM imputation fails for all columns.
         """
         df = self._ensure_numeric(df)
         result = df.copy()
@@ -202,29 +218,47 @@ class PMMImputer(BaseImputer):
                 missing = result[result[column].isna()]
 
                 if predictors.size == 0 or observed.empty:
-                    mean_val = observed[column].mean()
-                    result.loc[result[column].isna(), column] = mean_val
+                    try:
+                        mean_val = observed[column].mean()
+                        if np.isnan(mean_val):
+                            mean_val = 0
+                        result.loc[result[column].isna(), column] = mean_val
+                    except Exception as e:
+                        logger.warning(f"Failed to compute mean for column {column}: {e}")
+                        result.loc[result[column].isna(), column] = 0
                     continue
 
-                reg = LinearRegression()
-                reg.fit(observed[predictors], observed[column])
+                try:
+                    reg = LinearRegression()
+                    reg.fit(observed[predictors], observed[column])
 
-                observed_pred = reg.predict(observed[predictors])
-                missing_pred = reg.predict(missing[predictors])
+                    observed_pred = reg.predict(observed[predictors])
+                    missing_pred = reg.predict(missing[predictors])
 
-                for i, pred in zip(missing.index, missing_pred):
-                    distances = np.abs(observed_pred - pred)
-                    nearest_idx = np.argsort(distances)[: self.k]
-                    donors = observed.iloc[nearest_idx]
-                    imputed_val = (
-                        donors[column]
-                        .sample(
-                            1,
-                            random_state=self.random_state,
+                    for i, pred in zip(missing.index, missing_pred):
+                        distances = np.abs(observed_pred - pred)
+                        nearest_idx = np.argsort(distances)[: self.k]
+                        donors = observed.iloc[nearest_idx]
+                        imputed_val = (
+                            donors[column]
+                            .sample(
+                                1,
+                                random_state=self.random_state,
+                            )
+                            .iloc[0]
                         )
-                        .iloc[0]
-                    )
-                    result.at[i, column] = imputed_val
+                        result.at[i, column] = imputed_val
+                except (ValueError, np.linalg.LinAlgError) as e:
+                    logger.error(f"PMM failed for column {column}: {e}")
+                    logger.warning(f"Falling back to mean imputation for column {column}")
+                    try:
+                        mean_val = result[column].mean()
+                        result.loc[result[column].isna(), column] = mean_val
+                    except Exception:
+                        result.loc[result[column].isna(), column] = 0
+                except Exception as e:
+                    logger.error(f"Unexpected error in PMM for column {column}: {e}")
+                    result.loc[result[column].isna(), column] = result[column].median()
 
         return result
 
@@ -252,10 +286,21 @@ class MICEImputer(BaseImputer):
 
         Returns:
             Imputed dataframe.
+
+        Raises:
+            RuntimeError: If MICE imputation fails.
         """
         df = self._ensure_numeric(df)
-        imputed_array = self._imputer.fit_transform(df)
-        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        try:
+            imputed_array = self._imputer.fit_transform(df)
+            return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        except (ValueError, np.linalg.LinAlgError) as e:
+            logger.error(f"MICE imputation failed: {e}")
+            logger.warning("Falling back to mean imputation")
+            return MeanImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during MICE imputation: {e}")
+            raise RuntimeError(f"MICE imputation failed: {e}") from e
 
 
 class RegressionImputer(BaseImputer):
@@ -281,12 +326,27 @@ class RegressionImputer(BaseImputer):
                 missing = result[result[column].isna()]
 
                 if predictors.size == 0 or observed.empty:
+                    logger.warning(f"No predictors available for column {column}, skipping")
                     continue
 
-                reg = LinearRegression()
-                reg.fit(observed[predictors], observed[column])
-                predicted = reg.predict(missing[predictors])
-                result.loc[missing.index, column] = predicted
+                try:
+                    reg = LinearRegression()
+                    reg.fit(observed[predictors], observed[column])
+                    predicted = reg.predict(missing[predictors])
+                    result.loc[missing.index, column] = predicted
+                except (ValueError, np.linalg.LinAlgError) as e:
+                    logger.error(f"Regression failed for column {column}: {e}")
+                    logger.warning(f"Falling back to mean imputation for column {column}")
+                    try:
+                        mean_val = result[column].mean()
+                        if np.isnan(mean_val):
+                            mean_val = 0
+                        result.loc[result[column].isna(), column] = mean_val
+                    except Exception:
+                        result.loc[result[column].isna(), column] = 0
+                except Exception as e:
+                    logger.error(f"Unexpected error in regression for column {column}: {e}")
+                    result.loc[result[column].isna(), column] = result[column].median()
 
         return result
 
@@ -464,10 +524,21 @@ class MissForestImputer(BaseImputer):
 
         Returns:
             Imputed dataframe.
+
+        Raises:
+            RuntimeError: If MissForest imputation fails.
         """
         df = self._ensure_numeric(df)
-        imputed_array = self._imputer.fit_transform(df)
-        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        try:
+            imputed_array = self._imputer.fit_transform(df)
+            return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        except (ValueError, np.linalg.LinAlgError) as e:
+            logger.error(f"MissForest imputation failed: {e}")
+            logger.warning("Falling back to median imputation")
+            return MedianImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during MissForest imputation: {e}")
+            raise RuntimeError(f"MissForest imputation failed: {e}") from e
 
 
 class SoftImputeImputer(BaseImputer):
@@ -495,10 +566,21 @@ class SoftImputeImputer(BaseImputer):
 
         Returns:
             Dataframe with missing entries imputed by :class:`SoftImpute`.
+
+        Raises:
+            RuntimeError: If SoftImpute fails.
         """
         df = self._ensure_numeric(df)
-        imputed_array = self._imputer.fit_transform(df.to_numpy())
-        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        try:
+            imputed_array = self._imputer.fit_transform(df.to_numpy())
+            return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        except (ValueError, np.linalg.LinAlgError) as e:
+            logger.error(f"SoftImpute failed: {e}")
+            logger.warning("Falling back to mean imputation")
+            return MeanImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during SoftImpute: {e}")
+            raise RuntimeError(f"SoftImpute failed: {e}") from e
 
 
 class BayesianPCAImputer(BaseImputer):
@@ -532,6 +614,7 @@ class BayesianPCAImputer(BaseImputer):
         df = self._ensure_numeric(df)
         if df.shape[1] == 1:
             # PPCA cannot reduce to fewer than one component; return original
+            logger.warning("Single column dataframe, PPCA not applicable")
             return df.copy()
         elif self.n_components is None:
             d = min(df.shape[1], 2)
@@ -554,8 +637,16 @@ class BayesianPCAImputer(BaseImputer):
                 columns=df.columns,
                 index=df.index,
             )
-        except np.linalg.LinAlgError:
-            # Fall back to mean imputation if PPCA fails
+        except np.linalg.LinAlgError as e:
+            logger.error(f"PPCA imputation failed due to linear algebra error: {e}")
+            logger.warning("Falling back to mean imputation")
+            return MeanImputer().impute(df)
+        except (ValueError, AttributeError) as e:
+            logger.error(f"PPCA imputation failed: {e}")
+            logger.warning("Falling back to mean imputation")
+            return MeanImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during PPCA imputation: {e}")
             return MeanImputer().impute(df)
 
 
@@ -594,16 +685,30 @@ class AutoencoderImputer(BaseImputer):
 
         Returns:
             Dataframe with imputed values predicted by the autoencoder.
+
+        Raises:
+            RuntimeError: If autoencoder training or prediction fails.
         """
         df = self._ensure_numeric(df)
-        filled = df.fillna(df.mean())
-        self._model.fit(filled, filled)
-        reconstructed = pd.DataFrame(
-            self._model.predict(filled),
-            columns=df.columns,
-            index=df.index,
-        )
-        return df.where(~df.isna(), reconstructed)
+        try:
+            filled = df.fillna(df.mean())
+            # Handle case where mean might be NaN (all values missing)
+            if filled.isna().any().any():
+                filled = filled.fillna(0)
+            self._model.fit(filled, filled)
+            reconstructed = pd.DataFrame(
+                self._model.predict(filled),
+                columns=df.columns,
+                index=df.index,
+            )
+            return df.where(~df.isna(), reconstructed)
+        except (ValueError, np.linalg.LinAlgError) as e:
+            logger.error(f"Autoencoder imputation failed: {e}")
+            logger.warning("Falling back to mean imputation")
+            return MeanImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during autoencoder imputation: {e}")
+            raise RuntimeError(f"Autoencoder imputation failed: {e}") from e
 
 
 class GAINImputer(BaseImputer):
@@ -626,10 +731,21 @@ class GAINImputer(BaseImputer):
 
         Returns:
             Imputed dataframe.
+
+        Raises:
+            RuntimeError: If GAIN imputation fails.
         """
         df = self._ensure_numeric(df)
-        imputed_array = self._imputer.fit_transform(df)
-        return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        try:
+            imputed_array = self._imputer.fit_transform(df)
+            return pd.DataFrame(imputed_array, columns=df.columns, index=df.index)
+        except (ValueError, np.linalg.LinAlgError) as e:
+            logger.error(f"GAIN imputation failed: {e}")
+            logger.warning("Falling back to median imputation")
+            return MedianImputer().impute(df)
+        except Exception as e:
+            logger.error(f"Unexpected error during GAIN imputation: {e}")
+            raise RuntimeError(f"GAIN imputation failed: {e}") from e
 
 
 class GaussianProcessImputer(BaseImputer):
@@ -671,16 +787,31 @@ class GaussianProcessImputer(BaseImputer):
                 missing = result[result[column].isna()]
 
                 if predictors.size == 0 or observed.empty:
+                    logger.warning(f"No predictors for column {column}, skipping GP imputation")
                     continue
 
-                gp = GaussianProcessRegressor(
-                    kernel=self.kernel,
-                    alpha=self.alpha,
-                    random_state=self.random_state,
-                )
-                gp.fit(observed[predictors], observed[column])
-                predicted = gp.predict(missing[predictors])
-                result.loc[missing.index, column] = predicted
+                try:
+                    gp = GaussianProcessRegressor(
+                        kernel=self.kernel,
+                        alpha=self.alpha,
+                        random_state=self.random_state,
+                    )
+                    gp.fit(observed[predictors], observed[column])
+                    predicted = gp.predict(missing[predictors])
+                    result.loc[missing.index, column] = predicted
+                except (ValueError, np.linalg.LinAlgError) as e:
+                    logger.error(f"Gaussian Process failed for column {column}: {e}")
+                    logger.warning(f"Falling back to mean imputation for column {column}")
+                    try:
+                        mean_val = result[column].mean()
+                        if np.isnan(mean_val):
+                            mean_val = 0
+                        result.loc[result[column].isna(), column] = mean_val
+                    except Exception:
+                        result.loc[result[column].isna(), column] = 0
+                except Exception as e:
+                    logger.error(f"Unexpected error in GP for column {column}: {e}")
+                    result.loc[result[column].isna(), column] = result[column].median()
 
         return result
 
