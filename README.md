@@ -5,7 +5,7 @@
 [![Code style: flake8](https://img.shields.io/badge/code%20style-flake8-black.svg)](https://flake8.pycqa.org/)
 [![CI](https://github.com/DiogoRibeiro7/imputation-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/DiogoRibeiro7/imputation-showcase/actions)
 
-A comprehensive Python library showcasing 16+ state-of-the-art imputation techniques for handling missing data in numerical datasets. Built with pandas and scikit-learn, this library provides a unified interface for comparing and evaluating different imputation strategies.
+A comprehensive Python library showcasing **41 state-of-the-art imputation techniques** for handling missing data in numerical datasets. Built with pandas and scikit-learn, this library provides a unified interface for comparing and evaluating different imputation strategies.
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ A comprehensive Python library showcasing 16+ state-of-the-art imputation techni
 
 ## Features
 
-- **16+ imputation methods** ranging from simple statistical approaches to advanced machine learning techniques
+- **41 imputation methods** ranging from simple statistical approaches to advanced machine learning and robust techniques
 - **Unified API** with consistent interface across all imputation methods
 - **Type-safe** implementation with proper type hints
 - **Comprehensive testing** with pytest and coverage reporting
@@ -88,6 +88,13 @@ print("\nKNN imputed:\n", df_knn)
 |--------|-------|-------------|
 | Mean Imputation | `MeanImputer` | Replace missing values with column means |
 | Median Imputation | `MedianImputer` | Replace missing values with column medians |
+| Mode Imputation | `ModeImputer` | Replace with most frequent value (ideal for categorical/discrete data) |
+| Constant Imputation | `ConstantImputer` | Fill with user-specified constant value(s) |
+| Quantile Imputation | `QuantileImputer` | Impute using any quantile of observed values |
+| Random Sampling | `RandomSamplingImputer` | Randomly sample from observed values to preserve distribution |
+| EM Algorithm | `EMImputer` | Expectation-Maximization algorithm assuming multivariate normality |
+| End of Distribution | `EndOfDistributionImputer` | Impute at distribution edges (mean ± k*std) for flagging extremes |
+| Group Mean | `GroupMeanImputer` | Group-wise mean/median imputation for panel data |
 
 ### Time Series Methods
 
@@ -95,6 +102,14 @@ print("\nKNN imputed:\n", df_knn)
 |--------|-------|-------------|
 | LOCF | `LOCFImputer` | Last Observation Carried Forward |
 | NOCB | `NOCBImputer` | Next Observation Carried Backward |
+| Interpolation | `InterpolationImputer` | Linear, polynomial, or spline interpolation |
+| Moving Average | `MovingAverageImputer` | Fill with rolling window mean/median |
+| Weighted Moving Average | `WeightedMovingAverageImputer` | Exponentially weighted moving average (EWMA) for time series |
+| Linear Trend | `LinearTrendImputer` | Fit and extrapolate linear trend from observed data |
+| Polynomial Trend | `PolynomialTrendImputer` | Fit higher-order polynomial trends for non-linear patterns |
+| Seasonal | `SeasonalImputer` | Use seasonal patterns for imputation |
+| Kalman Filter | `KalmanFilterImputer` | Kalman filtering with uncertainty estimates for sensor data |
+| Forward Fill + Fallback | `ForwardFillFallbackImputer` | LOCF with mean/median fallback for leading NaNs |
 
 ### Distance-Based Methods
 
@@ -137,6 +152,9 @@ print("\nKNN imputed:\n", df_knn)
 | Method | Class | Description |
 |--------|-------|-------------|
 | Gaussian Process | `GaussianProcessImputer` | GP regression for missing value prediction |
+| Indicator Method | `IndicatorImputer` | Adds binary indicator columns for missingness + imputation |
+| Cold Deck | `ColdDeckImputer` | Use predetermined reference values from historical/external data |
+| Hybrid | `HybridImputer` | Combines multiple methods with fallback chain for robust imputation |
 
 ## Usage Examples
 
