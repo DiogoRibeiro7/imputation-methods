@@ -31,7 +31,7 @@ IDS = [function.__name__ for function, _ in WRAPPERS]
 # Arguments needed to build some imputers, or to keep the test fast.
 KWARGS: dict[str, dict[str, object]] = {
     "group_mean_impute": {"group_col": "g"},
-    "gain_impute": {"iterations": 50},
+    "gain_impute": {"max_iter": 50},
     "autoencoder_impute": {"max_iter": 50},
 }
 

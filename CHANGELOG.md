@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Consistent parameter names across imputers, following scikit-learn conventions:
+  - `max_iter` for iteration budgets: `SoftImputeImputer(max_iters=...)` and
+    `GAINImputer(iterations=...)` are now `max_iter=...`.
+  - `n_neighbors` for neighbour and donor counts: `KNNImputer(k=...)` and
+    `PMMImputer(k=...)` are now `n_neighbors=...`.
+  - `n_std` for the number of standard deviations in
+    `EndOfDistributionImputer(k=...)`.
+  - `strategy` for the summary statistic in `GroupMeanImputer`,
+    `MovingAverageImputer` and `SeasonalImputer`, which used `method=...`.
+    `InterpolationImputer(method=...)` is unchanged; there it selects the
+    interpolation kind, as in pandas.
+  - The functional shortcuts follow the same names.
+- Renamed `KNNImputerMethod` to `KNNImputer`, `BayesianPCAImputer` to `PPCAImputer`
+  (it is maximum-likelihood probabilistic PCA), `predictive_mean_matching` to
+  `pmm_impute` and `bayesian_pca_impute` to `ppca_impute`.
+- Instance attributes use the new parameter names (e.g. `imputer.n_neighbors`).
+
+### Deprecated
+
+- The old class, function and parameter names above still work but emit a
+  `FutureWarning` starting with `imputation-methods:`, and will be removed in 1.0.0.
+  Run your code with `-W "error:imputation-methods:FutureWarning"` to find uses.
+
 ## [0.1.0] - 2026-09-16
 
 First release on PyPI, as `imputation-methods`.

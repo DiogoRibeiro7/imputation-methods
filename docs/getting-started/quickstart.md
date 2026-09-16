@@ -72,10 +72,10 @@ Missing values: 0
 For more accurate imputation using similar observations:
 
 ```python
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 # Use 3 nearest neighbors
-knn_imputer = KNNImputerMethod(k=3)
+knn_imputer = KNNImputer(n_neighbors=3)
 df_knn = knn_imputer.impute(df)
 
 print(df_knn)
@@ -122,7 +122,7 @@ print(f"MAE: {error_mae:.4f}")
 from imputation_methods import (
     MeanImputer,
     MedianImputer,
-    KNNImputerMethod,
+    KNNImputer,
     rmse
 )
 
@@ -130,8 +130,8 @@ from imputation_methods import (
 methods = {
     'Mean': MeanImputer(),
     'Median': MedianImputer(),
-    'KNN-3': KNNImputerMethod(k=3),
-    'KNN-5': KNNImputerMethod(k=5),
+    'KNN-3': KNNImputer(n_neighbors=3),
+    'KNN-5': KNNImputer(n_neighbors=5),
 }
 
 # Compare all methods
@@ -154,7 +154,7 @@ print(f"Missing values per column:")
 print(df.isna().sum())
 
 # Apply imputation
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 df_imputed = imputer.impute(df)
 
 # Save results
@@ -166,7 +166,7 @@ df_imputed.to_csv("data/imputed_data.csv", index=False)
 ```python
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(
@@ -174,7 +174,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Impute training data
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 X_train_imputed = imputer.impute(X_train)
 X_test_imputed = imputer.impute(X_test)
 

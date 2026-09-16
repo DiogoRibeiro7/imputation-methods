@@ -183,7 +183,7 @@ df = generate_your_data()  # Replace with your data loading
 ### Adjust Parameters
 ```python
 # Change imputation parameters
-imputer = KNNImputerMethod(k=10)  # Increase k
+imputer = KNNImputer(n_neighbors=10)  # Increase k
 ```
 
 ### Add Methods
@@ -229,12 +229,12 @@ All examples follow these best practices:
 ```python
 # Example: Adapting the ML pipeline pattern (run from the repository root)
 from examples.ml_pipeline_example import ImputedPipeline
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 from sklearn.ensemble import GradientBoostingRegressor
 
 # Create your pipeline
 pipeline = ImputedPipeline(
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     model=GradientBoostingRegressor(),
     scaler=True
 )

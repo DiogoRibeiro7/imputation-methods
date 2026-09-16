@@ -11,11 +11,12 @@ from typing import Literal
 import pandas as pd
 from sklearn.gaussian_process.kernels import RBF
 
+from ._deprecation import renamed_module_attributes, renamed_parameters
 from .base import BaseImputer
 from .ensemble import BaggingImputer, HybridImputer, StackingImputer
 from .iterative import EMImputer, MICEImputer, MissForestImputer
-from .matrix import BayesianPCAImputer, SoftImputeImputer
-from .neighbors import KNNImputerMethod, LocalMeanImputer, RadiusNeighborsImputer
+from .matrix import PPCAImputer, SoftImputeImputer
+from .neighbors import KNNImputer, LocalMeanImputer, RadiusNeighborsImputer
 from .neural import AutoencoderImputer, GAINImputer
 from .regression import (
     BayesianRidgeImputer,
@@ -67,16 +68,18 @@ def median_impute(df: pd.DataFrame) -> pd.DataFrame:
     return MedianImputer().impute(df)
 
 
-def knn_impute(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
-    """Backwards-compatible wrapper for :class:`KNNImputerMethod`."""
-    return KNNImputerMethod(k=k).impute(df)
+@renamed_parameters(k="n_neighbors")
+def knn_impute(df: pd.DataFrame, n_neighbors: int = 5) -> pd.DataFrame:
+    """Wrapper for :class:`KNNImputer`."""
+    return KNNImputer(n_neighbors=n_neighbors).impute(df)
 
 
-def predictive_mean_matching(
-    df: pd.DataFrame, k: int = 5, random_state: int | None = None
+@renamed_parameters(k="n_neighbors")
+def pmm_impute(
+    df: pd.DataFrame, n_neighbors: int = 5, random_state: int | None = None
 ) -> pd.DataFrame:
-    """Backwards-compatible wrapper for :class:`PMMImputer`."""
-    return PMMImputer(k=k, random_state=random_state).impute(df)
+    """Wrapper for :class:`PMMImputer`."""
+    return PMMImputer(n_neighbors=n_neighbors, random_state=random_state).impute(df)
 
 
 def mice_impute(
@@ -128,15 +131,15 @@ def miss_forest_impute(
     return MissForestImputer(random_state=random_state).impute(df)
 
 
-def bayesian_pca_impute(
+def ppca_impute(
     df: pd.DataFrame,
     n_components: int | None = 1,
     min_obs: int = 1,
     max_iter: int = 500,
     tol: float = 1e-6,
 ) -> pd.DataFrame:
-    """Wrapper for :class:`BayesianPCAImputer`."""
-    return BayesianPCAImputer(
+    """Wrapper for :class:`PPCAImputer`."""
+    return PPCAImputer(
         n_components=n_components,
         min_obs=min_obs,
         max_iter=max_iter,
@@ -144,16 +147,17 @@ def bayesian_pca_impute(
     ).impute(df)
 
 
+@renamed_parameters(max_iters="max_iter")
 def soft_impute(
     df: pd.DataFrame,
-    max_iters: int = 100,
+    max_iter: int = 100,
     init_fill_method: str = "zero",
     shrinkage_value: float | None = None,
     convergence_threshold: float = 1e-3,
 ) -> pd.DataFrame:
     """Wrapper for :class:`SoftImputeImputer`."""
     return SoftImputeImputer(
-        max_iters=max_iters,
+        max_iter=max_iter,
         init_fill_method=init_fill_method,
         shrinkage_value=shrinkage_value,
         convergence_threshold=convergence_threshold,
@@ -174,12 +178,13 @@ def autoencoder_impute(
     ).impute(df)
 
 
+@renamed_parameters(iterations="max_iter")
 def gain_impute(
     df: pd.DataFrame,
     batch_size: int = 128,
     hint_rate: float = 0.9,
     alpha: float = 100.0,
-    iterations: int = 10000,
+    max_iter: int = 10000,
     learning_rate: float = 0.001,
     random_state: int | None = None,
 ) -> pd.DataFrame:
@@ -188,7 +193,7 @@ def gain_impute(
         batch_size=batch_size,
         hint_rate=hint_rate,
         alpha=alpha,
-        iterations=iterations,
+        max_iter=max_iter,
         learning_rate=learning_rate,
         random_state=random_state,
     ).impute(df)
@@ -231,16 +236,17 @@ def em_impute(
     return EMImputer(max_iter=max_iter, tol=tol, random_state=random_state).impute(df)
 
 
+@renamed_parameters(method="strategy")
 def moving_average_impute(
     df: pd.DataFrame,
     window: int = 3,
-    method: str = "mean",
+    strategy: str = "mean",
     min_periods: int = 1,
     center: bool = False,
 ) -> pd.DataFrame:
     """Wrapper for :class:`MovingAverageImputer`."""
     return MovingAverageImputer(
-        window=window, method=method, min_periods=min_periods, center=center
+        window=window, strategy=strategy, min_periods=min_periods, center=center
     ).impute(df)
 
 
@@ -260,11 +266,12 @@ def indicator_impute(
     ).impute(df)
 
 
+@renamed_parameters(method="strategy")
 def seasonal_impute(
-    df: pd.DataFrame, period: int = 7, method: str = "median"
+    df: pd.DataFrame, period: int = 7, strategy: str = "median"
 ) -> pd.DataFrame:
     """Wrapper for :class:`SeasonalImputer`."""
-    return SeasonalImputer(period=period, method=method).impute(df)
+    return SeasonalImputer(period=period, strategy=strategy).impute(df)
 
 
 def quantile_impute(df: pd.DataFrame, quantile: float = 0.5) -> pd.DataFrame:
@@ -291,19 +298,24 @@ def constant_impute(
     return ConstantImputer(fill_value=fill_value).impute(df)
 
 
+@renamed_parameters(k="n_std")
 def end_of_distribution_impute(
-    df: pd.DataFrame, position: str = "high", k: float = 3.0
+    df: pd.DataFrame, position: str = "high", n_std: float = 3.0
 ) -> pd.DataFrame:
     """Wrapper for :class:`EndOfDistributionImputer`."""
-    return EndOfDistributionImputer(position=position, k=k).impute(df)
+    return EndOfDistributionImputer(position=position, n_std=n_std).impute(df)
 
 
+@renamed_parameters(method="strategy")
 def group_mean_impute(
-    df: pd.DataFrame, group_col: str, method: str = "mean", global_fallback: bool = True
+    df: pd.DataFrame,
+    group_col: str,
+    strategy: str = "mean",
+    global_fallback: bool = True,
 ) -> pd.DataFrame:
     """Wrapper for :class:`GroupMeanImputer`."""
     return GroupMeanImputer(
-        group_col=group_col, method=method, global_fallback=global_fallback
+        group_col=group_col, strategy=strategy, global_fallback=global_fallback
     ).impute(df)
 
 
@@ -454,3 +466,6 @@ def ransac_impute(
 def trimmed_mean_impute(df: pd.DataFrame, trim_fraction: float = 0.1) -> pd.DataFrame:
     """Wrapper for :class:`TrimmedMeanImputer`."""
     return TrimmedMeanImputer(trim_fraction=trim_fraction).impute(df)
+
+
+__getattr__ = renamed_module_attributes(__name__)

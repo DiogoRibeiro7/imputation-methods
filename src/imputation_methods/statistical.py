@@ -9,6 +9,7 @@ from __future__ import annotations
 import pandas as pd
 from scipy import stats
 
+from ._deprecation import renamed_parameters
 from .base import BaseImputer
 
 
@@ -313,21 +314,21 @@ class TrimmedMeanImputer(BaseImputer):
 
 
 class EndOfDistributionImputer(BaseImputer):
-    """Impute at the edges of the distribution (mean ± k*std).
+    """Impute at the edges of the distribution (mean ± n_std*std).
 
     Useful for flagging or handling extreme/suspicious values.
-    Can impute at low end (mean - k*std) or high end (mean + k*std).
+    Can impute at low end (mean - n_std*std) or high end (mean + n_std*std).
 
     Args:
         position: Where to impute ('low' or 'high'). Default: 'high'
-        k: Number of standard deviations from mean. Default: 3.0
+        n_std: Number of standard deviations from mean. Default: 3.0
 
     Examples:
         >>> import pandas as pd
         >>> import numpy as np
         >>> from imputation_methods import EndOfDistributionImputer
         >>> df = pd.DataFrame({'a': [1, 2, 3, np.nan, 5]})
-        >>> imputer = EndOfDistributionImputer(position='high', k=2)
+        >>> imputer = EndOfDistributionImputer(position='high', n_std=2)
         >>> imputed = imputer.impute(df)
         >>> # Missing value filled with mean + 2*std
 
@@ -335,12 +336,13 @@ class EndOfDistributionImputer(BaseImputer):
         Used in outlier detection and robust imputation strategies.
     """
 
-    def __init__(self, position: str = "high", k: float = 3.0) -> None:
+    @renamed_parameters(k="n_std")
+    def __init__(self, position: str = "high", n_std: float = 3.0) -> None:
         """Initialize the end-of-distribution imputer.
 
         Args:
-            position: 'low' (mean - k*std) or 'high' (mean + k*std)
-            k: Number of standard deviations
+            position: 'low' (mean - n_std*std) or 'high' (mean + n_std*std)
+            n_std: Number of standard deviations
 
         Raises:
             ValueError: If position is not 'low' or 'high'
@@ -349,7 +351,7 @@ class EndOfDistributionImputer(BaseImputer):
             raise ValueError(f"position must be 'low' or 'high', got {position}")
 
         self.position = position
-        self.k = k
+        self.n_std = n_std
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute at distribution edges.
@@ -369,9 +371,9 @@ class EndOfDistributionImputer(BaseImputer):
                 std = result[column].std()
 
                 if self.position == "low":
-                    fill_value = mean - self.k * std
+                    fill_value = mean - self.n_std * std
                 else:  # high
-                    fill_value = mean + self.k * std
+                    fill_value = mean + self.n_std * std
 
                 result[column] = result[column].fillna(fill_value)
 
@@ -386,7 +388,7 @@ class GroupMeanImputer(BaseImputer):
 
     Args:
         group_col: Column name to group by (must be in the dataframe)
-        method: Aggregation method ('mean' or 'median'). Default: 'mean'
+        strategy: Aggregation strategy ('mean' or 'median'). Default: 'mean'
         global_fallback: Use global statistic if group has no data. Default: True
 
     Examples:
@@ -397,7 +399,7 @@ class GroupMeanImputer(BaseImputer):
         ...     'category': [1, 1, 2, 2, 1],
         ...     'value': [10, np.nan, 20, np.nan, 12]
         ... })
-        >>> imputer = GroupMeanImputer(group_col='category', method='mean')
+        >>> imputer = GroupMeanImputer(group_col='category', strategy='mean')
         >>> imputed = imputer.impute(df)
         >>> # Row 1 filled with mean of category 1, row 3 with mean of category 2
 
@@ -405,24 +407,25 @@ class GroupMeanImputer(BaseImputer):
         Common in hierarchical data and panel data analysis.
     """
 
+    @renamed_parameters(method="strategy")
     def __init__(
-        self, group_col: str, method: str = "mean", global_fallback: bool = True
+        self, group_col: str, strategy: str = "mean", global_fallback: bool = True
     ) -> None:
         """Initialize the group mean imputer.
 
         Args:
             group_col: Column name to group by
-            method: 'mean' or 'median'
+            strategy: 'mean' or 'median'
             global_fallback: Use global statistic for groups with no data
 
         Raises:
-            ValueError: If method is not 'mean' or 'median'
+            ValueError: If strategy is not 'mean' or 'median'
         """
-        if method not in ["mean", "median"]:
-            raise ValueError(f"method must be 'mean' or 'median', got {method}")
+        if strategy not in ["mean", "median"]:
+            raise ValueError(f"strategy must be 'mean' or 'median', got {strategy}")
 
         self.group_col = group_col
-        self.method = method
+        self.strategy = strategy
         self.global_fallback = global_fallback
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -456,14 +459,14 @@ class GroupMeanImputer(BaseImputer):
                 grouped = result.groupby(self.group_col)[column]
                 group_stats = (
                     grouped.transform("mean")
-                    if self.method == "mean"
+                    if self.strategy == "mean"
                     else grouped.transform("median")
                 )
                 result[column] = result[column].fillna(group_stats)
 
                 # Handle any remaining NaNs with global fallback
                 if self.global_fallback and result[column].isna().any():
-                    if self.method == "mean":
+                    if self.strategy == "mean":
                         global_stat = df[column].mean()
                     else:  # median
                         global_stat = df[column].median()

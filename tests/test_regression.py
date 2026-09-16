@@ -54,13 +54,13 @@ class TestPMMImputer:
 
     def test_pmm_impute_basic(self) -> None:
         df = pd.DataFrame({"x": [1, 2, 3, 4, np.nan], "y": [5, 6, 7, 8, 9]})
-        imputed = PMMImputer(k=2, random_state=0).impute(df)
+        imputed = PMMImputer(n_neighbors=2, random_state=0).impute(df)
         assert not imputed.isna().any().any()
 
     def test_pmm_imputer_no_predictors(self) -> None:
         """Test PMM imputer when no predictors are available."""
         df = pd.DataFrame({"a": [1, 2, np.nan, 4]})
-        imputed = PMMImputer(k=2, random_state=0).impute(df)
+        imputed = PMMImputer(n_neighbors=2, random_state=0).impute(df)
         # Should fall back to mean imputation
         assert not imputed.isna().any().any()
         assert np.isclose(imputed.loc[2, "a"], (1 + 2 + 4) / 3)
@@ -68,21 +68,21 @@ class TestPMMImputer:
     def test_pmm_imputer_empty_observed(self) -> None:
         """Test PMM when observed data is empty for predictors."""
         df = pd.DataFrame({"a": [np.nan, np.nan, np.nan], "b": [1, 2, 3]})
-        imputed = PMMImputer(k=2, random_state=0).impute(df)
+        imputed = PMMImputer(n_neighbors=2, random_state=0).impute(df)
         # Should handle gracefully
         assert imputed.isna().all()["a"]
 
     def test_pmm_invalid_k_type(self) -> None:
         """Test PMM imputer rejects non-integer k values."""
-        with pytest.raises(TypeError, match="k must be an integer"):
-            PMMImputer(k=3.5)  # type: ignore
+        with pytest.raises(TypeError, match="n_neighbors must be an integer"):
+            PMMImputer(n_neighbors=3.5)  # type: ignore
 
     def test_pmm_invalid_k_value(self) -> None:
         """Test PMM imputer rejects non-positive k values."""
-        with pytest.raises(ValueError, match="k must be positive"):
-            PMMImputer(k=0)
-        with pytest.raises(ValueError, match="k must be positive"):
-            PMMImputer(k=-2)
+        with pytest.raises(ValueError, match="n_neighbors must be positive"):
+            PMMImputer(n_neighbors=0)
+        with pytest.raises(ValueError, match="n_neighbors must be positive"):
+            PMMImputer(n_neighbors=-2)
 
     def test_pmm_imputes_only_observed_values_and_is_reproducible(self) -> None:
         rng = np.random.default_rng(1)
@@ -90,15 +90,15 @@ class TestPMMImputer:
         df = pd.DataFrame({"x": x, "y": np.round(2 * x + rng.normal(size=60), 1)})
         df.loc[::5, "y"] = np.nan
 
-        first = PMMImputer(k=5, random_state=7).impute(df)
-        second = PMMImputer(k=5, random_state=7).impute(df)
+        first = PMMImputer(n_neighbors=5, random_state=7).impute(df)
+        second = PMMImputer(n_neighbors=5, random_state=7).impute(df)
 
         pd.testing.assert_frame_equal(first, second)
         assert set(first["y"]) <= set(df["y"].dropna())
 
     def test_pmm_leaves_fully_missing_column_untouched(self) -> None:
         df = pd.DataFrame({"a": [np.nan, np.nan, np.nan], "b": [1.0, 2.0, 3.0]})
-        assert PMMImputer(k=2, random_state=0).impute(df)["a"].isna().all()
+        assert PMMImputer(n_neighbors=2, random_state=0).impute(df)["a"].isna().all()
 
 
 class TestBayesianRidgeImputer:

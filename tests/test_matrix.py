@@ -5,10 +5,10 @@ import pandas as pd
 import pytest
 
 from imputation_methods import (
-    BayesianPCAImputer,
     MeanImputer,
+    PPCAImputer,
     SoftImputeImputer,
-    bayesian_pca_impute,
+    ppca_impute,
     soft_impute,
 )
 
@@ -34,12 +34,12 @@ def _rmse(complete: pd.DataFrame, imputed: pd.DataFrame, mask: np.ndarray) -> fl
     [
         (SoftImputeImputer(), 0.7),
         (SoftImputeImputer(init_fill_method="mean"), 0.7),
-        (BayesianPCAImputer(n_components=2), 0.25),
+        (PPCAImputer(n_components=2), 0.25),
     ],
     ids=["softimpute-zero", "softimpute-mean", "ppca"],
 )
 def test_beats_mean_imputation_on_low_rank_data(
-    imputer: SoftImputeImputer | BayesianPCAImputer, max_ratio: float
+    imputer: SoftImputeImputer | PPCAImputer, max_ratio: float
 ) -> None:
     complete, missing, mask = _low_rank_frame()
     baseline = _rmse(complete, MeanImputer().impute(missing), mask)
@@ -49,7 +49,7 @@ def test_beats_mean_imputation_on_low_rank_data(
     assert _rmse(complete, result, mask) < max_ratio * baseline
 
 
-@pytest.mark.parametrize("imputer_cls", [SoftImputeImputer, BayesianPCAImputer])
+@pytest.mark.parametrize("imputer_cls", [SoftImputeImputer, PPCAImputer])
 def test_observed_values_and_input_are_unchanged(imputer_cls: type) -> None:
     _, missing, mask = _low_rank_frame(n_rows=40, n_cols=4)
     snapshot = missing.copy()
@@ -62,7 +62,7 @@ def test_observed_values_and_input_are_unchanged(imputer_cls: type) -> None:
     pd.testing.assert_index_equal(result.columns, missing.columns)
 
 
-@pytest.mark.parametrize("imputer_cls", [SoftImputeImputer, BayesianPCAImputer])
+@pytest.mark.parametrize("imputer_cls", [SoftImputeImputer, PPCAImputer])
 def test_is_deterministic(imputer_cls: type) -> None:
     _, missing, _ = _low_rank_frame(n_rows=40, n_cols=4)
     pd.testing.assert_frame_equal(
@@ -70,7 +70,7 @@ def test_is_deterministic(imputer_cls: type) -> None:
     )
 
 
-@pytest.mark.parametrize("imputer_cls", [SoftImputeImputer, BayesianPCAImputer])
+@pytest.mark.parametrize("imputer_cls", [SoftImputeImputer, PPCAImputer])
 def test_fully_missing_column_stays_missing(imputer_cls: type) -> None:
     df = pd.DataFrame(
         {
@@ -86,7 +86,7 @@ def test_fully_missing_column_stays_missing(imputer_cls: type) -> None:
 
 def test_ppca_instance_can_be_reused_on_different_shapes() -> None:
     _, missing, _ = _low_rank_frame(n_rows=40, n_cols=5)
-    imputer = BayesianPCAImputer(n_components=2)
+    imputer = PPCAImputer(n_components=2)
     imputer.impute(missing)
     result = imputer.impute(missing.iloc[:, :3])
     assert result.shape == (40, 3)
@@ -101,7 +101,7 @@ def test_ppca_columns_below_min_obs_are_mean_imputed() -> None:
             "sparse": [np.nan, np.nan, 7.0, np.nan, np.nan, np.nan],
         }
     )
-    result = BayesianPCAImputer(min_obs=2).impute(df)
+    result = PPCAImputer(min_obs=2).impute(df)
     assert (result["sparse"] == 7.0).all()
     assert result.notna().all().all()
 
@@ -114,14 +114,14 @@ def test_accepts_nullable_integer_columns() -> None:
         }
     )
     assert SoftImputeImputer().impute(df).notna().all().all()
-    assert BayesianPCAImputer().impute(df).notna().all().all()
+    assert PPCAImputer().impute(df).notna().all().all()
 
 
 @pytest.mark.parametrize(
     ("kwargs", "message"),
     [
         ({"init_fill_method": "random"}, "init_fill_method"),
-        ({"max_iters": 0}, "max_iters"),
+        ({"max_iter": 0}, "max_iter"),
         ({"shrinkage_value": -1.0}, "shrinkage_value"),
     ],
 )
@@ -140,13 +140,13 @@ def test_softimpute_validates_arguments(kwargs: dict, message: str) -> None:
 )
 def test_ppca_validates_arguments(kwargs: dict, message: str) -> None:
     with pytest.raises(ValueError, match=message):
-        BayesianPCAImputer(**kwargs)
+        PPCAImputer(**kwargs)
 
 
 def test_functional_wrappers() -> None:
     _, missing, _ = _low_rank_frame(n_rows=30, n_cols=4)
-    assert soft_impute(missing, max_iters=10).notna().all().all()
-    assert bayesian_pca_impute(missing, n_components=2).notna().all().all()
+    assert soft_impute(missing, max_iter=10).notna().all().all()
+    assert ppca_impute(missing, n_components=2).notna().all().all()
 
 
 def test_soft_impute() -> None:
@@ -155,16 +155,16 @@ def test_soft_impute() -> None:
     assert not imputed.isna().any().any()
 
 
-def test_bayesian_pca_imputer() -> None:
+def test_ppca_imputer() -> None:
     df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
-    imputed = BayesianPCAImputer().impute(df)
+    imputed = PPCAImputer().impute(df)
     assert not imputed.isna().any().any()
 
 
-def test_bayesian_pca_single_column() -> None:
+def test_ppca_single_column() -> None:
     """Test Bayesian PCA with single column (cannot reduce dimensions)."""
     df = pd.DataFrame({"a": [1, 2, np.nan, 4]})
-    imputed = BayesianPCAImputer().impute(df)
+    imputed = PPCAImputer().impute(df)
     # Should return copy of original when only one column
     pd.testing.assert_frame_equal(imputed, df)
 
@@ -178,10 +178,10 @@ def test_soft_impute_different_init_methods() -> None:
     assert not imputed_mean.isna().any().any()
 
 
-def test_bayesian_pca_with_n_components() -> None:
+def test_ppca_with_n_components() -> None:
     """Test Bayesian PCA with explicit number of components."""
     df = pd.DataFrame(
         {"a": [1, np.nan, 3, 4], "b": [4, 5, np.nan, 7], "c": [7, 8, 9, np.nan]}
     )
-    imputed = BayesianPCAImputer(n_components=2).impute(df)
+    imputed = PPCAImputer(n_components=2).impute(df)
     assert not imputed.isna().any().any()

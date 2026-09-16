@@ -59,14 +59,14 @@ The probability that a value is missing depends on the missing value itself.
 All imputation methods in this library inherit from `BaseImputer` and follow the same interface:
 
 ```python
-from imputation_methods import MeanImputer, KNNImputerMethod
+from imputation_methods import MeanImputer, KNNImputer
 
 # Every imputer has an impute() method
 imputer = MeanImputer()
 df_imputed = imputer.impute(df)
 
 # Works the same way for all methods
-knn_imputer = KNNImputerMethod(k=5)
+knn_imputer = KNNImputer(n_neighbors=5)
 df_imputed = knn_imputer.impute(df)
 ```
 
@@ -86,7 +86,7 @@ The primary method for all imputers. Takes a DataFrame with missing values and r
 - All columns must be numeric (float or int); otherwise a `TypeError` is raised
 - Non-numeric columns should be encoded or removed before imputation
 
-Every imputer also has a functional shortcut, for example `mean_impute(df)` for `MeanImputer().impute(df)` and `knn_impute(df, k=5)` for `KNNImputerMethod(k=5).impute(df)`.
+Every imputer also has a functional shortcut, for example `mean_impute(df)` for `MeanImputer().impute(df)` and `knn_impute(df, n_neighbors=5)` for `KNNImputer(n_neighbors=5).impute(df)`.
 
 ## When to Use Imputation
 
@@ -128,7 +128,7 @@ Every imputer also has a functional shortcut, for example `mean_impute(df)` for 
 When ground truth is available, you can evaluate imputation quality:
 
 ```python
-from imputation_methods import KNNImputerMethod, rmse, mae
+from imputation_methods import KNNImputer, rmse, mae
 import numpy as np
 
 # Original complete data
@@ -143,7 +143,7 @@ mask = np.array([[False, True], [True, False], [False, False], [True, True], [Fa
 df_missing[mask] = np.nan
 
 # Impute
-imputer = KNNImputerMethod(k=2)
+imputer = KNNImputer(n_neighbors=2)
 df_imputed = imputer.impute(df_missing)
 
 # Evaluate only on originally missing values
@@ -187,7 +187,7 @@ from sklearn.model_selection import train_test_split
 X_train, X_test = train_test_split(X, test_size=0.2)
 
 # Impute each split separately (impute() only sees the rows it is given)
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 X_train_imputed = imputer.impute(X_train)
 X_test_imputed = imputer.impute(X_test)
 
@@ -201,11 +201,11 @@ X_test_imputed = imputer.impute(X_test)
 Different methods work better for different data types and missingness patterns:
 
 ```python
-from imputation_methods import MeanImputer, KNNImputerMethod, MICEImputer
+from imputation_methods import MeanImputer, KNNImputer, MICEImputer
 
 methods = {
     'Mean': MeanImputer(),
-    'KNN': KNNImputerMethod(k=5),
+    'KNN': KNNImputer(n_neighbors=5),
     'MICE': MICEImputer()
 }
 

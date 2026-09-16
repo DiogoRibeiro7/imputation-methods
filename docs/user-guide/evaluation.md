@@ -21,7 +21,7 @@ When you have complete data, artificially introduce missingness to evaluate impu
 ```python
 import numpy as np
 import pandas as pd
-from imputation_methods import KNNImputerMethod, rmse, mae
+from imputation_methods import KNNImputer, rmse, mae
 
 # Original complete dataset
 df_complete = pd.DataFrame({
@@ -36,7 +36,7 @@ df_with_missing = df_complete.copy()
 df_with_missing[mask] = np.nan
 
 # Impute
-imputer = KNNImputerMethod(k=3)
+imputer = KNNImputer(n_neighbors=3)
 df_imputed = imputer.impute(df_with_missing)
 
 # Evaluate only on artificially missing values
@@ -57,7 +57,7 @@ When ground truth isn't available, evaluate based on downstream task performance
 ```python
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
-from imputation_methods import MeanImputer, KNNImputerMethod, MICEImputer
+from imputation_methods import MeanImputer, KNNImputer, MICEImputer
 
 # Your data with missing values (no ground truth)
 X_missing = load_your_data()
@@ -65,7 +65,7 @@ y = load_your_labels()
 
 methods = {
     'Mean': MeanImputer(),
-    'KNN': KNNImputerMethod(k=5),
+    'KNN': KNNImputer(n_neighbors=5),
     'MICE': MICEImputer(random_state=42)
 }
 
@@ -232,7 +232,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
 from imputation_methods import (
-    MeanImputer, MedianImputer, KNNImputerMethod,
+    MeanImputer, MedianImputer, KNNImputer,
     MICEImputer, MissForestImputer, rmse, mae
 )
 
@@ -258,9 +258,9 @@ def evaluate_imputation_methods(df_complete, missing_rate=0.2, random_state=42):
     methods = {
         'Mean': MeanImputer(),
         'Median': MedianImputer(),
-        'KNN-3': KNNImputerMethod(k=3),
-        'KNN-5': KNNImputerMethod(k=5),
-        'KNN-7': KNNImputerMethod(k=7),
+        'KNN-3': KNNImputer(n_neighbors=3),
+        'KNN-5': KNNImputer(n_neighbors=5),
+        'KNN-7': KNNImputer(n_neighbors=7),
         'MICE': MICEImputer(random_state=random_state),
         'MissForest': MissForestImputer(random_state=random_state)
     }
@@ -447,9 +447,9 @@ def cv_evaluate_imputation(X, y, imputer, model, cv=5):
     return scores
 
 # Usage
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 model = RandomForestRegressor(n_estimators=100, random_state=42)
 scores = cv_evaluate_imputation(X, y, imputer, model, cv=5)
 ```

@@ -11,6 +11,7 @@ from numpy.typing import NDArray
 from scipy.special import expit
 from sklearn.neural_network import MLPRegressor
 
+from ._deprecation import renamed_parameters
 from .base import BaseImputer
 from .statistical import MeanImputer
 
@@ -166,7 +167,7 @@ def _gain_impute(
     batch_size: int,
     hint_rate: float,
     alpha: float,
-    iterations: int,
+    max_iter: int,
     learning_rate: float,
     rng: np.random.Generator,
 ) -> FloatArray:
@@ -182,7 +183,7 @@ def _gain_impute(
     d_optimizer = _Adam(discriminator.params, learning_rate)
     batch = min(batch_size, n_samples)
 
-    for _ in range(iterations):
+    for _ in range(max_iter):
         idx = rng.permutation(n_samples)[:batch]
         mask = observed[idx]
         noise = rng.uniform(0.0, 0.01, size=(batch, n_features))
@@ -240,7 +241,7 @@ class GAINImputer(BaseImputer):
         >>> df = pd.DataFrame(
         ...     {"a": [1.0, 2.0, np.nan, 4.0], "b": [2.0, np.nan, 6.0, 8.0]}
         ... )
-        >>> imputed = GAINImputer(iterations=100, random_state=0).impute(df)
+        >>> imputed = GAINImputer(max_iter=100, random_state=0).impute(df)
         >>> bool(imputed.notna().all().all())
         True
 
@@ -249,12 +250,13 @@ class GAINImputer(BaseImputer):
         imputation using generative adversarial nets. ICML, 5689-5698.
     """
 
+    @renamed_parameters(iterations="max_iter")
     def __init__(
         self,
         batch_size: int = 128,
         hint_rate: float = 0.9,
         alpha: float = 100.0,
-        iterations: int = 10000,
+        max_iter: int = 10000,
         learning_rate: float = 0.001,
         random_state: int | None = None,
     ) -> None:
@@ -267,7 +269,7 @@ class GAINImputer(BaseImputer):
             hint_rate: Probability that each entry of the missingness mask is
                 revealed to the discriminator.
             alpha: Weight of the reconstruction loss on observed entries.
-            iterations: Number of training steps.
+            max_iter: Number of training steps.
             learning_rate: Adam learning rate for both networks.
             random_state: Seed for initialisation, batching, noise and hints.
 
@@ -280,14 +282,14 @@ class GAINImputer(BaseImputer):
             raise ValueError(f"hint_rate must be in [0, 1], got {hint_rate}")
         if alpha < 0:
             raise ValueError(f"alpha must be >= 0, got {alpha}")
-        if iterations < 1:
-            raise ValueError(f"iterations must be >= 1, got {iterations}")
+        if max_iter < 1:
+            raise ValueError(f"max_iter must be >= 1, got {max_iter}")
         if learning_rate <= 0:
             raise ValueError(f"learning_rate must be > 0, got {learning_rate}")
         self.batch_size = batch_size
         self.hint_rate = hint_rate
         self.alpha = alpha
-        self.iterations = iterations
+        self.max_iter = max_iter
         self.learning_rate = learning_rate
         self.random_state = random_state
 
@@ -320,7 +322,7 @@ class GAINImputer(BaseImputer):
             batch_size=self.batch_size,
             hint_rate=self.hint_rate,
             alpha=self.alpha,
-            iterations=self.iterations,
+            max_iter=self.max_iter,
             learning_rate=self.learning_rate,
             rng=np.random.default_rng(self.random_state),
         )

@@ -140,14 +140,14 @@ Methods that use similarity between observations.
 Impute using the average of the k nearest neighbors (scikit-learn's `KNNImputer`).
 
 ```python
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
-- `k`: Number of neighbors (default: 5)
+- `n_neighbors`: Number of neighbors (default: 5)
 
 **When to use:**
 - Features are correlated
@@ -162,19 +162,19 @@ df_imputed = imputer.impute(df)
 **Cons:**
 - Computationally expensive for large datasets
 - Sensitive to feature scaling
-- Requires tuning k parameter
+- Requires tuning `n_neighbors`
 
 **Hyperparameter tuning:**
 ```python
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import Ridge
 
-# Try different k values
-for k in [3, 5, 7, 10]:
-    imputer = KNNImputerMethod(k=k)
+# Try different numbers of neighbors
+for n_neighbors in [3, 5, 7, 10]:
+    imputer = KNNImputer(n_neighbors=n_neighbors)
     X_imputed = imputer.impute(X_train)
     score = cross_val_score(Ridge(), X_imputed, y_train, cv=5).mean()
-    print(f"k={k}: CV Score = {score:.4f}")
+    print(f"n_neighbors={n_neighbors}: CV Score = {score:.4f}")
 ```
 
 ### Hot Deck Imputation
@@ -281,12 +281,12 @@ Regression-based method that selects actual observed values.
 ```python
 from imputation_methods import PMMImputer
 
-imputer = PMMImputer(k=5, random_state=42)
+imputer = PMMImputer(n_neighbors=5, random_state=42)
 df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
-- `k`: Number of donor candidates
+- `n_neighbors`: Number of donor candidates (default: 5)
 - `random_state`: Random seed
 
 **When to use:**
@@ -380,14 +380,14 @@ Low-rank matrix completion via nuclear-norm regularization.
 from imputation_methods import SoftImputeImputer
 
 imputer = SoftImputeImputer(
-    max_iters=100,
+    max_iter=100,
     init_fill_method='zero'
 )
 df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
-- `max_iters`: Maximum iterations (default: 100)
+- `max_iter`: Maximum iterations (default: 100)
 - `init_fill_method`: Initialization strategy (`'zero'`, `'mean'`, `'median'` or `'min'`; default: `'zero'`)
 - `shrinkage_value`: Amount subtracted from each singular value (default: 1/50 of the largest singular value of the initial fill)
 - `convergence_threshold`: Relative change of the imputed entries at which to stop (default: 1e-3)
@@ -412,9 +412,9 @@ df_imputed = imputer.impute(df)
 Probabilistic PCA for missing data imputation. Columns are standardized and a PPCA model is fitted by EM while the missing entries are repeatedly replaced by their expected values. Despite the name, this is maximum-likelihood PPCA (Tipping & Bishop, 1999): no priors are placed on the loadings.
 
 ```python
-from imputation_methods import BayesianPCAImputer
+from imputation_methods import PPCAImputer
 
-imputer = BayesianPCAImputer(
+imputer = PPCAImputer(
     n_components=2,
     min_obs=1
 )
@@ -489,7 +489,7 @@ The GAN-based approach of Yoon et al. (2018). A generator fills in missing entri
 ```python
 from imputation_methods import GAINImputer
 
-imputer = GAINImputer(iterations=2000, random_state=42)
+imputer = GAINImputer(max_iter=2000, random_state=42)
 df_imputed = imputer.impute(df)
 ```
 
@@ -497,7 +497,7 @@ df_imputed = imputer.impute(df)
 - `batch_size`: Rows per training step (default: 128)
 - `hint_rate`: Probability of revealing each mask entry to the discriminator (default: 0.9)
 - `alpha`: Weight of the reconstruction loss (default: 100)
-- `iterations`: Training steps (default: 10000)
+- `max_iter`: Training steps (default: 10000)
 - `learning_rate`: Adam learning rate (default: 0.001)
 - `random_state`: Random seed
 

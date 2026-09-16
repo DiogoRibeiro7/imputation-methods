@@ -18,7 +18,7 @@ import seaborn as sns
 from sklearn.datasets import load_diabetes
 
 from imputation_methods import (
-    KNNImputerMethod,
+    KNNImputer,
     MeanImputer,
     MedianImputer,
     MICEImputer,
@@ -69,7 +69,7 @@ print("\n2. Applying imputation methods...")
 imputers = {
     "Mean": MeanImputer(),
     "Median": MedianImputer(),
-    "KNN": KNNImputerMethod(k=3),
+    "KNN": KNNImputer(n_neighbors=3),
 }
 
 # Try to add more methods if they work
@@ -79,7 +79,7 @@ try:
     print("   - Median imputation...")
     imputed_data["Median"] = MedianImputer().impute(data)
     print("   - KNN imputation...")
-    imputed_data["KNN"] = KNNImputerMethod(k=3).impute(data)
+    imputed_data["KNN"] = KNNImputer(n_neighbors=3).impute(data)
     print("   - MICE imputation...")
     imputed_data["MICE"] = MICEImputer(random_state=0).impute(data)
 except Exception as e:
@@ -88,7 +88,7 @@ except Exception as e:
     imputed_data = {
         "Mean": MeanImputer().impute(data),
         "Median": MedianImputer().impute(data),
-        "KNN": KNNImputerMethod(k=3).impute(data),
+        "KNN": KNNImputer(n_neighbors=3).impute(data),
     }
 
 # Figure 2: RMSE comparison

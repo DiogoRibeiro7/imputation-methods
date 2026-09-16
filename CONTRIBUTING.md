@@ -146,6 +146,22 @@ versions allowed by `pyproject.toml`. If you raise a minimum version, change it 
 6. Add the class to the module's page under `docs/api/` if it's in a new module,
    to the methods table in `README.md`, and to `CHANGELOG.md`.
 
+### Renaming or removing public API
+
+Before 1.0, renamed classes, functions and parameters keep working for users, with
+a `FutureWarning`, until 1.0.0:
+
+- Renamed parameter: decorate the `__init__` (or shortcut function) with
+  `@renamed_parameters(old_name="new_name")` from `imputation_methods._deprecation`.
+- Renamed class or function: add the old name to `RENAMED_ATTRIBUTES` in
+  `_deprecation.py` for each module it could be imported from. Those modules already
+  define `__getattr__ = renamed_module_attributes(__name__)`.
+- Add cases to `tests/test_deprecations.py` and describe the change under
+  `Deprecated` in `CHANGELOG.md`.
+
+The test suite turns these warnings into errors, so no code, test or doctest in the
+repository can keep using an old name.
+
 ## Pull requests
 
 1. Create a branch from `main` (`git switch -c fix/short-description`).

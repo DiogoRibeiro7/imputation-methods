@@ -6,9 +6,10 @@ import logging
 
 import numpy as np
 import pandas as pd
-from sklearn.impute import KNNImputer
+from sklearn.impute import KNNImputer as _SklearnKNNImputer
 from sklearn.neighbors import RadiusNeighborsRegressor
 
+from ._deprecation import renamed_module_attributes, renamed_parameters
 from ._utils import fit_transform_non_empty
 from .base import BaseImputer
 from .statistical import MeanImputer
@@ -16,34 +17,37 @@ from .statistical import MeanImputer
 logger = logging.getLogger(__name__)
 
 
-class KNNImputerMethod(BaseImputer):
+class KNNImputer(BaseImputer):
     """Impute missing values using K-nearest neighbors.
 
     Examples:
         >>> import pandas as pd
         >>> import numpy as np
-        >>> from imputation_methods import KNNImputerMethod
+        >>> from imputation_methods import KNNImputer
         >>> df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, np.nan, 7, 8]})
-        >>> imputer = KNNImputerMethod(k=2)
+        >>> imputer = KNNImputer(n_neighbors=2)
         >>> imputed = imputer.impute(df)
         >>> assert not imputed.isna().any().any()
     """
 
-    def __init__(self, k: int = 5) -> None:
+    @renamed_parameters(k="n_neighbors")
+    def __init__(self, n_neighbors: int = 5) -> None:
         """Initialize the imputer.
 
         Args:
-            k: Number of neighbors to consider.
+            n_neighbors: Number of neighbors to consider.
 
         Raises:
-            ValueError: If k is not a positive integer.
+            ValueError: If n_neighbors is not a positive integer.
         """
-        if not isinstance(k, int):
-            raise TypeError(f"k must be an integer, got {type(k).__name__}")
-        if k <= 0:
-            raise ValueError(f"k must be positive, got {k}")
-        self.k = k
-        self._imputer = KNNImputer(n_neighbors=k)
+        if not isinstance(n_neighbors, int):
+            raise TypeError(
+                f"n_neighbors must be an integer, got {type(n_neighbors).__name__}"
+            )
+        if n_neighbors <= 0:
+            raise ValueError(f"n_neighbors must be positive, got {n_neighbors}")
+        self.n_neighbors = n_neighbors
+        self._imputer = _SklearnKNNImputer(n_neighbors=n_neighbors)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using the fitted KNN strategy.
@@ -251,3 +255,6 @@ class LocalMeanImputer(BaseImputer):
                     )
 
         return result
+
+
+__getattr__ = renamed_module_attributes(__name__)

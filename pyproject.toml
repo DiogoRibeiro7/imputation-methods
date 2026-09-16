@@ -180,6 +180,9 @@ filterwarnings = [
     # (pandas, NumPy, scikit-learn) are caught before they become errors.
     "error::FutureWarning:imputation_methods",
     "error::DeprecationWarning:imputation_methods",
+    # Using a renamed API anywhere in the tests or doctests is an error; tests that
+    # check the deprecations catch these warnings explicitly with pytest.warns.
+    "error:imputation-methods:FutureWarning",
     "ignore::sklearn.exceptions.ConvergenceWarning",
 ]
 xfail_strict = true

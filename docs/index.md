@@ -37,7 +37,7 @@ Missing data is a common challenge in data science and machine learning. `imputa
 ```python
 import pandas as pd
 import numpy as np
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 # Create data with missing values
 df = pd.DataFrame({
@@ -46,7 +46,7 @@ df = pd.DataFrame({
 })
 
 # Apply KNN imputation
-imputer = KNNImputerMethod(k=3)
+imputer = KNNImputer(n_neighbors=3)
 df_imputed = imputer.impute(df)
 
 print(df_imputed)

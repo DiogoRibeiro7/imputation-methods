@@ -208,7 +208,7 @@ class StackingImputer(BaseImputer):
     - Can outperform individual imputers, especially with complementary methods
 
     **Recommended Base Imputer Combinations:**
-    - Simple + Complex: [MeanImputer, KNNImputerMethod, RegressionImputer]
+    - Simple + Complex: [MeanImputer, KNNImputer, RegressionImputer]
     - Robust mix: [MedianImputer, HuberImputer, TrimmedMeanImputer]
     - Diverse approaches: [MeanImputer, MICEImputer, MissForestImputer]
 
@@ -228,13 +228,13 @@ class StackingImputer(BaseImputer):
         >>> import pandas as pd
         >>> import numpy as np
         >>> from imputation_methods import (
-        ...     StackingImputer, MeanImputer, MedianImputer, KNNImputerMethod
+        ...     StackingImputer, MeanImputer, MedianImputer, KNNImputer
         ... )
         >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 5]})
         >>> imputer = StackingImputer(base_imputers=[
         ...     MeanImputer(),
         ...     MedianImputer(),
-        ...     KNNImputerMethod(k=2)
+        ...     KNNImputer(n_neighbors=2)
         ... ])
         >>> imputed = imputer.impute(df)
 
@@ -379,7 +379,7 @@ class BaggingImputer(BaseImputer):
     sampled are filled by running ``base_imputer`` once on the full data.
 
     **Good base imputers for bagging:** high-variance methods such as
-    :class:`~imputation_methods.KNNImputerMethod`,
+    :class:`~imputation_methods.KNNImputer`,
     :class:`~imputation_methods.RegressionImputer` or
     :class:`~imputation_methods.PMMImputer`. Simple statistics such as the mean
     gain little.
@@ -396,7 +396,7 @@ class BaggingImputer(BaseImputer):
     Examples:
         >>> import numpy as np
         >>> import pandas as pd
-        >>> from imputation_methods import BaggingImputer, KNNImputerMethod
+        >>> from imputation_methods import BaggingImputer, KNNImputer
         >>> df = pd.DataFrame(
         ...     {
         ...         "a": [1, 2, np.nan, 4, 5, np.nan, 7],
@@ -404,7 +404,7 @@ class BaggingImputer(BaseImputer):
         ...     }
         ... )
         >>> imputer = BaggingImputer(
-        ...     base_imputer=KNNImputerMethod(k=2), n_estimators=5, random_state=0
+        ...     base_imputer=KNNImputer(n_neighbors=2), n_estimators=5, random_state=0
         ... )
         >>> bool(imputer.impute(df).notna().all().all())
         True

@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 
+from ._deprecation import renamed_module_attributes, renamed_parameters
 from .base import BaseImputer
 from .statistical import MeanImputer
 
@@ -46,7 +47,7 @@ def _soft_impute(
     values: FloatArray,
     *,
     shrinkage_value: float | None,
-    max_iters: int,
+    max_iter: int,
     convergence_threshold: float,
     init_fill_method: str,
 ) -> FloatArray:
@@ -66,7 +67,7 @@ def _soft_impute(
         # value of the initial fill.
         shrinkage_value = float(np.linalg.norm(filled, ord=2)) / 50.0
 
-    for _ in range(max_iters):
+    for _ in range(max_iter):
         u, s, vt = np.linalg.svd(filled, full_matrices=False)
         s_shrunk = np.maximum(s - shrinkage_value, 0.0)
         reconstruction = (u * s_shrunk) @ vt
@@ -159,9 +160,10 @@ class SoftImputeImputer(BaseImputer):
         Journal of Machine Learning Research, 11, 2287-2322.
     """
 
+    @renamed_parameters(max_iters="max_iter")
     def __init__(
         self,
-        max_iters: int = 100,
+        max_iter: int = 100,
         init_fill_method: str = "zero",
         shrinkage_value: float | None = None,
         convergence_threshold: float = 1e-3,
@@ -169,7 +171,7 @@ class SoftImputeImputer(BaseImputer):
         """Initialize the imputer.
 
         Args:
-            max_iters: Maximum number of SVD iterations.
+            max_iter: Maximum number of SVD iterations.
             init_fill_method: How to initialise missing entries before solving:
                 ``"zero"``, ``"mean"``, ``"median"`` or ``"min"``.
             shrinkage_value: Amount subtracted from each singular value. Defaults
@@ -185,11 +187,11 @@ class SoftImputeImputer(BaseImputer):
                 f"init_fill_method must be one of {_INIT_FILL_METHODS}, "
                 f"got {init_fill_method!r}"
             )
-        if max_iters < 1:
-            raise ValueError(f"max_iters must be >= 1, got {max_iters}")
+        if max_iter < 1:
+            raise ValueError(f"max_iter must be >= 1, got {max_iter}")
         if shrinkage_value is not None and shrinkage_value < 0:
             raise ValueError(f"shrinkage_value must be >= 0, got {shrinkage_value}")
-        self.max_iters = max_iters
+        self.max_iter = max_iter
         self.init_fill_method = init_fill_method
         self.shrinkage_value = shrinkage_value
         self.convergence_threshold = convergence_threshold
@@ -213,7 +215,7 @@ class SoftImputeImputer(BaseImputer):
             completed = _soft_impute(
                 result[modelled].to_numpy(dtype=float, na_value=np.nan),
                 shrinkage_value=self.shrinkage_value,
-                max_iters=self.max_iters,
+                max_iter=self.max_iter,
                 convergence_threshold=self.convergence_threshold,
                 init_fill_method=self.init_fill_method,
             )
@@ -225,7 +227,7 @@ class SoftImputeImputer(BaseImputer):
         return result
 
 
-class BayesianPCAImputer(BaseImputer):
+class PPCAImputer(BaseImputer):
     """Impute missing values with probabilistic PCA (PPCA).
 
     Columns are standardised, then a PPCA model is fitted by EM while the
@@ -236,11 +238,11 @@ class BayesianPCAImputer(BaseImputer):
     Examples:
         >>> import numpy as np
         >>> import pandas as pd
-        >>> from imputation_methods import BayesianPCAImputer
+        >>> from imputation_methods import PPCAImputer
         >>> df = pd.DataFrame(
         ...     {"a": [1.0, 2.0, np.nan, 4.0], "b": [2.0, np.nan, 6.0, 8.0]}
         ... )
-        >>> bool(BayesianPCAImputer().impute(df).notna().all().all())
+        >>> bool(PPCAImputer().impute(df).notna().all().all())
         True
 
     References:
@@ -330,3 +332,6 @@ class BayesianPCAImputer(BaseImputer):
         if len(excluded) > 0:
             result[excluded] = MeanImputer().impute(result[excluded])
         return result
+
+
+__getattr__ = renamed_module_attributes(__name__)

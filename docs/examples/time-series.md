@@ -27,7 +27,7 @@ For a complete, runnable implementation, see [`examples/time_series_example.py`]
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from imputation_methods import LOCFImputer, NOCBImputer, KNNImputerMethod
+from imputation_methods import LOCFImputer, NOCBImputer, KNNImputer
 
 # Generate synthetic sensor data
 np.random.seed(42)
@@ -117,10 +117,10 @@ print("NOCB Imputation Complete")
 Considers relationships between multiple sensors.
 
 ```python
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 # KNN works well when multiple correlated sensors exist
-knn_imputer = KNNImputerMethod(k=5)
+knn_imputer = KNNImputer(n_neighbors=5)
 df_knn = knn_imputer.impute(df_numeric)
 df_knn['timestamp'] = df['timestamp']
 
@@ -292,7 +292,7 @@ def seasonal_impute(df, period=24):
 df_seasonal = seasonal_impute(df_numeric, period=24)  # Daily pattern
 ```
 
-The built-in `SeasonalImputer(period=24, method='median')` implements the same per-phase median and also fills any values it cannot match with the column mean.
+The built-in `SeasonalImputer(period=24, strategy='median')` implements the same per-phase median and also fills any values it cannot match with the column mean.
 
 ## Key Takeaways
 

@@ -15,7 +15,7 @@ from imputation_methods import (
     BaseImputer,
     HybridImputer,
     InterpolationImputer,
-    KNNImputerMethod,
+    KNNImputer,
     MeanImputer,
     MedianImputer,
     PMMImputer,
@@ -181,7 +181,7 @@ class TestBaggingImputer:
         assert len(set(seeds)) == len(seeds)
 
     def test_is_reproducible_with_random_state(self, frame: pd.DataFrame) -> None:
-        base = PMMImputer(k=3, random_state=0)
+        base = PMMImputer(n_neighbors=3, random_state=0)
         first = BaggingImputer(
             base_imputer=base, n_estimators=5, random_state=1
         ).impute(frame)
@@ -212,7 +212,7 @@ class TestBaggingImputer:
             diff = imputed.to_numpy()[mask] - complete.to_numpy()[mask]
             return float(np.sqrt(np.mean(diff**2)))
 
-        base = PMMImputer(k=3, random_state=0)
+        base = PMMImputer(n_neighbors=3, random_state=0)
         bagged = BaggingImputer(
             base_imputer=base, n_estimators=20, max_samples=1.0, random_state=0
         )
@@ -268,7 +268,7 @@ class TestWithRandomState:
         assert original.random_state is None  # type: ignore[attr-defined]
 
     def test_with_random_state_copies_deterministic_imputers(self) -> None:
-        original = KNNImputerMethod(k=3)
+        original = KNNImputer(n_neighbors=3)
         clone = _with_random_state(original, 7)
         assert clone is not original
-        assert clone.k == 3  # type: ignore[attr-defined]
+        assert clone.n_neighbors == 3  # type: ignore[attr-defined]
