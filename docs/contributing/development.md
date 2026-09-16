@@ -6,16 +6,16 @@ Detailed guide for setting up your development environment.
 
 ### Required Software
 
-- **Python 3.10 or higher**
+- **Python 3.10 or higher** (CI tests 3.10–3.14)
   ```bash
   python --version  # Check your Python version
   ```
 
-- **Poetry** - Dependency management
+- **Poetry** 2.x - Dependency management
   ```bash
   curl -sSL https://install.python-poetry.org | python3 -
   # or
-  pip install --user poetry
+  pipx install poetry
   ```
 
 - **Git** - Version control
@@ -31,27 +31,36 @@ Detailed guide for setting up your development environment.
 
 2. Clone your fork:
 ```bash
-git clone https://github.com/YOUR_USERNAME/imputation-showcase.git
-cd imputation-showcase
+git clone https://github.com/YOUR_USERNAME/imputation-methods.git
+cd imputation-methods
 ```
 
 3. Add upstream remote:
 ```bash
-git remote add upstream https://github.com/DiogoRibeiro7/imputation-showcase.git
+git remote add upstream https://github.com/DiogoRibeiro7/imputation-methods.git
 git remote -v  # Verify remotes
 ```
 
 ### 2. Install Dependencies
 
 ```bash
-# Install all dependencies (including dev dependencies)
+# Install the package plus the test and lint dependency groups
 poetry install
 
-# Activate virtual environment
-poetry shell
+# Optional groups: MkDocs for the documentation, Jupyter for the notebooks
+poetry install --with docs
+poetry install --with notebooks
 
 # Verify installation
-poetry run python -c "from imputation_showcase import MeanImputer; print('Success!')"
+poetry run python -c "from imputation_methods import MeanImputer; print('Success!')"
+```
+
+Prefer to skip Poetry? The dependency groups are standard `[dependency-groups]` tables, so pip or uv can install the same development environment into an activated virtual environment:
+
+```bash
+pip install -e . --group dev      # requires pip >= 25.1
+# or
+uv pip install -e . --group dev
 ```
 
 ### 3. Configure Pre-commit Hooks
@@ -64,6 +73,8 @@ poetry run pre-commit install
 poetry run pre-commit run --all-files
 ```
 
+The hooks run Ruff (lint and format), mypy and basic file hygiene checks (such as trailing whitespace, line endings, YAML/TOML syntax and merge-conflict markers).
+
 ### 4. Verify Setup
 
 ```bash
@@ -71,10 +82,10 @@ poetry run pre-commit run --all-files
 poetry run pytest
 
 # Run linter
-poetry run flake8 imputation_showcase tests
+poetry run ruff check .
 
 # Run type checker
-poetry run mypy imputation_showcase/
+poetry run mypy
 ```
 
 If all commands succeed, you're ready to develop!
@@ -84,11 +95,11 @@ If all commands succeed, you're ready to develop!
 ### Poetry Commands
 
 ```bash
-# Add a new dependency
+# Add a new runtime dependency
 poetry add package-name
 
-# Add a dev dependency
-poetry add --group dev package-name
+# Add a development dependency to a group (test, lint, docs or notebooks)
+poetry add --group test package-name
 
 # Update dependencies
 poetry update
@@ -96,14 +107,14 @@ poetry update
 # Show dependency tree
 poetry show --tree
 
-# Export requirements.txt
-poetry export -f requirements.txt --output requirements.txt
+# Run a command inside the project environment
+poetry run python
 ```
 
 ### Testing
 
 ```bash
-# Run all tests
+# Run all tests (includes doctests in src/imputation_methods)
 poetry run pytest
 
 # Run with verbose output
@@ -116,36 +127,46 @@ poetry run pytest tests/test_imputation_methods.py
 poetry run pytest -k "mean"
 
 # Run with coverage
-poetry run coverage run -m pytest
-poetry run coverage report
-poetry run coverage html  # Generate HTML report
+poetry run pytest --cov
+poetry run pytest --cov --cov-report=html  # Generate HTML report
 
-# Run tests in parallel (faster)
-poetry run pytest -n auto
+# Run the wall-clock benchmark tests (skipped by default)
+poetry run pytest -m benchmark
 ```
 
 ### Code Quality
 
 ```bash
-# Linting with flake8
-poetry run flake8 imputation_showcase tests
+# Lint with Ruff (includes import sorting)
+poetry run ruff check .
 
-# Type checking with mypy
-poetry run mypy imputation_showcase/
+# Apply safe autofixes
+poetry run ruff check --fix .
 
-# Format check with black
-poetry run black --check .
+# Format check with Ruff
+poetry run ruff format --check .
 
 # Actually format code
-poetry run black .
+poetry run ruff format .
 
-# Import sorting
-poetry run isort --check-only .
-poetry run isort .  # Actually sort
+# Type checking with mypy (strict mode, configured in pyproject.toml)
+poetry run mypy
 
 # Run all checks
 poetry run pre-commit run --all-files
 ```
+
+## Continuous Integration
+
+GitHub Actions runs on every push to `main` and on pull requests:
+
+- **Lint and type check:** `ruff check`, `ruff format --check` and `mypy`
+- **Tests:** Python 3.10–3.14 on Linux, plus Windows and macOS, with coverage
+- **Minimum dependencies:** tests against the oldest versions allowed by `pyproject.toml`
+- **Docs:** `mkdocs build --strict`
+- **Package:** builds the sdist and wheel, checks metadata and runs the tests against the built wheel
+
+Releases are published to PyPI from a GitHub Release via trusted publishing.
 
 ## IDE Setup
 
@@ -155,19 +176,18 @@ Recommended extensions:
 
 - Python (Microsoft)
 - Pylance
-- Black Formatter
-- autoDocstring
+- Ruff (Astral Software)
+- Mypy Type Checker (Microsoft)
+- autoDocstring (set the docstring format to Google)
 - GitLens
 
 **settings.json:**
 ```json
 {
-  "python.linting.enabled": true,
-  "python.linting.flake8Enabled": true,
-  "python.formatting.provider": "black",
-  "python.formatting.blackPath": "poetry run black",
-  "editor.formatOnSave": true,
-  "python.linting.mypyEnabled": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true
+  },
   "python.testing.pytestEnabled": true
 }
 ```
@@ -179,12 +199,12 @@ Recommended extensions:
    - Add → Poetry Environment → Existing
 
 2. Enable code quality tools:
-   - Settings → Tools → External Tools
-   - Add flake8, mypy, black
+   - Install the Ruff and Mypy plugins, or add `ruff` and `mypy` under Settings → Tools → External Tools
 
 3. Configure pytest:
    - Settings → Tools → Python Integrated Tools
    - Default test runner: pytest
+   - Docstring format: Google
 
 ## Working with Git
 
@@ -266,10 +286,12 @@ Fixes #456
 
 ```python
 # tests/test_my_feature.py
-import pytest
-import pandas as pd
 import numpy as np
-from imputation_showcase import MyNewImputer
+import pandas as pd
+import pytest
+
+from imputation_methods import MyNewImputer
+
 
 class TestMyNewImputer:
     """Tests for MyNewImputer."""
@@ -286,7 +308,7 @@ class TestMyNewImputer:
         df = pd.DataFrame({'a': [1, 2, np.nan, 4]})
         imputer = MyNewImputer()
         result = imputer.impute(df)
-        observed_mask = ~df.isna()
+        observed_mask = df['a'].notna()
         pd.testing.assert_series_equal(
             df.loc[observed_mask, 'a'],
             result.loc[observed_mask, 'a']
@@ -311,6 +333,7 @@ poetry run pytest tests/test_my_feature.py::TestMyNewImputer
 # Run with markers
 poetry run pytest -m slow  # Run only slow tests
 poetry run pytest -m "not slow"  # Skip slow tests
+poetry run pytest -m benchmark  # Run only the benchmark tests
 ```
 
 ## Documentation
@@ -318,19 +341,21 @@ poetry run pytest -m "not slow"  # Skip slow tests
 ### Building Docs Locally
 
 ```bash
-# Install MkDocs (should be installed with dev dependencies)
-poetry install
+# Install MkDocs (the optional docs group)
+poetry install --with docs
 
 # Serve docs locally
 poetry run mkdocs serve
 
 # Open browser to http://localhost:8000
 
-# Build docs
-poetry run mkdocs build
+# Build docs (CI uses --strict, which fails on warnings such as broken links)
+poetry run mkdocs build --strict
 ```
 
 ### Docstring Format
+
+Use Google-style docstrings. Examples in docstrings under `src/imputation_methods` run as doctests with `poetry run pytest`, so keep their output accurate.
 
 ```python
 def example_function(param1: int, param2: str) -> bool:
@@ -357,8 +382,7 @@ def example_function(param1: int, param2: str) -> bool:
         >>> example_function(0, "")
         False
     """
-    # Implementation
-    pass
+    return param1 > 0 and bool(param2)
 ```
 
 ## Debugging
@@ -369,7 +393,7 @@ def example_function(param1: int, param2: str) -> bool:
 # Add breakpoint
 import pdb; pdb.set_trace()
 
-# Or use built-in breakpoint() (Python 3.7+)
+# Or use built-in breakpoint()
 breakpoint()
 ```
 
@@ -416,10 +440,10 @@ poetry self update
 ### Import Errors
 
 ```bash
-# Ensure you're in the virtual environment
-poetry shell
+# Check which environment Poetry uses
+poetry env info
 
-# Reinstall package in editable mode
+# Reinstall the package in editable mode
 poetry install
 ```
 
@@ -442,7 +466,7 @@ poetry run pytest --capture=no
 
 ```bash
 # Profile with pytest-profiling
-poetry add --group dev pytest-profiling
+poetry add --group test pytest-profiling
 poetry run pytest --profile
 
 # Profile with cProfile
@@ -453,7 +477,7 @@ poetry run python -m cProfile -s cumulative -m pytest
 
 ```bash
 # Install memory-profiler
-poetry add --group dev memory-profiler
+poetry add --group test memory-profiler
 
 # Profile memory
 poetry run python -m memory_profiler script.py
@@ -463,6 +487,6 @@ poetry run python -m memory_profiler script.py
 
 - Review [Code Style Guidelines](code-style.md)
 - Check [Contributing Guidelines](guidelines.md)
-- Start with issues labeled ["good first issue"](https://github.com/DiogoRibeiro7/imputation-showcase/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+- Start with issues labeled ["good first issue"](https://github.com/DiogoRibeiro7/imputation-methods/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 Happy coding! 🚀

@@ -4,7 +4,7 @@ Learn how to create your own custom imputation methods tailored to your specific
 
 ## Overview
 
-While the library provides 16+ built-in methods, sometimes you need custom logic for:
+While the library provides 42 built-in imputers, sometimes you need custom logic for:
 
 - Domain-specific imputation rules
 - Combining multiple strategies
@@ -14,20 +14,23 @@ While the library provides 16+ built-in methods, sometimes you need custom logic
 
 ## Full Example
 
-For complete, runnable code, see `examples/custom_imputer_example.py` in the repository.
+For complete, runnable code, see [`examples/custom_imputer_example.py`](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/examples/custom_imputer_example.py) in the repository.
+
+!!! note "Built-in equivalents"
+    Some examples below re-implement logic that the library already ships, to show the pattern: see `ModeImputer`, `TrimmedMeanImputer`, `GroupMeanImputer` and `SeasonalImputer`. The `ModeImputer` and `HybridImputer` classes defined on this page are local examples that share their names with built-in classes (the built-in `HybridImputer` is a fallback chain of imputers), so don't mix them with `from imputation_methods import *`.
 
 ## Basic Custom Imputer
 
 All custom imputers inherit from `BaseImputer`:
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 import pandas as pd
 
 class MyCustomImputer(BaseImputer):
     """Template for creating custom imputers."""
 
-    def __init__(self, param1=default_value):
+    def __init__(self, param1: float = 1.0):
         """Initialize with any parameters you need."""
         self.param1 = param1
 
@@ -58,7 +61,7 @@ class MyCustomImputer(BaseImputer):
 Impute using the most frequent value (mode).
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 import pandas as pd
 
 class ModeImputer(BaseImputer):
@@ -99,7 +102,7 @@ df_imputed = imputer.impute(df)
 Use different strategies based on missingness percentage.
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 import pandas as pd
 
 class ConditionalImputer(BaseImputer):
@@ -161,7 +164,7 @@ df_imputed = imputer.impute(df)
 Use trimmed mean to avoid outlier influence.
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 from scipy import stats
 import pandas as pd
 
@@ -208,7 +211,7 @@ df_imputed = imputer.impute(df)
 Combine multiple strategies based on data characteristics.
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 import pandas as pd
 
 class HybridImputer(BaseImputer):
@@ -262,7 +265,7 @@ df_imputed = imputer.impute(df)
 Impute within groups (e.g., by category or segment).
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 import pandas as pd
 
 class GroupImputer(BaseImputer):
@@ -312,7 +315,7 @@ df_imputed = imputer.impute(df)
 Custom logic based on domain knowledge.
 
 ```python
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 import pandas as pd
 import numpy as np
 
@@ -380,7 +383,7 @@ df_imputed = imputer.impute(df)
 Use built-in imputers within your custom logic:
 
 ```python
-from imputation_showcase import BaseImputer, MeanImputer, KNNImputerMethod
+from imputation_methods import BaseImputer, MeanImputer, KNNImputerMethod
 import pandas as pd
 
 class SmartImputer(BaseImputer):
@@ -449,7 +452,7 @@ class TestModeImputer(unittest.TestCase):
         imputer = ModeImputer()
         result = imputer.impute(self.df)
 
-        observed_mask = ~self.df.isna()
+        observed_mask = self.df['discrete'].notna()
         pd.testing.assert_series_equal(
             self.df.loc[observed_mask, 'discrete'],
             result.loc[observed_mask, 'discrete']
@@ -571,15 +574,14 @@ class MyImputer(BaseImputer):
 
 ## Complete Example
 
-Run the full example to see all custom imputers in action:
+Run the full example from the repository root to see the custom imputers in action (it needs the `viz` extra):
 
 ```bash
-cd examples/
-python custom_imputer_example.py
+poetry run python examples/custom_imputer_example.py
 ```
 
 This will demonstrate:
-- All 5 custom imputer examples
+- Examples 1–5 from this page
 - Performance comparison
 - Visualization of results
 - Use case recommendations
@@ -615,4 +617,4 @@ Don't create a custom imputer when:
 - Review [Methods Guide](../user-guide/methods.md) for built-in options
 - Check [Best Practices](../user-guide/best-practices.md) for production deployment
 - See [Time Series Example](time-series.md) and [ML Pipeline Example](ml-pipeline.md)
-- Consult [API Reference](../api/methods.md) for technical details
+- Consult [API Reference](../api/index.md) for technical details

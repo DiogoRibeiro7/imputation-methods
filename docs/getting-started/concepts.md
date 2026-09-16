@@ -59,7 +59,7 @@ The probability that a value is missing depends on the missing value itself.
 All imputation methods in this library inherit from `BaseImputer` and follow the same interface:
 
 ```python
-from imputation_showcase import MeanImputer, KNNImputerMethod
+from imputation_methods import MeanImputer, KNNImputerMethod
 
 # Every imputer has an impute() method
 imputer = MeanImputer()
@@ -74,17 +74,19 @@ df_imputed = knn_imputer.impute(df)
 
 #### `impute(df: pd.DataFrame) -> pd.DataFrame`
 
-The primary method for all imputers. Takes a DataFrame with missing values and returns a complete DataFrame with imputed values.
+The primary method for all imputers. Takes a DataFrame with missing values and returns a new DataFrame with imputed values; the input is left untouched.
 
 **Parameters:**
 - `df`: Pandas DataFrame with numeric columns containing `NaN` values
 
 **Returns:**
-- Pandas DataFrame with the same shape, with missing values replaced
+- Pandas DataFrame with the same shape, with missing values replaced (`IndicatorImputer` additionally appends one indicator column per input column)
 
 **Requirements:**
-- All columns must be numeric (float or int)
+- All columns must be numeric (float or int); otherwise a `TypeError` is raised
 - Non-numeric columns should be encoded or removed before imputation
+
+Every imputer also has a functional shortcut, for example `mean_impute(df)` for `MeanImputer().impute(df)` and `knn_impute(df, k=5)` for `KNNImputerMethod(k=5).impute(df)`.
 
 ## When to Use Imputation
 
@@ -119,14 +121,14 @@ The primary method for all imputers. Takes a DataFrame with missing values and r
 
 - **Interpretable:** Mean, median, LOCF - easy to understand and explain
 - **Moderate:** Regression, KNN - somewhat interpretable
-- **Black box:** Autoencoders, GAIN - difficult to interpret
+- **Black box:** Autoencoders - difficult to interpret
 
 ## Evaluation Strategy
 
 When ground truth is available, you can evaluate imputation quality:
 
 ```python
-from imputation_showcase import KNNImputerMethod, rmse, mae
+from imputation_methods import KNNImputerMethod, rmse, mae
 import numpy as np
 
 # Original complete data
@@ -162,7 +164,7 @@ print(f"MAE: {error_mae:.4f}")
 Before imputation, analyze the missing data pattern:
 
 ```python
-import missingno as msno
+import missingno as msno  # Separate package: pip install missingno
 import matplotlib.pyplot as plt
 
 # Visualize missingness pattern
@@ -184,7 +186,7 @@ from sklearn.model_selection import train_test_split
 # CORRECT: Split first
 X_train, X_test = train_test_split(X, test_size=0.2)
 
-# Fit imputer on training data only
+# Impute each split separately (impute() only sees the rows it is given)
 imputer = KNNImputerMethod(k=5)
 X_train_imputed = imputer.impute(X_train)
 X_test_imputed = imputer.impute(X_test)
@@ -199,7 +201,7 @@ X_test_imputed = imputer.impute(X_test)
 Different methods work better for different data types and missingness patterns:
 
 ```python
-from imputation_showcase import MeanImputer, KNNImputerMethod, MICEImputer
+from imputation_methods import MeanImputer, KNNImputerMethod, MICEImputer
 
 methods = {
     'Mean': MeanImputer(),
@@ -234,4 +236,4 @@ Now that you understand the basic concepts:
 - Explore the [User Guide](../user-guide/methods.md) for detailed method descriptions
 - Learn about [Method Selection](../user-guide/selection.md) to choose the right approach
 - See [Examples](../examples/time-series.md) for real-world use cases
-- Check the [API Reference](../api/methods.md) for technical details
+- Check the [API Reference](../api/index.md) for technical details

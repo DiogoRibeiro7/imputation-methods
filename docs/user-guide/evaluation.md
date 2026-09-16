@@ -21,7 +21,7 @@ When you have complete data, artificially introduce missingness to evaluate impu
 ```python
 import numpy as np
 import pandas as pd
-from imputation_showcase import KNNImputerMethod, rmse, mae
+from imputation_methods import KNNImputerMethod, rmse, mae
 
 # Original complete dataset
 df_complete = pd.DataFrame({
@@ -57,7 +57,7 @@ When ground truth isn't available, evaluate based on downstream task performance
 ```python
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
-from imputation_showcase import MeanImputer, KNNImputerMethod, MICEImputer
+from imputation_methods import MeanImputer, KNNImputerMethod, MICEImputer
 
 # Your data with missing values (no ground truth)
 X_missing = load_your_data()
@@ -132,7 +132,7 @@ plt.show()
 Measures average magnitude of errors, with higher weight on large errors.
 
 ```python
-from imputation_showcase import rmse
+from imputation_methods import rmse
 
 # For pandas Series
 error = rmse(true_series, imputed_series)
@@ -157,7 +157,7 @@ error = np.sqrt(np.mean((y_true - y_pred) ** 2))
 Measures average absolute difference between true and imputed values.
 
 ```python
-from imputation_showcase import mae
+from imputation_methods import mae
 
 # For pandas Series
 error = mae(true_series, imputed_series)
@@ -231,7 +231,7 @@ Complete evaluation comparing multiple methods:
 import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
-from imputation_showcase import (
+from imputation_methods import (
     MeanImputer, MedianImputer, KNNImputerMethod,
     MICEImputer, MissForestImputer, rmse, mae
 )
@@ -431,7 +431,7 @@ def cv_evaluate_imputation(X, y, imputer, model, cv=5):
         X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
         y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
-        # Impute (fit on train, transform both)
+        # Impute each fold's train and test rows separately
         X_train_imputed = imputer.impute(X_train)
         X_test_imputed = imputer.impute(X_test)
 
@@ -447,7 +447,7 @@ def cv_evaluate_imputation(X, y, imputer, model, cv=5):
     return scores
 
 # Usage
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 imputer = KNNImputerMethod(k=5)
 model = RandomForestRegressor(n_estimators=100, random_state=42)
@@ -541,4 +541,4 @@ monitor.plot_trends()
 - Review [Best Practices](best-practices.md) for production deployment
 - See [Examples](../examples/time-series.md) for complete workflows
 - Check [Method Selection](selection.md) to choose the right approach
-- Consult [API Reference](../api/evaluation.md) for function details
+- Consult [API Reference](../api/index.md) for function details

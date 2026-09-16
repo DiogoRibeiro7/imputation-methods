@@ -2,17 +2,23 @@
 
 ## Requirements
 
-- Python 3.10 or higher
+- Python 3.10 or higher (3.10–3.14 are supported)
 - pip or Poetry package manager
 
 ## Installation Methods
 
 ### Using pip (Recommended for Users)
 
-The simplest way to install Imputation Showcase:
+The simplest way to install `imputation-methods`:
 
 ```bash
-pip install imputation-showcase
+pip install imputation-methods
+```
+
+The notebooks, example scripts and plotting snippets in these docs also use matplotlib and seaborn. Install them with the `viz` extra:
+
+```bash
+pip install "imputation-methods[viz]"
 ```
 
 ### Using Poetry (Recommended for Developers)
@@ -20,7 +26,10 @@ pip install imputation-showcase
 If you're developing or want better dependency management:
 
 ```bash
-poetry add imputation-showcase
+poetry add imputation-methods
+
+# With the plotting extra
+poetry add "imputation-methods[viz]"
 ```
 
 ### From Source
@@ -29,8 +38,8 @@ For the latest development version:
 
 ```bash
 # Clone the repository
-git clone https://github.com/DiogoRibeiro7/imputation-showcase.git
-cd imputation-showcase
+git clone https://github.com/DiogoRibeiro7/imputation-methods.git
+cd imputation-methods
 
 # Install with Poetry
 poetry install
@@ -43,23 +52,27 @@ pip install -e .
 
 The library automatically installs these core dependencies:
 
-- **pandas** ^2.0 - Data manipulation
-- **numpy** ^1.24 - Numerical computing
-- **scikit-learn** ^1.4 - Machine learning tools
-- **fancyimpute** 0.7.0 - Advanced imputation methods
-- **ppca** ^0.0.4 - Probabilistic PCA
-- **matplotlib** ^3.7 - Visualization
-- **seaborn** ^0.12 - Statistical visualization
+- **numpy** >=1.24 - Numerical computing
+- **pandas** >=2.0 - Data manipulation (pandas 3 is supported)
+- **scipy** >=1.10 - Scientific computing
+- **scikit-learn** >=1.4 - Machine learning tools
+
+Optional `viz` extra:
+
+- **matplotlib** >=3.7 - Visualization
+- **seaborn** >=0.13 - Statistical visualization
+
+SoftImpute and Bayesian PCA are implemented directly on NumPy, so no extra matrix-completion packages are required.
 
 ## Verification
 
 Verify your installation:
 
 ```python
-import imputation_showcase
-from imputation_showcase.imputation_methods import MeanImputer
+import imputation_methods
+from imputation_methods import MeanImputer
 
-print("✓ Imputation Showcase installed successfully!")
+print(f"✓ imputation-methods {imputation_methods.__version__} installed successfully!")
 ```
 
 ## Development Installation
@@ -67,9 +80,9 @@ print("✓ Imputation Showcase installed successfully!")
 For contributors who want to run tests and modify the code:
 
 ```bash
-# Clone and install with dev dependencies
-git clone https://github.com/DiogoRibeiro7/imputation-showcase.git
-cd imputation-showcase
+# Clone and install the package plus the test and lint dependency groups
+git clone https://github.com/DiogoRibeiro7/imputation-methods.git
+cd imputation-methods
 poetry install
 
 # Install pre-commit hooks
@@ -79,8 +92,11 @@ poetry run pre-commit install
 poetry run pytest
 
 # Check code quality
-poetry run flake8 imputation_showcase tests
+poetry run ruff check .
+poetry run mypy
 ```
+
+Without Poetry, install the same development dependencies with `pip install -e . --group dev` (requires pip >= 25.1) or `uv pip install -e . --group dev`. See [Development Setup](../contributing/development.md) for details.
 
 ## Troubleshooting
 
@@ -91,25 +107,24 @@ poetry run flake8 imputation_showcase tests
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install imputation-showcase
+pip install imputation-methods
 ```
 
-### Issue: fancyimpute installation fails
+### Issue: `ModuleNotFoundError` for matplotlib or seaborn
 
-**Solution**: Install system dependencies first (Ubuntu/Debian):
+**Solution**: The plotting libraries are optional. Install the `viz` extra:
 
 ```bash
-sudo apt-get install libopenblas-dev liblapack-dev
-pip install imputation-showcase
+pip install "imputation-methods[viz]"
 ```
 
 ### Issue: Import errors after installation
 
-**Solution**: Ensure you're using the correct Python environment:
+**Solution**: Ensure you're using the correct Python environment. Note that the distribution is named `imputation-methods`, but the import name is `imputation_methods`:
 
 ```bash
 which python  # Should point to your virtual environment
-pip list | grep imputation  # Should show imputation-showcase
+pip list | grep imputation  # Should show imputation-methods
 ```
 
 ## Next Steps

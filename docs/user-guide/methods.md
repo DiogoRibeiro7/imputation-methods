@@ -1,6 +1,6 @@
 # Imputation Methods
 
-This comprehensive guide describes all 16+ imputation methods available in the library, organized by category.
+This guide describes the core imputation methods available in the library, organized by category. The library exports 42 imputers in total; the remaining ones are listed under [Other Methods](#other-methods), and the [API Reference](../api/index.md) documents every class and constructor argument.
 
 ## Statistical Methods
 
@@ -11,7 +11,7 @@ Simple, fast methods based on basic statistics.
 Replace missing values with the column mean.
 
 ```python
-from imputation_showcase import MeanImputer
+from imputation_methods import MeanImputer
 
 imputer = MeanImputer()
 df_imputed = imputer.impute(df)
@@ -36,7 +36,7 @@ df_imputed = imputer.impute(df)
 ```python
 import pandas as pd
 import numpy as np
-from imputation_showcase import MeanImputer
+from imputation_methods import MeanImputer
 
 df = pd.DataFrame({'A': [1, 2, np.nan, 4, 5]})
 imputer = MeanImputer()
@@ -49,7 +49,7 @@ result = imputer.impute(df)
 Replace missing values with the column median.
 
 ```python
-from imputation_showcase import MedianImputer
+from imputation_methods import MedianImputer
 
 imputer = MedianImputer()
 df_imputed = imputer.impute(df)
@@ -78,7 +78,7 @@ Methods designed specifically for temporal data.
 Fill missing values with the most recent observed value.
 
 ```python
-from imputation_showcase import LOCFImputer
+from imputation_methods import LOCFImputer
 
 imputer = LOCFImputer()
 df_imputed = imputer.impute(df)
@@ -110,7 +110,7 @@ df = pd.DataFrame({'sensor': [20.5, np.nan, np.nan, 22.0, np.nan]})
 Fill missing values with the next observed value.
 
 ```python
-from imputation_showcase import NOCBImputer
+from imputation_methods import NOCBImputer
 
 imputer = NOCBImputer()
 df_imputed = imputer.impute(df)
@@ -137,10 +137,10 @@ Methods that use similarity between observations.
 
 ### K-Nearest Neighbors (KNN)
 
-Impute using weighted average of k-nearest neighbors.
+Impute using the average of the k nearest neighbors (scikit-learn's `KNNImputer`).
 
 ```python
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 imputer = KNNImputerMethod(k=5)
 df_imputed = imputer.impute(df)
@@ -182,7 +182,7 @@ for k in [3, 5, 7, 10]:
 Randomly sample from similar observations ("donors").
 
 ```python
-from imputation_showcase import HotDeckImputer
+from imputation_methods import HotDeckImputer
 
 # Simple random sampling
 imputer = HotDeckImputer(random_state=42)
@@ -197,7 +197,7 @@ df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
-- `stratify_cols`: Columns used to define similarity groups
+- `stratify_cols`: Columns used to define similarity groups (must be numeric, e.g. integer-coded categories)
 - `random_state`: Random seed for reproducibility
 
 **When to use:**
@@ -224,7 +224,7 @@ Methods that predict missing values using regression models.
 Predict missing values using linear regression on other features.
 
 ```python
-from imputation_showcase import RegressionImputer
+from imputation_methods import RegressionImputer
 
 imputer = RegressionImputer()
 df_imputed = imputer.impute(df)
@@ -250,7 +250,7 @@ df_imputed = imputer.impute(df)
 Regression imputation with added noise to preserve variance.
 
 ```python
-from imputation_showcase import StochasticRegressionImputer
+from imputation_methods import StochasticRegressionImputer
 
 imputer = StochasticRegressionImputer(random_state=42)
 df_imputed = imputer.impute(df)
@@ -279,7 +279,7 @@ df_imputed = imputer.impute(df)
 Regression-based method that selects actual observed values.
 
 ```python
-from imputation_showcase import PMMImputer
+from imputation_methods import PMMImputer
 
 imputer = PMMImputer(k=5, random_state=42)
 df_imputed = imputer.impute(df)
@@ -309,7 +309,7 @@ df_imputed = imputer.impute(df)
 Iteratively imputes each variable using the others as predictors.
 
 ```python
-from imputation_showcase import MICEImputer
+from imputation_methods import MICEImputer
 
 imputer = MICEImputer(random_state=42)
 df_imputed = imputer.impute(df)
@@ -325,15 +325,15 @@ df_imputed = imputer.impute(df)
 
 **Pros:**
 - Handles multiple missing variables well
-- Flexible (can use different models per variable)
+- Flexible in principle (this implementation uses `BayesianRidge` for every column)
 - Widely accepted in statistics
 
 **Cons:**
 - Computationally intensive
 - May not converge
-- Requires careful tuning
+- Only `random_state` is configurable
 
-**Note:** Full MICE involves creating multiple imputed datasets. This implementation returns a single imputation.
+**Note:** Full MICE involves creating multiple imputed datasets. This implementation returns a single imputation from scikit-learn's `IterativeImputer`.
 
 ## Tree-Based Methods
 
@@ -341,10 +341,10 @@ Methods using decision tree ensembles.
 
 ### MissForest
 
-Random forest-based iterative imputation.
+Random forest-based iterative imputation (scikit-learn's `IterativeImputer` with a `RandomForestRegressor` per column).
 
 ```python
-from imputation_showcase import MissForestImputer
+from imputation_methods import MissForestImputer
 
 imputer = MissForestImputer(random_state=42)
 df_imputed = imputer.impute(df)
@@ -355,7 +355,7 @@ df_imputed = imputer.impute(df)
 
 **When to use:**
 - Non-linear relationships
-- Mixed data types (numeric/categorical)
+- Integer-coded categorical features mixed with continuous ones (all columns must be numeric)
 - High-dimensional data
 
 **Pros:**
@@ -366,7 +366,7 @@ df_imputed = imputer.impute(df)
 **Cons:**
 - Slow for large datasets
 - Computationally expensive
-- Many hyperparameters (inherited from RandomForest)
+- Forest settings are fixed (only `random_state` is configurable)
 
 ## Matrix Completion Methods
 
@@ -377,7 +377,7 @@ Methods based on low-rank matrix approximation.
 Low-rank matrix completion via nuclear-norm regularization.
 
 ```python
-from imputation_showcase import SoftImputeImputer
+from imputation_methods import SoftImputeImputer
 
 imputer = SoftImputeImputer(
     max_iters=100,
@@ -387,8 +387,10 @@ df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
-- `max_iters`: Maximum iterations
-- `init_fill_method`: Initialization strategy ('zero', 'mean')
+- `max_iters`: Maximum iterations (default: 100)
+- `init_fill_method`: Initialization strategy (`'zero'`, `'mean'`, `'median'` or `'min'`; default: `'zero'`)
+- `shrinkage_value`: Amount subtracted from each singular value (default: 1/50 of the largest singular value of the initial fill)
+- `convergence_threshold`: Relative change of the imputed entries at which to stop (default: 1e-3)
 
 **When to use:**
 - Data has low-rank structure
@@ -407,10 +409,10 @@ df_imputed = imputer.impute(df)
 
 ### Bayesian PCA
 
-Probabilistic PCA for missing data imputation.
+Probabilistic PCA for missing data imputation. Columns are standardized and a PPCA model is fitted by EM while the missing entries are repeatedly replaced by their expected values. Despite the name, this is maximum-likelihood PPCA (Tipping & Bishop, 1999): no priors are placed on the loadings.
 
 ```python
-from imputation_showcase import BayesianPCAImputer
+from imputation_methods import BayesianPCAImputer
 
 imputer = BayesianPCAImputer(
     n_components=2,
@@ -420,8 +422,10 @@ df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
-- `n_components`: Number of latent dimensions
-- `min_obs`: Minimum observations required
+- `n_components`: Number of latent dimensions (default: 1; capped at the number of columns minus one)
+- `min_obs`: Minimum observed values a column needs to take part in the model; other columns are mean-imputed
+- `max_iter`: Maximum EM iterations (default: 500)
+- `tol`: Convergence tolerance (default: 1e-6)
 
 **When to use:**
 - Data lies in low-dimensional subspace
@@ -431,7 +435,7 @@ df_imputed = imputer.impute(df)
 **Pros:**
 - Principled probabilistic approach
 - Dimension reduction + imputation
-- Handles uncertainty
+- Explicit noise model
 
 **Cons:**
 - Requires choosing number of components
@@ -444,10 +448,10 @@ Neural network-based approaches.
 
 ### Autoencoder Imputation
 
-Use neural network autoencoder to reconstruct missing values.
+Use a neural network autoencoder (scikit-learn's `MLPRegressor` trained to reconstruct the mean-filled data) to predict missing values.
 
 ```python
-from imputation_showcase import AutoencoderImputer
+from imputation_methods import AutoencoderImputer
 
 imputer = AutoencoderImputer(
     hidden_layer_sizes=(10, 5),
@@ -480,10 +484,10 @@ df_imputed = imputer.impute(df)
 
 ### GAIN (Generative Adversarial Imputation Networks)
 
-GAN-based approach for missing data (simplified implementation).
+Placeholder for the GAN-based approach of Yoon et al. (2018).
 
 ```python
-from imputation_showcase import GAINImputer
+from imputation_methods import GAINImputer
 
 imputer = GAINImputer(random_state=42)
 df_imputed = imputer.impute(df)
@@ -493,22 +497,16 @@ df_imputed = imputer.impute(df)
 - `random_state`: Random seed
 
 **When to use:**
-- Very large datasets
-- Complex missing patterns
-- State-of-the-art accuracy needed
+- Code written against the GAIN API; otherwise use `MICEImputer` directly
 
 **Pros:**
-- State-of-the-art performance
-- Can handle complex patterns
-- Preserves distributions well
+- Stable API that may be backed by a true GAIN implementation later
 
 **Cons:**
-- Very complex
-- Requires significant computational resources
-- Difficult to tune
-- Black box
+- No adversarial network is trained
+- Results are identical to `MICEImputer`
 
-**Note:** This is a simplified implementation using iterative imputation.
+**Note:** `GAINImputer` currently delegates to scikit-learn's `IterativeImputer` and produces the same results as `MICEImputer`.
 
 ## Advanced Statistical Methods
 
@@ -516,10 +514,10 @@ Sophisticated statistical approaches.
 
 ### Gaussian Process Imputation
 
-Use GP regression for spatially-correlated data.
+Predict each column from the other columns with Gaussian process regression; missing entries are filled with the GP predictive mean.
 
 ```python
-from imputation_showcase import GaussianProcessImputer
+from imputation_methods import GaussianProcessImputer
 from sklearn.gaussian_process.kernels import RBF
 
 imputer = GaussianProcessImputer(
@@ -536,14 +534,13 @@ df_imputed = imputer.impute(df)
 - `random_state`: Random seed
 
 **When to use:**
-- Spatial/temporal correlations
+- Smooth non-linear relationships between columns
 - Small to moderate datasets
-- Need uncertainty estimates
 
 **Pros:**
-- Provides uncertainty estimates
 - Flexible kernel choice
-- Principled probabilistic approach
+- Captures smooth non-linear relationships
+- Principled probabilistic approach (the imputer returns point predictions only)
 
 **Cons:**
 - Computationally expensive (O(n³))
@@ -568,8 +565,20 @@ df_imputed = imputer.impute(df)
 | SoftImpute | ⚡⚡ | ⭐⭐⭐ | Moderate | Low-rank data |
 | Bayesian PCA | ⚡⚡ | ⭐⭐⭐ | Moderate | High-dimensional |
 | Autoencoder | ⚡ | ⭐⭐⭐⭐ | Complex | Large datasets |
-| GAIN | ⚡ | ⭐⭐⭐⭐⭐ | Very Complex | State-of-the-art |
-| Gaussian Process | ⚡ | ⭐⭐⭐⭐ | Complex | Spatial data |
+| GAIN | ⚡⚡ | ⭐⭐⭐⭐ | Complex | Placeholder (same as MICE) |
+| Gaussian Process | ⚡ | ⭐⭐⭐⭐ | Complex | Smooth non-linear data |
+
+## Other Methods
+
+The library also provides these imputers (see the [API Reference](../api/index.md) for their arguments):
+
+- **Statistical:** `ModeImputer`, `ConstantImputer`, `QuantileImputer`, `TrimmedMeanImputer`, `EndOfDistributionImputer`, `GroupMeanImputer`, `IndicatorImputer`
+- **Sampling:** `RandomSamplingImputer`, `ColdDeckImputer`
+- **Time series:** `ForwardFillFallbackImputer`, `InterpolationImputer`, `MovingAverageImputer`, `WeightedMovingAverageImputer`, `LinearTrendImputer`, `PolynomialTrendImputer`, `SeasonalImputer`, `KalmanFilterImputer`
+- **Distance-based:** `RadiusNeighborsImputer`, `LocalMeanImputer`
+- **Regression-based:** `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`
+- **Iterative:** `EMImputer` — iterative chained-equations imputation (`IterativeImputer`) with a configurable `max_iter` and `tol`; it is not closed-form EM for a multivariate normal
+- **Ensemble:** `HybridImputer` (tries imputers in order until no NaNs remain), `StackingImputer` (element-wise mean or median of several imputers' outputs; `meta_strategy="weighted"` currently equals `"mean"`), `BaggingImputer` (averages repeated runs of a base imputer; no bootstrap resampling yet and `max_samples` is unused)
 
 ## Next Steps
 

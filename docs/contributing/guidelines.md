@@ -1,12 +1,12 @@
 # Contributing Guidelines
 
-Thank you for considering contributing to Imputation Showcase! This page provides guidelines for contributing to the project.
+Thank you for considering contributing to `imputation-methods`! This page provides guidelines for contributing to the project.
 
 ## Quick Links
 
-- **Main Contributing Guide:** [CONTRIBUTING.md](https://github.com/DiogoRibeiro7/imputation-showcase/blob/main/CONTRIBUTING.md)
-- **Code of Conduct:** [CODE_OF_CONDUCT.md](https://github.com/DiogoRibeiro7/imputation-showcase/blob/main/CODE_OF_CONDUCT.md)
-- **Issues:** [GitHub Issues](https://github.com/DiogoRibeiro7/imputation-showcase/issues)
+- **Main Contributing Guide:** [CONTRIBUTING.md](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/CONTRIBUTING.md)
+- **Code of Conduct:** [CODE_OF_CONDUCT.md](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/CODE_OF_CONDUCT.md)
+- **Issues:** [GitHub Issues](https://github.com/DiogoRibeiro7/imputation-methods/issues)
 
 ## How to Contribute
 
@@ -33,17 +33,21 @@ Have an idea? We'd love to hear it! Open an issue describing:
 
 Want to add a new imputation technique? Great! Please:
 
-1. Inherit from `BaseImputer`
+1. Inherit from `BaseImputer` and put the class in the matching module under `src/imputation_methods/` (for example `statistical.py`, `time_series.py` or `regression.py`)
 2. Implement the `impute()` method
-3. Add comprehensive tests
-4. Document with examples
-5. Update README and documentation
+3. Add a functional shortcut in `functional.py` and export both from `src/imputation_methods/__init__.py` (including `__all__`)
+4. Add comprehensive tests
+5. Document with Google-style docstrings and examples (docstring examples run as doctests)
+6. Update README and documentation
 
 **Example template:**
 
 ```python
-from imputation_showcase import BaseImputer
 import pandas as pd
+
+# Inside the package, use a relative import: from .base import BaseImputer
+from imputation_methods import BaseImputer
+
 
 class MyNewImputer(BaseImputer):
     """Brief description.
@@ -55,17 +59,16 @@ class MyNewImputer(BaseImputer):
 
     Args:
         param1: Description
-        param2: Description
 
     Examples:
         >>> import pandas as pd
         >>> import numpy as np
         >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4]})
         >>> imputer = MyNewImputer()
-        >>> imputer.impute(df)
+        >>> result = imputer.impute(df)
     """
 
-    def __init__(self, param1=default):
+    def __init__(self, param1: float = 1.0) -> None:
         self.param1 = param1
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -99,7 +102,7 @@ We welcome pull requests for:
 ### Prerequisites
 
 - Python 3.10+
-- [Poetry](https://python-poetry.org/) for dependency management
+- [Poetry](https://python-poetry.org/) for dependency management (or pip >= 25.1 / uv, see [Development Setup](development.md))
 - Git
 
 ### Setup
@@ -108,16 +111,16 @@ We welcome pull requests for:
 
 2. Clone your fork:
 ```bash
-git clone https://github.com/YOUR_USERNAME/imputation-showcase.git
-cd imputation-showcase
+git clone https://github.com/YOUR_USERNAME/imputation-methods.git
+cd imputation-methods
 ```
 
 3. Add upstream remote:
 ```bash
-git remote add upstream https://github.com/DiogoRibeiro7/imputation-showcase.git
+git remote add upstream https://github.com/DiogoRibeiro7/imputation-methods.git
 ```
 
-4. Install dependencies:
+4. Install the package plus the `test` and `lint` dependency groups:
 ```bash
 poetry install
 ```
@@ -142,27 +145,29 @@ Edit code, tests, and documentation as needed.
 
 ```bash
 # Linting
-poetry run flake8 imputation_showcase tests
-
-# Type checking
-poetry run mypy imputation_showcase/
+poetry run ruff check .
 
 # Formatting
-poetry run black --check .
+poetry run ruff format .
 
-# All pre-commit hooks
+# Type checking (strict mode, configured in pyproject.toml)
+poetry run mypy
+
+# All pre-commit hooks (Ruff lint + format, mypy, file hygiene)
 poetry run pre-commit run --all-files
 ```
 
 ### 3. Run Tests
 
 ```bash
-# All tests
+# All tests (includes doctests in src; benchmark tests are skipped)
 poetry run pytest
 
 # With coverage
-poetry run coverage run -m pytest
-poetry run coverage report
+poetry run pytest --cov
+
+# Wall-clock benchmark tests
+poetry run pytest -m benchmark
 
 # Specific test
 poetry run pytest tests/test_imputation_methods.py -v
@@ -208,7 +213,7 @@ Then create a Pull Request on GitHub with:
 
 Before submitting your PR, ensure:
 
-- [ ] Code follows project style (passes flake8, mypy, black)
+- [ ] Code follows project style (passes `ruff check`, `ruff format --check` and `mypy`)
 - [ ] All tests pass
 - [ ] New tests added for new functionality
 - [ ] Documentation updated
@@ -218,7 +223,7 @@ Before submitting your PR, ensure:
 
 ## Code Review Process
 
-1. Automated checks run (CI/CD)
+1. Automated checks run in GitHub Actions: Ruff and mypy, tests on Python 3.10–3.14 on Linux plus Windows and macOS, a minimum-dependency-versions job, the docs build and package build checks
 2. Maintainers review code
 3. Discussion and requested changes
 4. Approval by maintainer
@@ -238,7 +243,7 @@ All contributors are recognized in:
 
 Need help? You can:
 
-- Open a [GitHub Discussion](https://github.com/DiogoRibeiro7/imputation-showcase/discussions)
+- Open a [GitHub Discussion](https://github.com/DiogoRibeiro7/imputation-methods/discussions)
 - Create an issue labeled "question"
 - Email: diogo.debastos.ribeiro@gmail.com
 
@@ -246,6 +251,6 @@ Need help? You can:
 
 - Read [Development Setup](development.md) for detailed environment setup
 - Review [Code Style](code-style.md) for coding standards
-- Check out [existing issues](https://github.com/DiogoRibeiro7/imputation-showcase/issues) labeled "good first issue"
+- Check out [existing issues](https://github.com/DiogoRibeiro7/imputation-methods/issues) labeled "good first issue"
 
 Thank you for contributing! 🎉
