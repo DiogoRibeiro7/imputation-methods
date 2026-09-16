@@ -45,7 +45,9 @@ work too.
 src/imputation_methods/   the package, one module per family of imputers
   base.py                 BaseImputer, the interface every imputer implements
   functional.py           *_impute(df, ...) shortcuts
-tests/                    pytest suite (test_contract.py runs against every imputer)
+tests/                    pytest suite: one file per package module, plus
+                          test_contract.py and test_functional.py, which run
+                          against every imputer and every shortcut
 docs/                     MkDocs site; docs/api/ is generated from docstrings
 examples/, notebooks/     runnable examples (need the viz extra)
 benchmarks/, scripts/     performance comparison and figure generation
@@ -58,7 +60,7 @@ CI runs all of these; run them locally before opening a pull request.
 | Check | Command |
 | --- | --- |
 | Tests (+ doctests) | `poetry run pytest` |
-| Coverage | `poetry run pytest --cov` |
+| Coverage (CI requires at least 90%) | `poetry run pytest --cov` |
 | Lint | `poetry run ruff check .` |
 | Format | `poetry run ruff format .` |
 | Types (strict) | `poetry run mypy` |
@@ -135,10 +137,12 @@ versions allowed by `pyproject.toml`. If you raise a minimum version, change it 
     ```
 
 2. Never modify `df` in place; return a new dataframe with the same index and columns.
-3. Add a `my_impute(df, ...)` shortcut to `functional.py`.
+3. Add a `my_impute(df, ...)` shortcut to `functional.py` with the same parameters
+   and defaults as the class (`tests/test_functional.py` checks this).
 4. Export both from `src/imputation_methods/__init__.py` (keep `__all__` sorted).
-5. Add tests. `tests/test_contract.py` picks up the new class automatically; add a
-   `KWARGS` entry there if it can't be built with default arguments.
+5. Add tests in the test file for the module (e.g. `tests/test_statistical.py`).
+   `tests/test_contract.py` picks up the new class automatically; add a `KWARGS`
+   entry there if it can't be built with default arguments.
 6. Add the class to the module's page under `docs/api/` if it's in a new module,
    to the methods table in `README.md`, and to `CHANGELOG.md`.
 
