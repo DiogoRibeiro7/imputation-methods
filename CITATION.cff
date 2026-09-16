@@ -8,6 +8,7 @@ abstract: >-
   matrix-completion, neural and ensemble) behind a single pandas DataFrame
   interface, with metrics for evaluating imputations.
 version: 0.1.0
+date-released: "2026-09-16"
 license: MIT
 repository-code: "https://github.com/DiogoRibeiro7/imputation-methods"
 url: "https://diogoribeiro7.github.io/imputation-methods/"

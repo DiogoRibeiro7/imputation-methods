@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-First release on PyPI, as `imputation-methods` 0.1.0.
+## [0.1.0] - 2026-09-16
+
+First release on PyPI, as `imputation-methods`.
 
 ### Added
 
@@ -82,4 +84,5 @@ First release on PyPI, as `imputation-methods` 0.1.0.
 
 <!-- --8<-- [end:changelog] -->
 
-[Unreleased]: https://github.com/DiogoRibeiro7/imputation-methods/commits/main
+[Unreleased]: https://github.com/DiogoRibeiro7/imputation-methods/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/DiogoRibeiro7/imputation-methods/releases/tag/v0.1.0
