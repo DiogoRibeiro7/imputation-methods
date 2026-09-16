@@ -2,8 +2,8 @@
 
 <div align="center" markdown>
 
-[![PyPI](https://img.shields.io/pypi/v/imputation-methods.svg)](https://pypi.org/project/imputation-methods/)
-[![Python versions](https://img.shields.io/pypi/pyversions/imputation-methods.svg)](https://pypi.org/project/imputation-methods/)
+[![PyPI](https://img.shields.io/pypi/v/imputation-methods)](https://pypi.org/project/imputation-methods/)
+[![Python versions](https://img.shields.io/pypi/pyversions/imputation-methods)](https://pypi.org/project/imputation-methods/)
 [![CI](https://github.com/DiogoRibeiro7/imputation-methods/actions/workflows/ci.yml/badge.svg)](https://github.com/DiogoRibeiro7/imputation-methods/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
