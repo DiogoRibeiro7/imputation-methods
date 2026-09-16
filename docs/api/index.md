@@ -22,9 +22,8 @@ Every imputer subclasses [`BaseImputer`](base.md) and exposes one method,
   `random_state` for reproducible results.
 - **Columns with no observed values** carry no information, so most imputers leave
   them as `NaN`. `ConstantImputer` fills them with its constant, and
-  `HybridImputer`, `BaggingImputer`, `BayesianRidgeImputer`, `HuberImputer`,
-  `LocalMeanImputer` and `AutoencoderImputer` fall back to 0 (or a value
-  reconstructed from 0). Drop or handle empty columns explicitly if that matters.
+  `HybridImputer`, `BayesianRidgeImputer`, `HuberImputer`, `LocalMeanImputer` and
+  `AutoencoderImputer` fall back to 0 (or a value reconstructed from 0). Drop or handle empty columns explicitly if that matters.
 - **Row order** matters only for the [time-series imputers](time-series.md); sort
   your data first.
 
@@ -41,9 +40,9 @@ Each imputer also has a [functional shortcut](functional.md), for example
 | [Time series](time-series.md) | `imputation_methods.time_series` | `LOCFImputer`, `NOCBImputer`, `ForwardFillFallbackImputer`, `InterpolationImputer`, `MovingAverageImputer`, `WeightedMovingAverageImputer`, `LinearTrendImputer`, `PolynomialTrendImputer`, `SeasonalImputer`, `KalmanFilterImputer` |
 | [Nearest neighbors](neighbors.md) | `imputation_methods.neighbors` | `KNNImputerMethod`, `RadiusNeighborsImputer`, `LocalMeanImputer` |
 | [Regression](regression.md) | `imputation_methods.regression` | `RegressionImputer`, `StochasticRegressionImputer`, `PMMImputer`, `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`, `GaussianProcessImputer` |
-| [Iterative](iterative.md) | `imputation_methods.iterative` | `MICEImputer`, `EMImputer`, `MissForestImputer`, `GAINImputer` |
+| [Iterative](iterative.md) | `imputation_methods.iterative` | `MICEImputer`, `EMImputer`, `MissForestImputer` |
 | [Matrix completion](matrix.md) | `imputation_methods.matrix` | `SoftImputeImputer`, `BayesianPCAImputer` |
-| [Neural networks](neural.md) | `imputation_methods.neural` | `AutoencoderImputer` |
+| [Neural networks](neural.md) | `imputation_methods.neural` | `AutoencoderImputer`, `GAINImputer` |
 | [Ensembles](ensemble.md) | `imputation_methods.ensemble` | `HybridImputer`, `StackingImputer`, `BaggingImputer` |
 | [Functional API](functional.md) | `imputation_methods.functional` | `mean_impute`, `median_impute`, … (42 functions) |
 | [Metrics](metrics.md) | `imputation_methods.metrics` | `rmse`, `mae` |
