@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 
+from ._utils import observed_median
 from .base import BaseImputer
 
 ReferenceValues: TypeAlias = (
@@ -196,7 +197,9 @@ class ColdDeckImputer(BaseImputer):
             # Fallback to median
             for column in result.columns:
                 if result[column].isna().any():
-                    result[column] = result[column].fillna(result[column].median())
+                    result[column] = result[column].fillna(
+                        observed_median(result[column])
+                    )
         elif isinstance(self.reference_values, pd.DataFrame):
             # Use reference DataFrame
             for column in result.columns:
@@ -226,6 +229,8 @@ class ColdDeckImputer(BaseImputer):
                             result[column] = result[column].fillna(float(ref_value))
                     else:
                         # Fallback to median if column not in reference
-                        result[column] = result[column].fillna(result[column].median())
+                        result[column] = result[column].fillna(
+                            observed_median(result[column])
+                        )
 
         return result

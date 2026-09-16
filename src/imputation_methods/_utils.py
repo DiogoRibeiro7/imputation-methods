@@ -41,6 +41,15 @@ def fit_transform_non_empty(imputer: Any, df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
+def observed_median(series: pd.Series) -> float:
+    """Median of the observed values, or NaN if there are none.
+
+    Unlike ``Series.median``, this never emits NumPy's "Mean of empty slice"
+    warning for a column with no observed values.
+    """
+    return float(series.median()) if series.notna().any() else float("nan")
+
+
 def check_on_error(on_error: OnError) -> OnError:
     """Validate an ``on_error`` argument.
 

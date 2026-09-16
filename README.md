@@ -120,7 +120,8 @@ for name, imputer in imputers.items():
   nullable dtypes). Encode categorical columns before imputing. `GroupMeanImputer`
   is the exception: its grouping column may be non-numeric.
 - Time-series imputers use row order, so sort the data first.
-- Columns with no observed values are left as `NaN` by most imputers.
+- Columns with no observed values are left as `NaN`, except by imputers that fill
+  in a constant you choose, such as `ConstantImputer`.
 
 ## Documentation
 

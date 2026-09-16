@@ -382,8 +382,7 @@ class BayesianRidgeImputer(BaseImputer):
 
                 # Edge case: No observed values to learn from
                 if train_mask.sum() == 0:
-                    # Fallback to zero (could also use global mean)
-                    result[column] = result[column].fillna(0)
+                    # No observed values to learn from: leave the column as NaN.
                     continue
 
                 # Use all other columns as predictive features
@@ -484,7 +483,7 @@ class HuberImputer(BaseImputer):
                 predict_mask = result[column].isna()
 
                 if train_mask.sum() == 0:
-                    result[column] = result[column].fillna(0)
+                    # No observed values to learn from: leave the column as NaN.
                     continue
 
                 feature_cols = [c for c in result.columns if c != column]

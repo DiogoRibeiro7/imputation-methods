@@ -47,7 +47,8 @@ class HybridImputer(BaseImputer):
     1. **Graceful degradation**: Complex methods → Simple methods → Always succeed
     2. **Error resilience**: Method failures don't crash the pipeline
     3. **Early stopping**: Stop once all NaNs are filled (efficiency)
-    4. **Guaranteed completion**: Final fallback ensures no NaNs remain
+    4. **Completion**: A final mean fill covers any NaNs the chain left, except in
+       columns with no observed values, which stay NaN
 
     **Recommended Method Ordering:**
     1. **Domain-specific** (if applicable): Business rules, external data
@@ -80,7 +81,9 @@ class HybridImputer(BaseImputer):
         - Each method sees the output of the previous method
         - If a method fills all NaNs, subsequent methods are skipped
         - Exceptions in individual methods are caught and logged
-        - Always has a final safety net (mean → 0) to guarantee no NaNs
+        - A final column-mean fill covers any NaNs the chain left. Columns with no
+          observed values stay NaN; add ``ConstantImputer`` to the chain if you
+          want to fill them with a fixed value
 
     References:
         Ensemble and cascading strategies for robust machine learning.
@@ -117,7 +120,8 @@ class HybridImputer(BaseImputer):
             df: Dataframe with missing values.
 
         Returns:
-            Imputed dataframe (guaranteed to have no NaNs).
+            Imputed dataframe. NaNs remain only in columns that have no observed
+            values.
         """
         df = self._ensure_numeric(df)
         result = df.copy()
@@ -161,8 +165,8 @@ class HybridImputer(BaseImputer):
         # ============================================================
         # FINAL SAFETY NET
         # ============================================================
-        # Guarantee no NaNs remain, even if all methods failed
-        # This ensures the imputer always succeeds
+        # Fill whatever the chain left with column means. Columns with no
+        # observed values have no mean and stay NaN.
         if result.isna().any().any():
             logger.warning(
                 "Some NaNs remain after all methods. Applying final fallback."
@@ -175,13 +179,10 @@ class HybridImputer(BaseImputer):
                     if not np.isnan(mean_val):
                         result[column] = result[column].fillna(mean_val)
                     else:
-                        # If mean is NaN (all values were missing), use 0
-                        # This is a last resort but ensures no NaNs
                         logger.warning(
-                            "Column %r has no observed values; filling with 0",
+                            "Column %r has no observed values; leaving it as NaN",
                             column,
                         )
-                        result[column] = result[column].fillna(0)
 
         return result
 
