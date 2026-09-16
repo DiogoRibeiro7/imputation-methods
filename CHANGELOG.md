@@ -26,9 +26,9 @@ First release on PyPI, as `imputation-methods` 0.1.0.
     `LocalMeanImputer`
   - **Regression**: `RegressionImputer`, `StochasticRegressionImputer`, `PMMImputer`,
     `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`, `GaussianProcessImputer`
-  - **Iterative**: `MICEImputer`, `EMImputer`, `MissForestImputer`, `GAINImputer`
+  - **Iterative**: `MICEImputer`, `EMImputer`, `MissForestImputer`
   - **Matrix completion**: `SoftImputeImputer`, `BayesianPCAImputer`
-  - **Neural networks**: `AutoencoderImputer`
+  - **Neural networks**: `AutoencoderImputer`, `GAINImputer`
   - **Ensembles**: `HybridImputer`, `StackingImputer`, `BaggingImputer`
 - A functional shortcut for every imputer, e.g. `knn_impute(df, k=3)`.
 - `rmse` and `mae` metrics for scoring imputations against ground truth.
@@ -52,6 +52,13 @@ First release on PyPI, as `imputation-methods` 0.1.0.
 - Handled fallbacks (e.g. MICE falling back to mean imputation) log a single
   `WARNING` instead of `ERROR` + `WARNING`, and routine progress messages were
   removed from `INFO`.
+- `GAINImputer` now implements Generative Adversarial Imputation Nets (Yoon et
+  al., 2018) on NumPy, with the reference hyperparameters (`batch_size`,
+  `hint_rate`, `alpha`, `iterations`, `learning_rate`). It previously ran
+  scikit-learn's `IterativeImputer` and gave the same results as `MICEImputer`.
+- `BaggingImputer` now performs real bootstrap aggregating: each run imputes a
+  resampled set of rows (`max_samples`) with its own seed, and the results are
+  averaged. It previously averaged identical runs on the full data.
 - `ColdDeckImputer` accepts `random_state` for reproducible sampling from array
   reference values.
 - Faster, vectorized `GroupMeanImputer` and `SeasonalImputer`.
@@ -63,7 +70,7 @@ First release on PyPI, as `imputation-methods` 0.1.0.
   silently fell back to mean imputation in the same situation. Gaps in predictor
   columns are now mean-filled before fitting.
 - A column with no observed values made `EMImputer` raise, and made `MICEImputer`,
-  `MissForestImputer`, `GAINImputer` and `KNNImputerMethod` fall back to mean/median
+  `MissForestImputer` and `KNNImputerMethod` fall back to mean/median
   imputation for every column. Such columns are now left as `NaN` and the other
   columns are imputed normally.
 - `PMMImputer` drew donors with the same seed for every missing value, and filled

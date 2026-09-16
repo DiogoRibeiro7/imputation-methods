@@ -92,7 +92,6 @@ print(df_imputed)
 - MICE (Multiple Imputation by Chained Equations)
 - MissForest
 - EM-style iterative imputation (chained equations, not closed-form multivariate-normal EM)
-- GAIN (placeholder: currently delegates to iterative imputation and gives the same results as MICE)
 
 ### Matrix Completion Methods
 - SoftImpute
@@ -100,11 +99,12 @@ print(df_imputed)
 
 ### Neural Network Methods
 - Autoencoder
+- GAIN (Generative Adversarial Imputation Nets)
 
 ### Ensemble Methods
 - Hybrid (fallback chain)
 - Stacking (mean/median of several imputers)
-- Bagging (averages repeated runs; no bootstrap resampling yet)
+- Bagging (bootstrap aggregating of a base imputer)
 
 ## Installation
 

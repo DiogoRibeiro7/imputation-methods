@@ -74,19 +74,13 @@ Imputers are configured in the constructor. Those with a random component accept
 | Time series | `LOCFImputer`, `NOCBImputer`, `ForwardFillFallbackImputer`, `InterpolationImputer`, `MovingAverageImputer`, `WeightedMovingAverageImputer`, `LinearTrendImputer`, `PolynomialTrendImputer`, `SeasonalImputer`, `KalmanFilterImputer` |
 | Nearest neighbors | `KNNImputerMethod`, `RadiusNeighborsImputer`, `LocalMeanImputer` |
 | Regression | `RegressionImputer`, `StochasticRegressionImputer`, `PMMImputer` (predictive mean matching), `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`, `GaussianProcessImputer` |
-| Iterative | `MICEImputer`, `MissForestImputer`, `EMImputer`, `GAINImputer` |
+| Iterative | `MICEImputer`, `MissForestImputer`, `EMImputer` |
 | Matrix completion | `SoftImputeImputer`, `BayesianPCAImputer` (probabilistic PCA) |
-| Neural networks | `AutoencoderImputer` |
-| Ensembles | `HybridImputer` (fallback chain), `StackingImputer`, `BaggingImputer` |
+| Neural networks | `AutoencoderImputer`, `GAINImputer` (generative adversarial imputation) |
+| Ensembles | `HybridImputer` (fallback chain), `StackingImputer`, `BaggingImputer` (bootstrap aggregating) |
 
-Some implementations are simpler than their names suggest:
-
-- `GAINImputer` does not train an adversarial network yet; it currently gives the
-  same results as `MICEImputer`.
-- `EMImputer` runs iterative chained-equation imputation, not closed-form EM for a
-  multivariate normal distribution.
-- `BaggingImputer` averages repeated runs of its base imputer without bootstrap
-  resampling.
+`EMImputer` runs iterative chained-equation imputation rather than closed-form EM
+for a multivariate normal distribution.
 
 The [API reference](https://diogoribeiro7.github.io/imputation-methods/api/) documents
 every class and its parameters.

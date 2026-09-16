@@ -432,14 +432,11 @@ def print_summary(df_results: pd.DataFrame):
             f"  {row['method']:20s}: {row['time']:6.2f}s, RMSE {row['rmse']:.4f} (score: {row['score']:.3f})"
         )
 
-    # Recommendations
-    print("\n💡 RECOMMENDATIONS:")
-    print("  - For production (speed priority): Mean, Median, or LOCF")
-    print("  - For accuracy (time not critical): MissForest, MICE, or PMM")
-    print("  - For balance: KNN-5 or Regression")
-    print("  - For time series: LOCF or KNN")
-    print("  - For small datasets: Any method works")
-    print("  - For large datasets (>10K rows): Avoid MissForest, GP")
+    print(
+        "\nRankings depend on the data. These synthetic rows have no time "
+        "order, so time-series methods (LOCF, NOCB) are expected to do poorly "
+        "here. See the method selection guide in the documentation."
+    )
 
     print("\n✓ Benchmark complete!")
 

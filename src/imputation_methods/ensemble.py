@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import copy
+import inspect
 import logging
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -333,68 +336,81 @@ class StackingImputer(BaseImputer):
         return result
 
 
+def _with_random_state(imputer: BaseImputer, seed: int) -> BaseImputer:
+    """Return a copy of ``imputer`` configured with ``random_state=seed``.
+
+    Imputers are rebuilt from their constructor arguments so that internal
+    estimators created in ``__init__`` pick up the new seed. Imputers without a
+    ``random_state`` parameter are deterministic and are simply copied.
+    """
+    parameters = inspect.signature(type(imputer).__init__).parameters
+    if "random_state" not in parameters:
+        return copy.deepcopy(imputer)
+    kwargs: dict[str, Any] = {}
+    for name, parameter in parameters.items():
+        if name == "self" or parameter.kind in (
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        ):
+            continue
+        if not hasattr(imputer, name):
+            clone = copy.deepcopy(imputer)
+            clone.random_state = seed  # type: ignore[attr-defined]
+            return clone
+        kwargs[name] = copy.deepcopy(getattr(imputer, name))
+    kwargs["random_state"] = seed
+    return type(imputer)(**kwargs)
+
+
 class BaggingImputer(BaseImputer):
-    """Average repeated runs of a base imputer.
+    """Bootstrap aggregating (bagging) of a base imputer.
 
-    Runs ``base_imputer`` ``n_estimators`` times on the full dataset and
-    averages the completed dataframes.
+    Each of the ``n_estimators`` runs draws a bootstrap sample of the rows (with
+    replacement), imputes that sample with its own copy of ``base_imputer``, and
+    records the values imputed for the rows it contains. Every missing cell is
+    then set to the average of the values imputed for its row across all runs
+    whose sample included that row. Averaging over resampled data reduces the
+    variance of unstable imputers.
 
-    Warning:
-        Bootstrap resampling is not implemented yet: every run sees the same
-        rows and uses the base imputer's own ``random_state``. Averaging only
-        changes the result for base imputers that are unseeded and random, and
-        ``max_samples`` is currently ignored.
+    Sampled rows keep their original order, so order-dependent imputers such as
+    :class:`~imputation_methods.LOCFImputer` still see a time-ordered sequence.
+    Base imputers that accept ``random_state`` get a different seed for every
+    run, derived from this imputer's ``random_state``. Cells whose row was never
+    sampled are filled by running ``base_imputer`` once on the full data.
 
-    **Intended Algorithm (bootstrap aggregating):**
-    1. Create n_estimators bootstrap samples (sample with replacement)
-    2. Train base imputer on each bootstrap sample
-    3. Predict missing values using each trained imputer
-    4. Average all predictions for final result
-
-    **Why Bagging Works:**
-    - Reduces variance without increasing bias
-    - Makes unstable imputers (like KNN, decision trees) more robust
-    - Similar principle to Random Forests (which bags decision trees)
-    - Smooths out predictions by averaging multiple noisy estimates
-
-    **Mathematical Intuition:**
-    If base imputer has variance σ², the bagged ensemble has variance ≈ σ²/n
-    (assuming independent errors). More estimators = lower variance = more stable.
-
-    **Best Base Imputers for Bagging:**
-    - KNNImputerMethod (high variance method)
-    - RegressionImputer (benefits from multiple training sets)
-    - MissForestImputer (already uses random forests internally)
-    - Avoid: MeanImputer, MedianImputer (too simple, no variance to reduce)
-
-    **When to Use:**
-    - When base imputer is unstable or high-variance
-    - When you want more robust predictions
-    - When computational cost is acceptable (trains n_estimators models)
-    - For small to medium datasets where bootstrap sampling makes sense
+    **Good base imputers for bagging:** high-variance methods such as
+    :class:`~imputation_methods.KNNImputerMethod`,
+    :class:`~imputation_methods.RegressionImputer` or
+    :class:`~imputation_methods.PMMImputer`. Simple statistics such as the mean
+    gain little.
 
     Args:
-        base_imputer: Base imputer to use for each bootstrap sample.
-            Default: MeanImputer()
+        base_imputer: Imputer applied to each bootstrap sample.
+            Default: ``MeanImputer()``
         n_estimators: Number of bootstrap samples. Default: 10
-        max_samples: Fraction of samples per bootstrap (currently unused).
-            Default: 0.8
-        random_state: Random seed (currently unused). Default: None
+        max_samples: Size of each bootstrap sample as a fraction of the number
+            of rows. Default: 0.8
+        random_state: Seed for the bootstrap samples and the base imputer
+            seeds. Default: None
 
     Examples:
-        >>> import pandas as pd
         >>> import numpy as np
+        >>> import pandas as pd
         >>> from imputation_methods import BaggingImputer, KNNImputerMethod
-        >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, 5, np.nan, 7]})
-        >>> imputer = BaggingImputer(
-        ...     base_imputer=KNNImputerMethod(),
-        ...     n_estimators=5
+        >>> df = pd.DataFrame(
+        ...     {
+        ...         "a": [1, 2, np.nan, 4, 5, np.nan, 7],
+        ...         "b": [2, 4, 6, np.nan, 10, 12, 14],
+        ...     }
         ... )
-        >>> imputed = imputer.impute(df)
+        >>> imputer = BaggingImputer(
+        ...     base_imputer=KNNImputerMethod(k=2), n_estimators=5, random_state=0
+        ... )
+        >>> bool(imputer.impute(df).notna().all().all())
+        True
 
     References:
-        Breiman, L. (1996). Bagging predictors. Machine Learning.
-        Bootstrap aggregating for variance reduction in predictions.
+        Breiman, L. (1996). Bagging predictors. Machine Learning, 24(2), 123-140.
     """
 
     def __init__(
@@ -407,11 +423,18 @@ class BaggingImputer(BaseImputer):
         """Initialize the bagging imputer.
 
         Args:
-            base_imputer: Base imputer instance
-            n_estimators: Number of bootstrap samples
-            max_samples: Fraction of samples per bootstrap (currently unused)
-            random_state: Random seed (currently unused)
+            base_imputer: Imputer applied to each bootstrap sample.
+            n_estimators: Number of bootstrap samples.
+            max_samples: Bootstrap sample size as a fraction of the rows.
+            random_state: Seed for sampling and base imputer seeds.
+
+        Raises:
+            ValueError: If ``n_estimators`` or ``max_samples`` is out of range.
         """
+        if n_estimators < 1:
+            raise ValueError(f"n_estimators must be >= 1, got {n_estimators}")
+        if not 0.0 < max_samples <= 1.0:
+            raise ValueError(f"max_samples must be in (0, 1], got {max_samples}")
         if base_imputer is None:
             base_imputer = MeanImputer()
 
@@ -421,43 +444,57 @@ class BaggingImputer(BaseImputer):
         self.random_state = random_state
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Impute using bagging.
-
-        Applies the base imputer ``n_estimators`` times and averages the
-        results.
+        """Impute using bootstrap aggregating.
 
         Args:
             df: Dataframe with missing values.
 
         Returns:
-            Imputed dataframe.
+            Imputed dataframe with float columns. Cells the base imputer cannot
+            fill (for example in a column with no observed values) stay NaN.
         """
         df = self._ensure_numeric(df)
+        values = df.to_numpy(dtype=float, na_value=np.nan)
+        missing = np.isnan(values)
+        if not missing.any():
+            return df.astype(float)
 
-        all_predictions = []
+        n_rows = len(df)
+        sample_size = max(1, round(self.max_samples * n_rows))
+        rng = np.random.default_rng(self.random_state)
+        totals = np.zeros_like(values)
+        counts = np.zeros_like(values)
+
         for i in range(self.n_estimators):
+            rows = np.sort(rng.integers(0, n_rows, size=sample_size))
+            estimator = _with_random_state(
+                self.base_imputer, int(rng.integers(2**32 - 1))
+            )
+            sample = df.iloc[rows].reset_index(drop=True)
             try:
-                all_predictions.append(self.base_imputer.impute(df))
+                imputed = estimator.impute(sample)[df.columns].to_numpy(
+                    dtype=float, na_value=np.nan
+                )
             except Exception as e:
                 logger.warning("Estimator %d failed (%s); excluding it", i, e)
+                continue
+            usable = missing[rows] & ~np.isnan(imputed)
+            np.add.at(totals, rows, np.where(usable, imputed, 0.0))
+            np.add.at(counts, rows, usable.astype(float))
 
-        # Safety check: ensure at least one estimator succeeded
-        if len(all_predictions) == 0:
-            # All estimators failed, fall back to base imputer
-            return self.base_imputer.impute(df)
+        completed = np.where(
+            missing & (counts > 0), totals / np.maximum(counts, 1.0), values
+        )
+        uncovered = missing & (counts == 0)
+        if uncovered.any():
+            logger.debug(
+                "%d missing cells were not in any bootstrap sample; imputing them "
+                "from the full data",
+                int(uncovered.sum()),
+            )
+            fallback = self.base_imputer.impute(df)[df.columns].to_numpy(
+                dtype=float, na_value=np.nan
+            )
+            completed = np.where(uncovered, fallback, completed)
 
-        # Aggregate predictions via averaging
-        # This is the "aggregating" part of "bootstrap aggregating"
-        # Averaging reduces variance: Var(mean) = Var(X) / n
-        result = _mean_frame(all_predictions)
-
-        # Final safety check: ensure no NaNs remain
-        # This should rarely trigger if base imputer is working correctly
-        if result.isna().any().any():
-            # Fallback imputation for any remaining NaNs
-            result = result.fillna(df.mean())
-            if result.isna().any().any():
-                # Last resort: use zero
-                result = result.fillna(0)
-
-        return result
+        return pd.DataFrame(completed, index=df.index, columns=df.columns)

@@ -138,7 +138,7 @@ def test_autoencoder_imputer() -> None:
 
 def test_gain_imputer() -> None:
     df = pd.DataFrame({"a": [1, 2, np.nan], "b": [4, np.nan, 6]})
-    imputed = GAINImputer(random_state=0).impute(df)
+    imputed = GAINImputer(iterations=200, random_state=0).impute(df)
     assert not imputed.isna().any().any()
 
 

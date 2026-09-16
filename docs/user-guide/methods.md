@@ -484,29 +484,35 @@ df_imputed = imputer.impute(df)
 
 ### GAIN (Generative Adversarial Imputation Networks)
 
-Placeholder for the GAN-based approach of Yoon et al. (2018).
+The GAN-based approach of Yoon et al. (2018). A generator fills in missing entries while a discriminator tries to tell observed entries from imputed ones; a hint vector reveals part of the missingness mask to the discriminator, and a reconstruction loss keeps the generator faithful to the observed values. Implemented on NumPy, with the reference implementation's defaults.
 
 ```python
 from imputation_methods import GAINImputer
 
-imputer = GAINImputer(random_state=42)
+imputer = GAINImputer(iterations=2000, random_state=42)
 df_imputed = imputer.impute(df)
 ```
 
 **Parameters:**
+- `batch_size`: Rows per training step (default: 128)
+- `hint_rate`: Probability of revealing each mask entry to the discriminator (default: 0.9)
+- `alpha`: Weight of the reconstruction loss (default: 100)
+- `iterations`: Training steps (default: 10000)
+- `learning_rate`: Adam learning rate (default: 0.001)
 - `random_state`: Random seed
 
 **When to use:**
-- Code written against the GAIN API; otherwise use `MICEImputer` directly
+- Larger datasets with complex, non-linear dependencies between columns
+- As a generative alternative to compare against MICE or MissForest
 
 **Pros:**
-- Stable API that may be backed by a true GAIN implementation later
+- Learns the joint distribution without parametric assumptions
+- Handles any missingness pattern across columns
 
 **Cons:**
-- No adversarial network is trained
-- Results are identical to `MICEImputer`
-
-**Note:** `GAINImputer` currently delegates to scikit-learn's `IterativeImputer` and produces the same results as `MICEImputer`.
+- Needs a reasonable amount of data; on small tables MICE is usually more accurate
+- Training takes seconds rather than milliseconds
+- Results depend on the random seed and training budget
 
 ## Advanced Statistical Methods
 
@@ -565,7 +571,7 @@ df_imputed = imputer.impute(df)
 | SoftImpute | ⚡⚡ | ⭐⭐⭐ | Moderate | Low-rank data |
 | Bayesian PCA | ⚡⚡ | ⭐⭐⭐ | Moderate | High-dimensional |
 | Autoencoder | ⚡ | ⭐⭐⭐⭐ | Complex | Large datasets |
-| GAIN | ⚡⚡ | ⭐⭐⭐⭐ | Complex | Placeholder (same as MICE) |
+| GAIN | ⚡ | ⭐⭐⭐ | Complex | Large datasets, non-linear dependencies |
 | Gaussian Process | ⚡ | ⭐⭐⭐⭐ | Complex | Smooth non-linear data |
 
 ## Other Methods
@@ -578,7 +584,7 @@ The library also provides these imputers (see the [API Reference](../api/index.m
 - **Distance-based:** `RadiusNeighborsImputer`, `LocalMeanImputer`
 - **Regression-based:** `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`
 - **Iterative:** `EMImputer` — iterative chained-equations imputation (`IterativeImputer`) with a configurable `max_iter` and `tol`; it is not closed-form EM for a multivariate normal
-- **Ensemble:** `HybridImputer` (tries imputers in order until no NaNs remain), `StackingImputer` (element-wise mean or median of several imputers' outputs; `meta_strategy="weighted"` currently equals `"mean"`), `BaggingImputer` (averages repeated runs of a base imputer; no bootstrap resampling yet and `max_samples` is unused)
+- **Ensemble:** `HybridImputer` (tries imputers in order until no NaNs remain), `StackingImputer` (element-wise mean or median of several imputers' outputs; `meta_strategy="weighted"` currently equals `"mean"`), `BaggingImputer` (bootstrap aggregating: averages a base imputer's imputations over resampled rows)
 
 ## Next Steps
 
