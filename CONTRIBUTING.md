@@ -175,7 +175,7 @@ are stored in the repository.
    approval step before anything is uploaded.
 3. The documentation site is served by GitHub Pages from the `gh-pages` branch.
    The **Docs** workflow redeploys it whenever `docs/`, `mkdocs.yml`, `src/` or
-   `CHANGELOG.md` change on `main`, on every release, and when run manually.
+   `CHANGELOG.md` or `ROADMAP.md` change on `main`, on every release, and when run manually.
 
 ### Each release
 
