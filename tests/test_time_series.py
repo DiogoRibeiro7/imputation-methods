@@ -136,7 +136,7 @@ class TestMovingAverageImputer:
     def test_mean_window(self):
         """Test moving average with mean."""
         df = pd.DataFrame({"a": [1.0, 2.0, np.nan, 4.0, 5.0]})
-        imputer = MovingAverageImputer(window=3, method="mean")
+        imputer = MovingAverageImputer(window=3, strategy="mean")
         result = imputer.impute(df)
 
         assert not result.isna().any().any()
@@ -144,7 +144,7 @@ class TestMovingAverageImputer:
     def test_median_window(self):
         """Test moving average with median."""
         df = pd.DataFrame({"a": [1.0, 2.0, np.nan, 4.0, 5.0]})
-        imputer = MovingAverageImputer(window=3, method="median")
+        imputer = MovingAverageImputer(window=3, strategy="median")
         result = imputer.impute(df)
 
         assert not result.isna().any().any()
@@ -156,8 +156,8 @@ class TestMovingAverageImputer:
 
     def test_invalid_method(self):
         """Test invalid method."""
-        with pytest.raises(ValueError, match="method must be 'mean' or 'median'"):
-            MovingAverageImputer(method="invalid")
+        with pytest.raises(ValueError, match="strategy must be 'mean' or 'median'"):
+            MovingAverageImputer(strategy="invalid")
 
     def test_centered_window(self):
         """Test centered window."""
@@ -267,7 +267,7 @@ class TestSeasonalImputer:
         # Create data with weekly pattern
         data = [100, 120, 110, np.nan, 130, 90, 80] * 2
         df = pd.DataFrame({"sales": data})
-        imputer = SeasonalImputer(period=7, method="median")
+        imputer = SeasonalImputer(period=7, strategy="median")
         result = imputer.impute(df)
 
         assert not result.isna().any().any()
@@ -280,7 +280,7 @@ class TestSeasonalImputer:
         data[29] = np.nan
         df = pd.DataFrame({"temp": data})
 
-        imputer = SeasonalImputer(period=24, method="mean")
+        imputer = SeasonalImputer(period=24, strategy="mean")
         result = imputer.impute(df)
 
         assert not result.isna().any().any()
@@ -292,18 +292,18 @@ class TestSeasonalImputer:
 
     def test_invalid_method(self):
         """Test invalid aggregation method."""
-        with pytest.raises(ValueError, match="method must be 'mean' or 'median'"):
-            SeasonalImputer(method="invalid")
+        with pytest.raises(ValueError, match="strategy must be 'mean' or 'median'"):
+            SeasonalImputer(strategy="invalid")
 
     def test_mean_vs_median(self):
         """Test mean vs median methods."""
         data = [1, 2, np.nan, 4] * 2
         df = pd.DataFrame({"a": data})
 
-        imputer_mean = SeasonalImputer(period=4, method="mean")
+        imputer_mean = SeasonalImputer(period=4, strategy="mean")
         result_mean = imputer_mean.impute(df)
 
-        imputer_median = SeasonalImputer(period=4, method="median")
+        imputer_median = SeasonalImputer(period=4, strategy="median")
         result_median = imputer_median.impute(df)
 
         assert not result_mean.isna().any().any()
@@ -311,7 +311,7 @@ class TestSeasonalImputer:
 
     def test_seasonal_imputer_uses_per_phase_statistic(self) -> None:
         df = pd.DataFrame({"a": [1.0, 10.0, np.nan, 20.0, 3.0, np.nan]})
-        result = SeasonalImputer(period=2, method="median").impute(df)
+        result = SeasonalImputer(period=2, strategy="median").impute(df)
         assert result["a"].tolist() == [1.0, 10.0, 2.0, 20.0, 3.0, 15.0]
 
 

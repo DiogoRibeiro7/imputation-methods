@@ -15,6 +15,7 @@ from sklearn.linear_model import (
     RANSACRegressor,
 )
 
+from ._deprecation import renamed_parameters
 from .base import BaseImputer
 
 logger = logging.getLogger(__name__)
@@ -154,29 +155,32 @@ class PMMImputer(BaseImputer):
 
     For each column, a linear regression on the other columns scores every row.
     Each missing entry is then replaced by the observed value of a donor drawn
-    at random from the ``k`` rows whose predicted scores are closest, so imputed
-    values are always values that actually occur in the data.
+    at random from the ``n_neighbors`` rows whose predicted scores are closest, so
+    imputed values are always values that actually occur in the data.
 
     References:
         Little, R. J. A. (1988). Missing-data adjustments in large surveys.
         Journal of Business & Economic Statistics, 6(3), 287-296.
     """
 
-    def __init__(self, k: int = 5, random_state: int | None = None) -> None:
+    @renamed_parameters(k="n_neighbors")
+    def __init__(self, n_neighbors: int = 5, random_state: int | None = None) -> None:
         """Initialize the imputer.
 
         Args:
-            k: Number of donor candidates to consider.
+            n_neighbors: Number of donor candidates to consider.
             random_state: Seed for donor selection randomness.
 
         Raises:
-            ValueError: If k is not a positive integer.
+            ValueError: If n_neighbors is not a positive integer.
         """
-        if not isinstance(k, int):
-            raise TypeError(f"k must be an integer, got {type(k).__name__}")
-        if k <= 0:
-            raise ValueError(f"k must be positive, got {k}")
-        self.k = k
+        if not isinstance(n_neighbors, int):
+            raise TypeError(
+                f"n_neighbors must be an integer, got {type(n_neighbors).__name__}"
+            )
+        if n_neighbors <= 0:
+            raise ValueError(f"n_neighbors must be positive, got {n_neighbors}")
+        self.n_neighbors = n_neighbors
         self.random_state = random_state
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -219,7 +223,7 @@ class PMMImputer(BaseImputer):
 
                     for i, pred in zip(missing.index, missing_pred, strict=True):
                         distances = np.abs(observed_pred - pred)
-                        nearest_idx = np.argsort(distances)[: self.k]
+                        nearest_idx = np.argsort(distances)[: self.n_neighbors]
                         result.at[i, column] = rng.choice(observed_values[nearest_idx])
                 except (ValueError, np.linalg.LinAlgError) as e:
                     logger.warning(

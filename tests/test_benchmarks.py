@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from imputation_methods import (
-    KNNImputerMethod,
+    KNNImputer,
     MeanImputer,
     MedianImputer,
     MICEImputer,
@@ -73,7 +73,7 @@ def test_knn_imputation_performance() -> None:
         df[mask] = np.nan
 
         start = time.time()
-        imputed = KNNImputerMethod(k=3).impute(df)
+        imputed = KNNImputer(n_neighbors=3).impute(df)
         elapsed = time.time() - start
         times.append(elapsed)
 
@@ -102,7 +102,7 @@ def test_performance_comparison() -> None:
 
     # Test complex imputer
     start = time.time()
-    KNNImputerMethod(k=3).impute(df)
+    KNNImputer(n_neighbors=3).impute(df)
     times["knn"] = time.time() - start
 
     # Simple imputers should be faster than KNN
@@ -148,7 +148,7 @@ def test_memory_efficiency() -> None:
     imputers = [
         MeanImputer(),
         MedianImputer(),
-        KNNImputerMethod(k=5),
+        KNNImputer(n_neighbors=5),
     ]
 
     for imputer in imputers:

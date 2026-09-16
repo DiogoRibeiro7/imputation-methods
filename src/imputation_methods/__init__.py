@@ -16,12 +16,12 @@ Examples:
 
 from importlib.metadata import PackageNotFoundError, version
 
+from ._deprecation import renamed_module_attributes
 from .base import BaseImputer
 from .ensemble import BaggingImputer, HybridImputer, StackingImputer
 from .functional import (
     autoencoder_impute,
     bagging_impute,
-    bayesian_pca_impute,
     bayesian_ridge_impute,
     cold_deck_impute,
     constant_impute,
@@ -48,8 +48,9 @@ from .functional import (
     mode_impute,
     moving_average_impute,
     nocb_impute,
+    pmm_impute,
     polynomial_trend_impute,
-    predictive_mean_matching,
+    ppca_impute,
     quantile_impute,
     radius_neighbors_impute,
     random_sampling_impute,
@@ -63,9 +64,9 @@ from .functional import (
     weighted_moving_average_impute,
 )
 from .iterative import EMImputer, MICEImputer, MissForestImputer
-from .matrix import BayesianPCAImputer, SoftImputeImputer
+from .matrix import PPCAImputer, SoftImputeImputer
 from .metrics import mae, rmse
-from .neighbors import KNNImputerMethod, LocalMeanImputer, RadiusNeighborsImputer
+from .neighbors import KNNImputer, LocalMeanImputer, RadiusNeighborsImputer
 from .neural import AutoencoderImputer, GAINImputer
 from .regression import (
     BayesianRidgeImputer,
@@ -101,6 +102,9 @@ from .time_series import (
     WeightedMovingAverageImputer,
 )
 
+# Old names that still work, with a FutureWarning, until 1.0.0.
+__getattr__ = renamed_module_attributes(__name__)
+
 try:
     __version__ = version("imputation-methods")
 except PackageNotFoundError:  # pragma: no cover - package is not installed
@@ -110,7 +114,6 @@ __all__ = [
     "AutoencoderImputer",
     "BaggingImputer",
     "BaseImputer",
-    "BayesianPCAImputer",
     "BayesianRidgeImputer",
     "ColdDeckImputer",
     "ConstantImputer",
@@ -125,7 +128,7 @@ __all__ = [
     "HybridImputer",
     "IndicatorImputer",
     "InterpolationImputer",
-    "KNNImputerMethod",
+    "KNNImputer",
     "KalmanFilterImputer",
     "LOCFImputer",
     "LinearTrendImputer",
@@ -138,6 +141,7 @@ __all__ = [
     "MovingAverageImputer",
     "NOCBImputer",
     "PMMImputer",
+    "PPCAImputer",
     "PolynomialTrendImputer",
     "QuantileImputer",
     "RANSACImputer",
@@ -153,7 +157,6 @@ __all__ = [
     "__version__",
     "autoencoder_impute",
     "bagging_impute",
-    "bayesian_pca_impute",
     "bayesian_ridge_impute",
     "cold_deck_impute",
     "constant_impute",
@@ -181,8 +184,9 @@ __all__ = [
     "mode_impute",
     "moving_average_impute",
     "nocb_impute",
+    "pmm_impute",
     "polynomial_trend_impute",
-    "predictive_mean_matching",
+    "ppca_impute",
     "quantile_impute",
     "radius_neighbors_impute",
     "random_sampling_impute",

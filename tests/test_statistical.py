@@ -221,7 +221,7 @@ class TestEndOfDistributionImputer:
     def test_high_position(self):
         """Test imputation at high end of distribution."""
         df = pd.DataFrame({"a": [1, 2, 3, 4, 5, np.nan]})
-        imputer = EndOfDistributionImputer(position="high", k=1)
+        imputer = EndOfDistributionImputer(position="high", n_std=1)
         result = imputer.impute(df)
 
         assert not result.isna().any().any()
@@ -233,7 +233,7 @@ class TestEndOfDistributionImputer:
     def test_low_position(self):
         """Test imputation at low end of distribution."""
         df = pd.DataFrame({"a": [1, 2, 3, 4, 5, np.nan]})
-        imputer = EndOfDistributionImputer(position="low", k=2)
+        imputer = EndOfDistributionImputer(position="low", n_std=2)
         result = imputer.impute(df)
 
         assert not result.isna().any().any()
@@ -256,7 +256,7 @@ class TestGroupMeanImputer:
         df = pd.DataFrame(
             {"category": [1, 1, 1, 2, 2, 2], "value": [10, np.nan, 12, 20, np.nan, 24]}
         )
-        imputer = GroupMeanImputer(group_col="category", method="mean")
+        imputer = GroupMeanImputer(group_col="category", strategy="mean")
         result = imputer.impute(df)
 
         assert not result["value"].isna().any()
@@ -270,7 +270,7 @@ class TestGroupMeanImputer:
         df = pd.DataFrame(
             {"category": [1, 1, 1, 2, 2, 2], "value": [10, np.nan, 14, 20, np.nan, 24]}
         )
-        imputer = GroupMeanImputer(group_col="category", method="median")
+        imputer = GroupMeanImputer(group_col="category", strategy="median")
         result = imputer.impute(df)
 
         assert not result["value"].isna().any()

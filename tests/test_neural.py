@@ -60,32 +60,32 @@ class TestGAINImputer:
         complete, missing, mask = _low_rank_frame()
         baseline = _rmse(complete, MeanImputer().impute(missing), mask)
 
-        result = GAINImputer(iterations=1500, random_state=0).impute(missing)
+        result = GAINImputer(max_iter=1500, random_state=0).impute(missing)
 
         assert result.notna().all().all()
         assert _rmse(complete, result, mask) < 0.75 * baseline
 
     def test_is_reproducible_with_random_state(self) -> None:
         _, missing, _ = _low_rank_frame(n_rows=60)
-        first = GAINImputer(iterations=50, random_state=3).impute(missing)
-        second = gain_impute(missing, iterations=50, random_state=3)
+        first = GAINImputer(max_iter=50, random_state=3).impute(missing)
+        second = gain_impute(missing, max_iter=50, random_state=3)
         pd.testing.assert_frame_equal(first, second)
 
     def test_different_seeds_give_different_imputations(self) -> None:
         _, missing, mask = _low_rank_frame(n_rows=60)
-        first = GAINImputer(iterations=50, random_state=1).impute(missing)
-        second = GAINImputer(iterations=50, random_state=2).impute(missing)
+        first = GAINImputer(max_iter=50, random_state=1).impute(missing)
+        second = GAINImputer(max_iter=50, random_state=2).impute(missing)
         assert not np.allclose(first.to_numpy()[mask], second.to_numpy()[mask])
 
     def test_imputations_stay_within_observed_range(self) -> None:
         _, missing, _ = _low_rank_frame(n_rows=100)
-        result = GAINImputer(iterations=200, random_state=0).impute(missing)
+        result = GAINImputer(max_iter=200, random_state=0).impute(missing)
         low, high = missing.min() - 1e-5, missing.max() + 1e-5
         assert ((result >= low) & (result <= high)).all().all()
 
     def test_constant_column_is_supported(self) -> None:
         df = pd.DataFrame({"a": [5.0, 5.0, np.nan, 5.0], "b": [1.0, np.nan, 3.0, 4.0]})
-        result = GAINImputer(iterations=50, random_state=0).impute(df)
+        result = GAINImputer(max_iter=50, random_state=0).impute(df)
         np.testing.assert_allclose(result["a"], 5.0, atol=1e-5)
         assert result["b"].notna().all()
 
@@ -95,7 +95,7 @@ class TestGAINImputer:
             ({"batch_size": 0}, "batch_size"),
             ({"hint_rate": 1.5}, "hint_rate"),
             ({"alpha": -1.0}, "alpha"),
-            ({"iterations": 0}, "iterations"),
+            ({"max_iter": 0}, "max_iter"),
             ({"learning_rate": 0.0}, "learning_rate"),
         ],
     )
@@ -105,7 +105,7 @@ class TestGAINImputer:
 
     def test_gain_imputer(self) -> None:
         df = pd.DataFrame({"a": [1, 2, np.nan], "b": [4, np.nan, 6]})
-        imputed = GAINImputer(iterations=200, random_state=0).impute(df)
+        imputed = GAINImputer(max_iter=200, random_state=0).impute(df)
         assert not imputed.isna().any().any()
 
 

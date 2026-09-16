@@ -10,6 +10,7 @@ from sklearn.linear_model import (
     LinearRegression,
 )
 
+from ._deprecation import renamed_parameters
 from .base import BaseImputer
 
 
@@ -204,7 +205,7 @@ class MovingAverageImputer(BaseImputer):
 
     Args:
         window: Size of the rolling window. Default: 3
-        method: Aggregation method ('mean' or 'median'). Default: 'mean'
+        strategy: Aggregation strategy ('mean' or 'median'). Default: 'mean'
         min_periods: Minimum observations in window. Default: 1
         center: Whether to center the window. Default: False
 
@@ -213,14 +214,15 @@ class MovingAverageImputer(BaseImputer):
         >>> import numpy as np
         >>> from imputation_methods import MovingAverageImputer
         >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4, np.nan, 6]})
-        >>> imputer = MovingAverageImputer(window=3, method='mean')
+        >>> imputer = MovingAverageImputer(window=3, strategy='mean')
         >>> imputed = imputer.impute(df)
     """
 
+    @renamed_parameters(method="strategy")
     def __init__(
         self,
         window: int = 3,
-        method: str = "mean",
+        strategy: str = "mean",
         min_periods: int = 1,
         center: bool = False,
     ) -> None:
@@ -228,17 +230,17 @@ class MovingAverageImputer(BaseImputer):
 
         Args:
             window: Window size
-            method: 'mean' or 'median'
+            strategy: 'mean' or 'median'
             min_periods: Minimum observations required
             center: Center the window
         """
         if window < 1:
             raise ValueError(f"window must be >= 1, got {window}")
-        if method not in ["mean", "median"]:
-            raise ValueError(f"method must be 'mean' or 'median', got {method}")
+        if strategy not in ["mean", "median"]:
+            raise ValueError(f"strategy must be 'mean' or 'median', got {strategy}")
 
         self.window = window
-        self.method = method
+        self.strategy = strategy
         self.min_periods = min_periods
         self.center = center
 
@@ -261,7 +263,7 @@ class MovingAverageImputer(BaseImputer):
                     window=self.window, min_periods=self.min_periods, center=self.center
                 )
 
-                if self.method == "mean":
+                if self.strategy == "mean":
                     rolling_values = rolling.mean()
                 else:  # median
                     rolling_values = rolling.median()
@@ -524,7 +526,7 @@ class SeasonalImputer(BaseImputer):
     Args:
         period: Seasonal period (e.g., 24 for hourly data with daily seasonality,
             7 for daily data with weekly seasonality). Default: 7
-        method: Aggregation method ('mean' or 'median'). Default: 'median'
+        strategy: Aggregation strategy ('mean' or 'median'). Default: 'median'
 
     Examples:
         >>> import pandas as pd
@@ -532,24 +534,25 @@ class SeasonalImputer(BaseImputer):
         >>> from imputation_methods import SeasonalImputer
         >>> # Daily data with weekly seasonality
         >>> df = pd.DataFrame({'sales': [100, 120, np.nan, 140, 130, np.nan, 90]})
-        >>> imputer = SeasonalImputer(period=7, method='median')
+        >>> imputer = SeasonalImputer(period=7, strategy='median')
         >>> imputed = imputer.impute(df)
     """
 
-    def __init__(self, period: int = 7, method: str = "median") -> None:
+    @renamed_parameters(method="strategy")
+    def __init__(self, period: int = 7, strategy: str = "median") -> None:
         """Initialize the seasonal imputer.
 
         Args:
             period: Seasonal period
-            method: 'mean' or 'median'
+            strategy: 'mean' or 'median'
         """
         if period < 2:
             raise ValueError(f"period must be >= 2, got {period}")
-        if method not in ["mean", "median"]:
-            raise ValueError(f"method must be 'mean' or 'median', got {method}")
+        if strategy not in ["mean", "median"]:
+            raise ValueError(f"strategy must be 'mean' or 'median', got {strategy}")
 
         self.period = period
-        self.method = method
+        self.strategy = strategy
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using seasonal patterns.
@@ -569,7 +572,7 @@ class SeasonalImputer(BaseImputer):
                 phases = pd.Series(
                     np.arange(len(result)) % self.period, index=result.index
                 )
-                phase_stats = result[column].groupby(phases).agg(self.method)
+                phase_stats = result[column].groupby(phases).agg(self.strategy)
                 result[column] = result[column].fillna(phases.map(phase_stats))
 
                 # Fill any remaining NaNs with overall mean

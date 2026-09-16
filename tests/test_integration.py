@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.datasets import load_diabetes
 
 from imputation_methods import (
-    KNNImputerMethod,
+    KNNImputer,
     MeanImputer,
     MedianImputer,
     MICEImputer,
@@ -32,7 +32,7 @@ def test_full_pipeline_diabetes_dataset() -> None:
     imputers = [
         MeanImputer(),
         MedianImputer(),
-        KNNImputerMethod(k=5),
+        KNNImputer(n_neighbors=5),
         MICEImputer(random_state=42),
     ]
 
@@ -78,7 +78,7 @@ def test_sequential_imputation() -> None:
     assert not step1.isna().any().any()
 
     # Second pass: KNN on already-imputed data (should not change)
-    step2 = KNNImputerMethod(k=2).impute(step1)
+    step2 = KNNImputer(n_neighbors=2).impute(step1)
     assert not step2.isna().any().any()
 
     # Results should be close (since no NaNs in step1)
@@ -150,7 +150,7 @@ def test_large_proportion_missing() -> None:
     imputers = [
         MeanImputer(),
         MedianImputer(),
-        KNNImputerMethod(k=1),
+        KNNImputer(n_neighbors=1),
     ]
 
     for imputer in imputers:

@@ -17,7 +17,7 @@ KWARGS: dict[str, dict[str, object]] = {
     "HotDeckImputer": {"stratify_cols": ["g"], "random_state": 0},
     "AutoencoderImputer": {"max_iter": 50, "random_state": 0},
     "BaggingImputer": {"n_estimators": 2, "random_state": 0},
-    "GAINImputer": {"iterations": 200, "random_state": 0},
+    "GAINImputer": {"max_iter": 200, "random_state": 0},
     "MissForestImputer": {"random_state": 0},
     "RadiusNeighborsImputer": {"radius": 10.0},
 }
@@ -127,7 +127,7 @@ def test_handles_a_single_column(
         imputation_methods.EMImputer,
         imputation_methods.GAINImputer,
         imputation_methods.GaussianProcessImputer,
-        imputation_methods.KNNImputerMethod,
+        imputation_methods.KNNImputer,
         imputation_methods.MICEImputer,
         imputation_methods.MissForestImputer,
         imputation_methods.PMMImputer,

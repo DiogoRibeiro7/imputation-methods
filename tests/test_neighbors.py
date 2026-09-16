@@ -7,39 +7,39 @@ import pandas as pd
 import pytest
 
 from imputation_methods import (
-    KNNImputerMethod,
+    KNNImputer,
     LocalMeanImputer,
     RadiusNeighborsImputer,
 )
 
 
-class TestKNNImputerMethod:
-    """Tests for ``KNNImputerMethod``."""
+class TestKNNImputer:
+    """Tests for ``KNNImputer``."""
 
     def test_knn_impute_basic(self) -> None:
         df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, np.nan, 7, 8]})
-        imputed = KNNImputerMethod(k=2).impute(df)
+        imputed = KNNImputer(n_neighbors=2).impute(df)
         assert not imputed.isna().any().any()
 
     def test_knn_imputer_k_variation(self) -> None:
         """Test KNN imputer with different k values."""
         df = pd.DataFrame({"a": [1, 2, np.nan, 4], "b": [5, 6, 7, 8]})
-        imputed_k1 = KNNImputerMethod(k=1).impute(df)
-        imputed_k3 = KNNImputerMethod(k=3).impute(df)
+        imputed_k1 = KNNImputer(n_neighbors=1).impute(df)
+        imputed_k3 = KNNImputer(n_neighbors=3).impute(df)
         assert not imputed_k1.isna().any().any()
         assert not imputed_k3.isna().any().any()
 
     def test_knn_invalid_k_type(self) -> None:
         """Test KNN imputer rejects non-integer k values."""
-        with pytest.raises(TypeError, match="k must be an integer"):
-            KNNImputerMethod(k=2.5)  # type: ignore
+        with pytest.raises(TypeError, match="n_neighbors must be an integer"):
+            KNNImputer(n_neighbors=2.5)  # type: ignore
 
     def test_knn_invalid_k_value(self) -> None:
         """Test KNN imputer rejects non-positive k values."""
-        with pytest.raises(ValueError, match="k must be positive"):
-            KNNImputerMethod(k=0)
-        with pytest.raises(ValueError, match="k must be positive"):
-            KNNImputerMethod(k=-1)
+        with pytest.raises(ValueError, match="n_neighbors must be positive"):
+            KNNImputer(n_neighbors=0)
+        with pytest.raises(ValueError, match="n_neighbors must be positive"):
+            KNNImputer(n_neighbors=-1)
 
 
 class TestRadiusNeighborsImputer:
