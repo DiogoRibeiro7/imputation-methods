@@ -239,6 +239,18 @@ def test_shortcuts_forward_on_error(
     pd.testing.assert_frame_equal(result, im.MeanImputer().impute(df))
 
 
+def test_warning_through_a_shortcut_points_at_the_caller(
+    df: pd.DataFrame, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        "imputation_methods.regression.LinearRegression", _FailingEstimator
+    )
+    with pytest.warns(FutureWarning) as record:
+        im.regression_impute(df)
+    assert record
+    assert all(w.filename == __file__ for w in record)
+
+
 def test_hybrid_moves_on_when_a_member_raises(
     df: pd.DataFrame, monkeypatch: pytest.MonkeyPatch
 ) -> None:

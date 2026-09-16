@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import logging
+import sys
 import warnings
 from collections.abc import Hashable
+from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
@@ -18,6 +20,26 @@ OnError = Literal["raise", "fallback"] | None
 """How an imputer reacts when its model cannot be fitted; see ``check_on_error``."""
 
 _ON_ERROR_VALUES = ("raise", "fallback", None)
+_PACKAGE_DIR = Path(__file__).resolve().parent
+
+
+def user_stacklevel() -> int:
+    """Return the ``stacklevel`` that points a warning at the user's code.
+
+    Meant to be passed straight to :func:`warnings.warn` by the function that calls
+    it: level 1 is that function, and each further level is one frame up, until the
+    first frame whose file is outside this package. Internal wrappers and
+    functional shortcuts therefore never hide the line the user wrote.
+    """
+    frame = sys._getframe(1)
+    level = 1
+    while frame.f_back is not None:
+        filename = frame.f_code.co_filename
+        if not filename or Path(filename).resolve().parent != _PACKAGE_DIR:
+            break
+        frame = frame.f_back
+        level += 1
+    return level
 
 
 def fit_transform_non_empty(imputer: Any, df: pd.DataFrame) -> pd.DataFrame:
@@ -75,7 +97,6 @@ def raise_or_fall_back(
     error: Exception,
     fallback: str,
     column: Hashable | None = None,
-    stacklevel: int = 3,
 ) -> None:
     """Handle a model failure according to ``on_error``.
 
@@ -87,8 +108,6 @@ def raise_or_fall_back(
         error: The exception raised by the model.
         fallback: Human-readable name of the fallback, e.g. ``"mean imputation"``.
         column: Column being imputed, if the failure is column-specific.
-        stacklevel: Passed to :func:`warnings.warn`, so the warning points at the
-            user's ``impute`` call.
 
     Raises:
         ImputationError: If ``on_error`` is ``"raise"``.
@@ -108,5 +127,5 @@ def raise_or_fall_back(
             "on_error='raise' in 1.0.0. Pass on_error='fallback' to keep this "
             "behavior, or on_error='raise' to get an error.",
             FutureWarning,
-            stacklevel=stacklevel,
+            stacklevel=user_stacklevel(),
         )

@@ -116,10 +116,13 @@ for name, imputer in imputers.items():
 
 ## Input requirements
 
-- A `pandas.DataFrame` with numeric columns; missing values as `NaN` (or `pd.NA` in
-  nullable dtypes). Encode categorical columns before imputing. `GroupMeanImputer`
+- A `pandas.DataFrame` with numeric columns, including pandas nullable dtypes such
+  as `Int64`; missing values as `NaN` or `pd.NA`. Encode categorical columns before imputing. `GroupMeanImputer`
   is the exception: its grouping column may be non-numeric.
 - Time-series imputers use row order, so sort the data first.
+- Columns without missing values are returned unchanged. Imputed columns are
+  floating point: `float32`/`float64` keep their precision and nullable columns
+  become `Float64`.
 - Columns with no observed values are left as `NaN`, except by imputers that fill
   in a constant you choose, such as `ConstantImputer`.
 

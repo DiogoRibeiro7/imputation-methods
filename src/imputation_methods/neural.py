@@ -12,6 +12,7 @@ from scipy.special import expit
 from sklearn.neural_network import MLPRegressor
 
 from ._deprecation import renamed_parameters
+from ._dtypes import preserve_dtypes
 from ._utils import OnError, check_on_error, raise_or_fall_back
 from .base import BaseImputer, ImputationError
 from .statistical import MeanImputer
@@ -54,6 +55,7 @@ class AutoencoderImputer(BaseImputer):
         )
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values using an autoencoder reconstruction.
 
@@ -306,6 +308,7 @@ class GAINImputer(BaseImputer):
         self.learning_rate = learning_rate
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Train GAIN on ``df`` and fill its missing values.
 

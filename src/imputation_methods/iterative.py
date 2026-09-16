@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.impute import IterativeImputer
 
+from ._dtypes import preserve_dtypes
 from ._utils import OnError, check_on_error, fit_transform_non_empty, raise_or_fall_back
 from .base import BaseImputer, ImputationError
 from .statistical import MeanImputer, MedianImputer
@@ -35,9 +36,7 @@ def _fit_transform_or_fallback(
     try:
         return fit_transform_non_empty(imputer, df)
     except (ValueError, np.linalg.LinAlgError) as e:
-        raise_or_fall_back(
-            on_error, imputer=name, error=e, fallback=fallback_name, stacklevel=4
-        )
+        raise_or_fall_back(on_error, imputer=name, error=e, fallback=fallback_name)
         return fallback.impute(df)
     except Exception as e:
         raise ImputationError(f"{name} failed: {e}") from e
@@ -76,6 +75,7 @@ class MICEImputer(BaseImputer):
         self._imputer = IterativeImputer(random_state=random_state)
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Perform MICE-based imputation.
 
@@ -143,6 +143,7 @@ class EMImputer(BaseImputer):
         self.tol = tol
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute missing values iteratively.
 
@@ -194,6 +195,7 @@ class MissForestImputer(BaseImputer):
         )
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using a random forest estimator.
 

@@ -38,6 +38,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (it is maximum-likelihood probabilistic PCA), `predictive_mean_matching` to
   `pmm_impute` and `bayesian_pca_impute` to `ppca_impute`.
 - Instance attributes use the new parameter names (e.g. `imputer.n_neighbors`).
+- **One output dtype policy for every imputer.** Columns without missing values are
+  returned unchanged, with the same dtype; imputed columns are floating point,
+  keeping `float32` or `float64`, and pandas nullable columns become `Float64` so
+  values that couldn't be imputed stay `<NA>`. Previously the imputers based on
+  scikit-learn (`KNNImputer`, `MICEImputer`, `MissForestImputer`, `EMImputer`,
+  `SoftImputeImputer`, `PPCAImputer`, `GAINImputer`) turned every column, including
+  complete integer columns, into `float64`.
 - **Behavior change:** a column with no observed values is now left as `NaN` by
   every imputer that learns from the data. `BayesianRidgeImputer`, `HuberImputer`,
   `LocalMeanImputer` and `HybridImputer` used to fill it with 0, and
@@ -57,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- 24 imputers raised `TypeError` on pandas nullable integer columns (`Int64`) with
+  missing values, and `KalmanFilterImputer` and `LocalMeanImputer` on other nullable
+  columns; `float32` columns with missing values failed in 7 imputers under pandas 3.
 - `TrimmedMeanImputer` emitted a SciPy `SmallSampleWarning`, and `MedianImputer`,
   `ModeImputer`, `IndicatorImputer`, `GroupMeanImputer` and `ColdDeckImputer` a NumPy
   "Mean of empty slice" warning on older NumPy, for columns with no observed values.

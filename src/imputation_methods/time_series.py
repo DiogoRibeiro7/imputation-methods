@@ -11,12 +11,14 @@ from sklearn.linear_model import (
 )
 
 from ._deprecation import renamed_parameters
+from ._dtypes import preserve_dtypes
 from .base import BaseImputer
 
 
 class LOCFImputer(BaseImputer):
     """Impute using Last Observation Carried Forward (LOCF)."""
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values forward along each column.
 
@@ -33,6 +35,7 @@ class LOCFImputer(BaseImputer):
 class NOCBImputer(BaseImputer):
     """Impute using Next Observation Carried Backward (NOCB)."""
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values backward along each column.
 
@@ -79,6 +82,7 @@ class ForwardFillFallbackImputer(BaseImputer):
 
         self.fallback = fallback
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using forward fill with fallback.
 
@@ -156,6 +160,7 @@ class InterpolationImputer(BaseImputer):
         self.limit = limit
         self.limit_direction = limit_direction
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using interpolation.
 
@@ -244,6 +249,7 @@ class MovingAverageImputer(BaseImputer):
         self.min_periods = min_periods
         self.center = center
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using moving average.
 
@@ -319,6 +325,7 @@ class WeightedMovingAverageImputer(BaseImputer):
         self.alpha = alpha
         self.min_periods = min_periods
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using exponentially weighted moving average.
 
@@ -383,6 +390,7 @@ class LinearTrendImputer(BaseImputer):
         """
         self.use_index = use_index
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using linear trend.
 
@@ -470,6 +478,7 @@ class PolynomialTrendImputer(BaseImputer):
         self.degree = degree
         self.use_index = use_index
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using polynomial trend.
 
@@ -554,6 +563,7 @@ class SeasonalImputer(BaseImputer):
         self.period = period
         self.strategy = strategy
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using seasonal patterns.
 
@@ -656,6 +666,7 @@ class KalmanFilterImputer(BaseImputer):
         self.initial_state = initial_state
         self.initial_covariance = initial_covariance
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using Kalman filter.
 

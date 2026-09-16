@@ -10,6 +10,7 @@ from sklearn.impute import KNNImputer as _SklearnKNNImputer
 from sklearn.neighbors import RadiusNeighborsRegressor
 
 from ._deprecation import renamed_module_attributes, renamed_parameters
+from ._dtypes import preserve_dtypes
 from ._utils import OnError, check_on_error, fit_transform_non_empty, raise_or_fall_back
 from .base import BaseImputer, ImputationError
 from .statistical import MeanImputer
@@ -54,6 +55,7 @@ class KNNImputer(BaseImputer):
         self._imputer = _SklearnKNNImputer(n_neighbors=n_neighbors)
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using the fitted KNN strategy.
 
@@ -135,6 +137,7 @@ class RadiusNeighborsImputer(BaseImputer):
         self.metric = metric
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using radius neighbors.
 
@@ -221,6 +224,7 @@ class LocalMeanImputer(BaseImputer):
         self.n_neighbors = n_neighbors
         self.distance_weight_power = distance_weight_power
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using local weighted mean.
 

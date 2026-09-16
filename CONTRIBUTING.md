@@ -137,6 +137,8 @@ versions allowed by `pyproject.toml`. If you raise a minimum version, change it 
     ```
 
 2. Never modify `df` in place; return a new dataframe with the same index and columns.
+   Decorate `impute` with `@preserve_dtypes` from `imputation_methods._dtypes`: your
+   code then only sees NumPy dtypes, and the output follows the dtype policy.
 3. Add a `my_impute(df, ...)` shortcut to `functional.py` with the same parameters
    and defaults as the class (`tests/test_functional.py` checks this).
 4. Export both from `src/imputation_methods/__init__.py` (keep `__all__` sorted).
