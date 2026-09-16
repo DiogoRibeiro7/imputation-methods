@@ -173,8 +173,9 @@ are stored in the repository.
 2. In the GitHub repository settings, create the environments `pypi` and
    `testpypi`. Adding yourself as a required reviewer on `pypi` gives you a manual
    approval step before anything is uploaded.
-3. For the documentation site, enable GitHub Pages with source "Deploy from a
-   branch", branch `gh-pages`, after the first run of the Docs workflow.
+3. The documentation site is served by GitHub Pages from the `gh-pages` branch.
+   The **Docs** workflow redeploys it whenever `docs/`, `mkdocs.yml`, `src/` or
+   `CHANGELOG.md` change on `main`, on every release, and when run manually.
 
 ### Each release
 
@@ -189,4 +190,4 @@ are stored in the repository.
 5. Create a GitHub release with tag `vX.Y.Z` targeting `main`, using the changelog
    entry as release notes. Publishing the release builds the distributions, checks
    that the tag matches the package version, and uploads to PyPI. The **Docs**
-   workflow redeploys the documentation at the same time.
+   workflow also redeploys the documentation.
