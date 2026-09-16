@@ -1,0 +1,2925 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A unified pandas API for 40+ missing-data imputation methods">
+      
+      
+        <meta name="author" content="Diogo Ribeiro">
+      
+      
+        <link rel="canonical" href="https://diogoribeiro7.github.io/imputation-methods/user-guide/methods/">
+      
+      
+        <link rel="prev" href="../../getting-started/concepts/">
+      
+      
+        <link rel="next" href="../selection/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Imputation Methods - imputation-methods</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#imputation-methods" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="imputation-methods" class="md-header__button md-logo" aria-label="imputation-methods" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            imputation-methods
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Imputation Methods
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DiogoRibeiro7/imputation-methods" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DiogoRibeiro7/imputation-methods
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../examples/time-series/" class="md-tabs__link">
+          
+  
+  
+  Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/guidelines/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="imputation-methods" class="md-nav__button md-logo" aria-label="imputation-methods" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    imputation-methods
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DiogoRibeiro7/imputation-methods" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DiogoRibeiro7/imputation-methods
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Imputation Methods
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Imputation Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#statistical-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistical Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistical Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mean-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mean Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#median-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Median Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time Series Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#locf-last-observation-carried-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOCF (Last Observation Carried Forward)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nocb-next-observation-carried-backward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOCB (Next Observation Carried Backward)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distance-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distance-Based Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distance-Based Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#k-nearest-neighbors-knn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        K-Nearest Neighbors (KNN)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hot-deck-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot Deck Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regression-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression-Based Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Regression-Based Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regression-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stochastic-regression-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stochastic Regression Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictive-mean-matching-pmm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Mean Matching (PMM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mice-multiple-imputation-by-chained-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MICE (Multiple Imputation by Chained Equations)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tree-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tree-Based Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tree-Based Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#missforest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MissForest
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-completion-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix Completion Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matrix Completion Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#softimpute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SoftImpute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bayesian-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bayesian PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deep-learning-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deep Learning Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autoencoder-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Autoencoder Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gain-generative-adversarial-imputation-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GAIN (Generative Adversarial Imputation Networks)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-statistical-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Statistical Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Statistical Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gaussian-process-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gaussian Process Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other Methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Method Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/time-series/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time Series
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/ml-pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ML Pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/custom-imputers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Imputers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base class
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/statistical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Statistical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Donor sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/time-series/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time series
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/neighbors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nearest neighbors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/regression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regression
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/iterative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Iterative
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrix completion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/neural/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neural networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/ensemble/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ensembles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/functional/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/guidelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#statistical-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistical Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistical Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mean-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mean Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#median-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Median Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Series Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time Series Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#locf-last-observation-carried-forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOCF (Last Observation Carried Forward)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nocb-next-observation-carried-backward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOCB (Next Observation Carried Backward)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distance-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distance-Based Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distance-Based Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#k-nearest-neighbors-knn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        K-Nearest Neighbors (KNN)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hot-deck-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot Deck Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regression-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression-Based Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Regression-Based Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regression-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stochastic-regression-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stochastic Regression Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#predictive-mean-matching-pmm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predictive Mean Matching (PMM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mice-multiple-imputation-by-chained-equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MICE (Multiple Imputation by Chained Equations)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tree-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tree-Based Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tree-Based Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#missforest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MissForest
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-completion-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix Completion Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matrix Completion Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#softimpute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SoftImpute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bayesian-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bayesian PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deep-learning-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deep Learning Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autoencoder-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Autoencoder Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gain-generative-adversarial-imputation-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GAIN (Generative Adversarial Imputation Networks)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-statistical-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Statistical Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Statistical Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gaussian-process-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gaussian Process Imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other Methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="imputation-methods">Imputation Methods<a class="headerlink" href="#imputation-methods" title="Permanent link">&para;</a></h1>
+<p>This guide describes the core imputation methods available in the library, organized by category. The library exports 42 imputers in total; the remaining ones are listed under <a href="#other-methods">Other Methods</a>, and the <a href="../../api/">API Reference</a> documents every class and constructor argument.</p>
+<h2 id="statistical-methods">Statistical Methods<a class="headerlink" href="#statistical-methods" title="Permanent link">&para;</a></h2>
+<p>Simple, fast methods based on basic statistics.</p>
+<h3 id="mean-imputation">Mean Imputation<a class="headerlink" href="#mean-imputation" title="Permanent link">&para;</a></h3>
+<p>Replace missing values with the column mean.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanImputer</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">MeanImputer</span><span class="p">()</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>When to use:</strong>
+- Quick baseline for comparison
+- Data is approximately normally distributed
+- Missing data is MCAR</p>
+<p><strong>Pros:</strong>
+- Very fast (O(n))
+- Easy to understand and implement
+- No hyperparameters</p>
+<p><strong>Cons:</strong>
+- Reduces variance
+- Ignores relationships between variables
+- Can distort distributions</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanImputer</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'A'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]})</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">MeanImputer</span><span class="p">()</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">result</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Missing value imputed as: (1+2+4+5)/4 = 3.0</span>
+</code></pre></div></p>
+<h3 id="median-imputation">Median Imputation<a class="headerlink" href="#median-imputation" title="Permanent link">&para;</a></h3>
+<p>Replace missing values with the column median.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MedianImputer</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">MedianImputer</span><span class="p">()</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>When to use:</strong>
+- Data has outliers
+- Skewed distributions
+- More robust alternative to mean</p>
+<p><strong>Pros:</strong>
+- Robust to outliers
+- Fast computation
+- Simple interpretation</p>
+<p><strong>Cons:</strong>
+- Same limitations as mean imputation
+- Still ignores variable relationships</p>
+<h2 id="time-series-methods">Time Series Methods<a class="headerlink" href="#time-series-methods" title="Permanent link">&para;</a></h2>
+<p>Methods designed specifically for temporal data.</p>
+<h3 id="locf-last-observation-carried-forward">LOCF (Last Observation Carried Forward)<a class="headerlink" href="#locf-last-observation-carried-forward" title="Permanent link">&para;</a></h3>
+<p>Fill missing values with the most recent observed value.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOCFImputer</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">LOCFImputer</span><span class="p">()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>When to use:</strong>
+- Time series data with temporal ordering
+- Slowly changing variables
+- Sensor data with intermittent failures</p>
+<p><strong>Pros:</strong>
+- Preserves temporal structure
+- Intuitive for time series
+- Very fast</p>
+<p><strong>Cons:</strong>
+- Introduces bias in long gaps
+- Assumes persistence (values don't change)
+- First value cannot be imputed if missing</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'sensor'</span><span class="p">:</span> <span class="p">[</span><span class="mf">20.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]})</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># Result: [20.5, 20.5, 20.5, 22.0, 22.0]</span>
+</code></pre></div></p>
+<h3 id="nocb-next-observation-carried-backward">NOCB (Next Observation Carried Backward)<a class="headerlink" href="#nocb-next-observation-carried-backward" title="Permanent link">&para;</a></h3>
+<p>Fill missing values with the next observed value.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">NOCBImputer</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">NOCBImputer</span><span class="p">()</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>When to use:</strong>
+- Backward-looking analysis
+- Complementary to LOCF
+- Event-driven data</p>
+<p><strong>Pros:</strong>
+- Useful for certain temporal patterns
+- Fast computation
+- Complementary to LOCF</p>
+<p><strong>Cons:</strong>
+- Last value cannot be imputed if missing
+- Less intuitive than forward filling
+- Can introduce look-ahead bias</p>
+<h2 id="distance-based-methods">Distance-Based Methods<a class="headerlink" href="#distance-based-methods" title="Permanent link">&para;</a></h2>
+<p>Methods that use similarity between observations.</p>
+<h3 id="k-nearest-neighbors-knn">K-Nearest Neighbors (KNN)<a class="headerlink" href="#k-nearest-neighbors-knn" title="Permanent link">&para;</a></h3>
+<p>Impute using the average of the k nearest neighbors (scikit-learn's <code>KNNImputer</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNNImputerMethod</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">KNNImputerMethod</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>k</code>: Number of neighbors (default: 5)</p>
+<p><strong>When to use:</strong>
+- Features are correlated
+- Moderate-sized datasets
+- MAR or MCAR data</p>
+<p><strong>Pros:</strong>
+- Considers relationships between variables
+- More accurate than simple methods
+- Well-established algorithm</p>
+<p><strong>Cons:</strong>
+- Computationally expensive for large datasets
+- Sensitive to feature scaling
+- Requires tuning k parameter</p>
+<p><strong>Hyperparameter tuning:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Try different k values</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">imputer</span> <span class="o">=</span> <span class="n">KNNImputerMethod</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">X_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">score</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">Ridge</span><span class="p">(),</span> <span class="n">X_imputed</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: CV Score = </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="hot-deck-imputation">Hot Deck Imputation<a class="headerlink" href="#hot-deck-imputation" title="Permanent link">&para;</a></h3>
+<p>Randomly sample from similar observations ("donors").</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">HotDeckImputer</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Simple random sampling</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">HotDeckImputer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># Stratified by categorical variables</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">HotDeckImputer</span><span class="p">(</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="n">stratify_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">'category_A'</span><span class="p">,</span> <span class="s1">'category_B'</span><span class="p">],</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">)</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>stratify_cols</code>: Columns used to define similarity groups (must be numeric, e.g. integer-coded categories)
+- <code>random_state</code>: Random seed for reproducibility</p>
+<p><strong>When to use:</strong>
+- Preserving realistic value distributions
+- Categorical stratification available
+- Avoiding over-smoothing</p>
+<p><strong>Pros:</strong>
+- Preserves empirical distribution
+- Adds realistic variability
+- Can stratify by categories</p>
+<p><strong>Cons:</strong>
+- Random (results vary)
+- Less accurate than model-based methods
+- Requires sufficient donors</p>
+<h2 id="regression-based-methods">Regression-Based Methods<a class="headerlink" href="#regression-based-methods" title="Permanent link">&para;</a></h2>
+<p>Methods that predict missing values using regression models.</p>
+<h3 id="regression-imputation">Regression Imputation<a class="headerlink" href="#regression-imputation" title="Permanent link">&para;</a></h3>
+<p>Predict missing values using linear regression on other features.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegressionImputer</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">RegressionImputer</span><span class="p">()</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>When to use:</strong>
+- Linear relationships between features
+- MAR data
+- Need deterministic imputation</p>
+<p><strong>Pros:</strong>
+- Uses variable relationships
+- More accurate than mean/median
+- Deterministic results</p>
+<p><strong>Cons:</strong>
+- Underestimates variance
+- Assumes linear relationships
+- Can produce unrealistic values</p>
+<h3 id="stochastic-regression-imputation">Stochastic Regression Imputation<a class="headerlink" href="#stochastic-regression-imputation" title="Permanent link">&para;</a></h3>
+<p>Regression imputation with added noise to preserve variance.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">StochasticRegressionImputer</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">StochasticRegressionImputer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>random_state</code>: Random seed for noise generation</p>
+<p><strong>When to use:</strong>
+- Need to preserve variance
+- Statistical inference on imputed data
+- Linear relationships exist</p>
+<p><strong>Pros:</strong>
+- Preserves variance
+- Uses feature relationships
+- More realistic than deterministic regression</p>
+<p><strong>Cons:</strong>
+- Introduces randomness
+- Still assumes linearity
+- Requires estimate of residual variance</p>
+<h3 id="predictive-mean-matching-pmm">Predictive Mean Matching (PMM)<a class="headerlink" href="#predictive-mean-matching-pmm" title="Permanent link">&para;</a></h3>
+<p>Regression-based method that selects actual observed values.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">PMMImputer</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">PMMImputer</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>k</code>: Number of donor candidates
+- <code>random_state</code>: Random seed</p>
+<p><strong>When to use:</strong>
+- Want realistic values from actual data
+- Avoid implausible predictions
+- Preserve distributions</p>
+<p><strong>Pros:</strong>
+- Imputes only observed values
+- Preserves distributions
+- Robust to model misspecification</p>
+<p><strong>Cons:</strong>
+- More complex than simple regression
+- Requires sufficient donors
+- Computationally more expensive</p>
+<h3 id="mice-multiple-imputation-by-chained-equations">MICE (Multiple Imputation by Chained Equations)<a class="headerlink" href="#mice-multiple-imputation-by-chained-equations" title="Permanent link">&para;</a></h3>
+<p>Iteratively imputes each variable using the others as predictors.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MICEImputer</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">MICEImputer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>random_state</code>: Random seed for reproducibility</p>
+<p><strong>When to use:</strong>
+- Multiple variables have missing data
+- Complex relationships between variables
+- Need statistically principled approach</p>
+<p><strong>Pros:</strong>
+- Handles multiple missing variables well
+- Flexible in principle (this implementation uses <code>BayesianRidge</code> for every column)
+- Widely accepted in statistics</p>
+<p><strong>Cons:</strong>
+- Computationally intensive
+- May not converge
+- Only <code>random_state</code> is configurable</p>
+<p><strong>Note:</strong> Full MICE involves creating multiple imputed datasets. This implementation returns a single imputation from scikit-learn's <code>IterativeImputer</code>.</p>
+<h2 id="tree-based-methods">Tree-Based Methods<a class="headerlink" href="#tree-based-methods" title="Permanent link">&para;</a></h2>
+<p>Methods using decision tree ensembles.</p>
+<h3 id="missforest">MissForest<a class="headerlink" href="#missforest" title="Permanent link">&para;</a></h3>
+<p>Random forest-based iterative imputation (scikit-learn's <code>IterativeImputer</code> with a <code>RandomForestRegressor</code> per column).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MissForestImputer</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">MissForestImputer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>random_state</code>: Random seed</p>
+<p><strong>When to use:</strong>
+- Non-linear relationships
+- Integer-coded categorical features mixed with continuous ones (all columns must be numeric)
+- High-dimensional data</p>
+<p><strong>Pros:</strong>
+- Handles non-linearity
+- Can capture complex interactions
+- Often very accurate</p>
+<p><strong>Cons:</strong>
+- Slow for large datasets
+- Computationally expensive
+- Forest settings are fixed (only <code>random_state</code> is configurable)</p>
+<h2 id="matrix-completion-methods">Matrix Completion Methods<a class="headerlink" href="#matrix-completion-methods" title="Permanent link">&para;</a></h2>
+<p>Methods based on low-rank matrix approximation.</p>
+<h3 id="softimpute">SoftImpute<a class="headerlink" href="#softimpute" title="Permanent link">&para;</a></h3>
+<p>Low-rank matrix completion via nuclear-norm regularization.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">SoftImputeImputer</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">SoftImputeImputer</span><span class="p">(</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">max_iters</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">init_fill_method</span><span class="o">=</span><span class="s1">'zero'</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="p">)</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>max_iters</code>: Maximum iterations (default: 100)
+- <code>init_fill_method</code>: Initialization strategy (<code>'zero'</code>, <code>'mean'</code>, <code>'median'</code> or <code>'min'</code>; default: <code>'zero'</code>)
+- <code>shrinkage_value</code>: Amount subtracted from each singular value (default: 1/50 of the largest singular value of the initial fill)
+- <code>convergence_threshold</code>: Relative change of the imputed entries at which to stop (default: 1e-3)</p>
+<p><strong>When to use:</strong>
+- Data has low-rank structure
+- Collaborative filtering-type problems
+- High correlation between columns</p>
+<p><strong>Pros:</strong>
+- Exploits low-rank structure
+- Good for high-dimensional data
+- Theoretically well-founded</p>
+<p><strong>Cons:</strong>
+- Assumes low-rank structure
+- Computationally intensive
+- May over-smooth</p>
+<h3 id="bayesian-pca">Bayesian PCA<a class="headerlink" href="#bayesian-pca" title="Permanent link">&para;</a></h3>
+<p>Probabilistic PCA for missing data imputation. Columns are standardized and a PPCA model is fitted by EM while the missing entries are repeatedly replaced by their expected values. Despite the name, this is maximum-likelihood PPCA (Tipping &amp; Bishop, 1999): no priors are placed on the loadings.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianPCAImputer</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">BayesianPCAImputer</span><span class="p">(</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">min_obs</span><span class="o">=</span><span class="mi">1</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">)</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>n_components</code>: Number of latent dimensions (default: 1; capped at the number of columns minus one)
+- <code>min_obs</code>: Minimum observed values a column needs to take part in the model; other columns are mean-imputed
+- <code>max_iter</code>: Maximum EM iterations (default: 500)
+- <code>tol</code>: Convergence tolerance (default: 1e-6)</p>
+<p><strong>When to use:</strong>
+- Data lies in low-dimensional subspace
+- Want probabilistic interpretation
+- High-dimensional data</p>
+<p><strong>Pros:</strong>
+- Principled probabilistic approach
+- Dimension reduction + imputation
+- Explicit noise model</p>
+<p><strong>Cons:</strong>
+- Requires choosing number of components
+- Assumes Gaussian distribution
+- Can be unstable</p>
+<h2 id="deep-learning-methods">Deep Learning Methods<a class="headerlink" href="#deep-learning-methods" title="Permanent link">&para;</a></h2>
+<p>Neural network-based approaches.</p>
+<h3 id="autoencoder-imputation">Autoencoder Imputation<a class="headerlink" href="#autoencoder-imputation" title="Permanent link">&para;</a></h3>
+<p>Use a neural network autoencoder (scikit-learn's <code>MLPRegressor</code> trained to reconstruct the mean-filled data) to predict missing values.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoencoderImputer</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">AutoencoderImputer</span><span class="p">(</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="p">)</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>hidden_layer_sizes</code>: Network architecture
+- <code>max_iter</code>: Training iterations
+- <code>random_state</code>: Random seed</p>
+<p><strong>When to use:</strong>
+- Large datasets
+- Complex non-linear patterns
+- Computational resources available</p>
+<p><strong>Pros:</strong>
+- Can learn complex patterns
+- Flexible architecture
+- Good for large data</p>
+<p><strong>Cons:</strong>
+- Requires large datasets
+- Many hyperparameters
+- Slow training
+- Less interpretable</p>
+<h3 id="gain-generative-adversarial-imputation-networks">GAIN (Generative Adversarial Imputation Networks)<a class="headerlink" href="#gain-generative-adversarial-imputation-networks" title="Permanent link">&para;</a></h3>
+<p>The GAN-based approach of Yoon et al. (2018). A generator fills in missing entries while a discriminator tries to tell observed entries from imputed ones; a hint vector reveals part of the missingness mask to the discriminator, and a reconstruction loss keeps the generator faithful to the observed values. Implemented on NumPy, with the reference implementation's defaults.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">GAINImputer</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">GAINImputer</span><span class="p">(</span><span class="n">iterations</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>batch_size</code>: Rows per training step (default: 128)
+- <code>hint_rate</code>: Probability of revealing each mask entry to the discriminator (default: 0.9)
+- <code>alpha</code>: Weight of the reconstruction loss (default: 100)
+- <code>iterations</code>: Training steps (default: 10000)
+- <code>learning_rate</code>: Adam learning rate (default: 0.001)
+- <code>random_state</code>: Random seed</p>
+<p><strong>When to use:</strong>
+- Larger datasets with complex, non-linear dependencies between columns
+- As a generative alternative to compare against MICE or MissForest</p>
+<p><strong>Pros:</strong>
+- Learns the joint distribution without parametric assumptions
+- Handles any missingness pattern across columns</p>
+<p><strong>Cons:</strong>
+- Needs a reasonable amount of data; on small tables MICE is usually more accurate
+- Training takes seconds rather than milliseconds
+- Results depend on the random seed and training budget</p>
+<h2 id="advanced-statistical-methods">Advanced Statistical Methods<a class="headerlink" href="#advanced-statistical-methods" title="Permanent link">&para;</a></h2>
+<p>Sophisticated statistical approaches.</p>
+<h3 id="gaussian-process-imputation">Gaussian Process Imputation<a class="headerlink" href="#gaussian-process-imputation" title="Permanent link">&para;</a></h3>
+<p>Predict each column from the other columns with Gaussian process regression; missing entries are filled with the GP predictive mean.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcessImputer</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.gaussian_process.kernels</span><span class="w"> </span><span class="kn">import</span> <span class="n">RBF</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">imputer</span> <span class="o">=</span> <span class="n">GaussianProcessImputer</span><span class="p">(</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="n">kernel</span><span class="o">=</span><span class="n">RBF</span><span class="p">(</span><span class="n">length_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>    <span class="n">alpha</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="p">)</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="n">df_imputed</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>kernel</code>: Covariance kernel (default: RBF)
+- <code>alpha</code>: Noise level
+- <code>random_state</code>: Random seed</p>
+<p><strong>When to use:</strong>
+- Smooth non-linear relationships between columns
+- Small to moderate datasets</p>
+<p><strong>Pros:</strong>
+- Flexible kernel choice
+- Captures smooth non-linear relationships
+- Principled probabilistic approach (the imputer returns point predictions only)</p>
+<p><strong>Cons:</strong>
+- Computationally expensive (O(n³))
+- Requires kernel selection
+- Doesn't scale to large datasets</p>
+<h2 id="quick-reference-table">Quick Reference Table<a class="headerlink" href="#quick-reference-table" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Speed</th>
+<th>Accuracy</th>
+<th>Complexity</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mean</td>
+<td>⚡⚡⚡⚡⚡</td>
+<td>⭐</td>
+<td>Simple</td>
+<td>Quick baseline</td>
+</tr>
+<tr>
+<td>Median</td>
+<td>⚡⚡⚡⚡⚡</td>
+<td>⭐</td>
+<td>Simple</td>
+<td>Outlier-robust baseline</td>
+</tr>
+<tr>
+<td>LOCF</td>
+<td>⚡⚡⚡⚡⚡</td>
+<td>⭐⭐</td>
+<td>Simple</td>
+<td>Time series</td>
+</tr>
+<tr>
+<td>NOCB</td>
+<td>⚡⚡⚡⚡⚡</td>
+<td>⭐⭐</td>
+<td>Simple</td>
+<td>Time series</td>
+</tr>
+<tr>
+<td>KNN</td>
+<td>⚡⚡⚡</td>
+<td>⭐⭐⭐</td>
+<td>Moderate</td>
+<td>General purpose</td>
+</tr>
+<tr>
+<td>Hot Deck</td>
+<td>⚡⚡⚡⚡</td>
+<td>⭐⭐</td>
+<td>Simple</td>
+<td>Preserve distributions</td>
+</tr>
+<tr>
+<td>Regression</td>
+<td>⚡⚡⚡</td>
+<td>⭐⭐⭐</td>
+<td>Moderate</td>
+<td>Linear relationships</td>
+</tr>
+<tr>
+<td>Stochastic Reg.</td>
+<td>⚡⚡⚡</td>
+<td>⭐⭐⭐</td>
+<td>Moderate</td>
+<td>Preserve variance</td>
+</tr>
+<tr>
+<td>PMM</td>
+<td>⚡⚡</td>
+<td>⭐⭐⭐⭐</td>
+<td>Moderate</td>
+<td>Realistic values</td>
+</tr>
+<tr>
+<td>MICE</td>
+<td>⚡⚡</td>
+<td>⭐⭐⭐⭐</td>
+<td>Complex</td>
+<td>Multiple variables</td>
+</tr>
+<tr>
+<td>MissForest</td>
+<td>⚡</td>
+<td>⭐⭐⭐⭐</td>
+<td>Complex</td>
+<td>Non-linear patterns</td>
+</tr>
+<tr>
+<td>SoftImpute</td>
+<td>⚡⚡</td>
+<td>⭐⭐⭐</td>
+<td>Moderate</td>
+<td>Low-rank data</td>
+</tr>
+<tr>
+<td>Bayesian PCA</td>
+<td>⚡⚡</td>
+<td>⭐⭐⭐</td>
+<td>Moderate</td>
+<td>High-dimensional</td>
+</tr>
+<tr>
+<td>Autoencoder</td>
+<td>⚡</td>
+<td>⭐⭐⭐⭐</td>
+<td>Complex</td>
+<td>Large datasets</td>
+</tr>
+<tr>
+<td>GAIN</td>
+<td>⚡</td>
+<td>⭐⭐⭐</td>
+<td>Complex</td>
+<td>Large datasets, non-linear dependencies</td>
+</tr>
+<tr>
+<td>Gaussian Process</td>
+<td>⚡</td>
+<td>⭐⭐⭐⭐</td>
+<td>Complex</td>
+<td>Smooth non-linear data</td>
+</tr>
+</tbody>
+</table>
+<h2 id="other-methods">Other Methods<a class="headerlink" href="#other-methods" title="Permanent link">&para;</a></h2>
+<p>The library also provides these imputers (see the <a href="../../api/">API Reference</a> for their arguments):</p>
+<ul>
+<li><strong>Statistical:</strong> <code>ModeImputer</code>, <code>ConstantImputer</code>, <code>QuantileImputer</code>, <code>TrimmedMeanImputer</code>, <code>EndOfDistributionImputer</code>, <code>GroupMeanImputer</code>, <code>IndicatorImputer</code></li>
+<li><strong>Sampling:</strong> <code>RandomSamplingImputer</code>, <code>ColdDeckImputer</code></li>
+<li><strong>Time series:</strong> <code>ForwardFillFallbackImputer</code>, <code>InterpolationImputer</code>, <code>MovingAverageImputer</code>, <code>WeightedMovingAverageImputer</code>, <code>LinearTrendImputer</code>, <code>PolynomialTrendImputer</code>, <code>SeasonalImputer</code>, <code>KalmanFilterImputer</code></li>
+<li><strong>Distance-based:</strong> <code>RadiusNeighborsImputer</code>, <code>LocalMeanImputer</code></li>
+<li><strong>Regression-based:</strong> <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>, <code>RANSACImputer</code></li>
+<li><strong>Iterative:</strong> <code>EMImputer</code> — iterative chained-equations imputation (<code>IterativeImputer</code>) with a configurable <code>max_iter</code> and <code>tol</code>; it is not closed-form EM for a multivariate normal</li>
+<li><strong>Ensemble:</strong> <code>HybridImputer</code> (tries imputers in order until no NaNs remain), <code>StackingImputer</code> (element-wise mean or median of several imputers' outputs; <code>meta_strategy="weighted"</code> currently equals <code>"mean"</code>), <code>BaggingImputer</code> (bootstrap aggregating: averages a base imputer's imputations over resampled rows)</li>
+</ul>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Learn about <a href="../selection/">Method Selection</a> to choose the right approach</li>
+<li>Understand <a href="../evaluation/">Evaluation Metrics</a> to assess quality</li>
+<li>Review <a href="../best-practices/">Best Practices</a> for production use</li>
+<li>See <a href="../../examples/time-series/">Examples</a> for real-world applications</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025-2026 Diogo Ribeiro
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/DiogoRibeiro7" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:diogo.debastos.ribeiro@gmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l208 156a48 48 0 0 0 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48zM0 196v188c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V196L313.6 344.8c-34.1 25.6-81.1 25.6-115.2 0z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
