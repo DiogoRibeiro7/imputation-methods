@@ -1,111 +1,78 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+<!-- --8<-- [start:changelog] -->
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+All notable changes to this project are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+First release on PyPI, as `imputation-methods` 0.1.0.
+
 ### Added
-- Comprehensive visualization generation script (`generate_figures.py`)
-- Five high-quality figures for documentation:
-  - Missingness pattern heatmap
-  - RMSE/MAE comparison charts
-  - Distribution comparison plots
-  - Scatter plots for imputed vs original values
-  - Summary metrics table
-- `matplotlib` and `seaborn` as core dependencies
-- `figures/` directory with README documentation
-- Enhanced CONTRIBUTING.md with detailed guidelines
-- CHANGELOG.md for tracking version history
-- Comprehensive README with:
-  - Professional badges
-  - Detailed table of contents
-  - Categorized imputation methods
-  - Multiple usage examples
-  - Installation instructions
-  - Development setup guide
+
+- 42 imputers behind one interface, `BaseImputer.impute(df) -> DataFrame`:
+  - **Statistical**: `MeanImputer`, `MedianImputer`, `ModeImputer`, `ConstantImputer`,
+    `QuantileImputer`, `TrimmedMeanImputer`, `EndOfDistributionImputer`,
+    `GroupMeanImputer`, `IndicatorImputer`
+  - **Donor sampling**: `RandomSamplingImputer`, `HotDeckImputer`, `ColdDeckImputer`
+  - **Time series**: `LOCFImputer`, `NOCBImputer`, `ForwardFillFallbackImputer`,
+    `InterpolationImputer`, `MovingAverageImputer`, `WeightedMovingAverageImputer`,
+    `LinearTrendImputer`, `PolynomialTrendImputer`, `SeasonalImputer`,
+    `KalmanFilterImputer`
+  - **Nearest neighbors**: `KNNImputerMethod`, `RadiusNeighborsImputer`,
+    `LocalMeanImputer`
+  - **Regression**: `RegressionImputer`, `StochasticRegressionImputer`, `PMMImputer`,
+    `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`, `GaussianProcessImputer`
+  - **Iterative**: `MICEImputer`, `EMImputer`, `MissForestImputer`, `GAINImputer`
+  - **Matrix completion**: `SoftImputeImputer`, `BayesianPCAImputer`
+  - **Neural networks**: `AutoencoderImputer`
+  - **Ensembles**: `HybridImputer`, `StackingImputer`, `BaggingImputer`
+- A functional shortcut for every imputer, e.g. `knn_impute(df, k=3)`.
+- `rmse` and `mae` metrics for scoring imputations against ground truth.
+- Inline type hints (`py.typed`), checked with mypy in strict mode.
+- Documentation site with an API reference generated from docstrings.
 
 ### Changed
-- Updated README from basic overview to comprehensive documentation
-- Improved project structure with better organization
+
+- Renamed the project from `imputation-showcase` to `imputation-methods` and moved
+  the code to a `src/` layout split into submodules. Import everything from the
+  top-level package: `from imputation_methods import MeanImputer`.
+- `SoftImputeImputer` and `BayesianPCAImputer` are now implemented directly on NumPy,
+  replacing the unmaintained `fancyimpute` and `ppca` dependencies. `fancyimpute`
+  0.7.0 no longer worked with scikit-learn 1.8+, and it pulled `pytest`, `nose`,
+  `cvxpy` and `cvxopt` in as runtime dependencies. Both imputers are now
+  deterministic and gained validated `shrinkage_value`/`convergence_threshold` and
+  `max_iter`/`tol` options respectively.
+- Runtime dependencies are now just NumPy (>=1.24), pandas (>=2.0, including 3.x),
+  SciPy (>=1.10) and scikit-learn (>=1.4). Matplotlib and seaborn moved to the
+  optional `viz` extra.
+- Handled fallbacks (e.g. MICE falling back to mean imputation) log a single
+  `WARNING` instead of `ERROR` + `WARNING`, and routine progress messages were
+  removed from `INFO`.
+- `ColdDeckImputer` accepts `random_state` for reproducible sampling from array
+  reference values.
+- Faster, vectorized `GroupMeanImputer` and `SeasonalImputer`.
 
 ### Fixed
-- None
 
-## [0.1.0] - 2024-11-XX
+- `StochasticRegressionImputer` raised `ValueError` whenever more than one column had
+  missing values; `RegressionImputer`, `PMMImputer` and `GaussianProcessImputer`
+  silently fell back to mean imputation in the same situation. Gaps in predictor
+  columns are now mean-filled before fitting.
+- A column with no observed values made `EMImputer` raise, and made `MICEImputer`,
+  `MissForestImputer`, `GAINImputer` and `KNNImputerMethod` fall back to mean/median
+  imputation for every column. Such columns are now left as `NaN` and the other
+  columns are imputed normally.
+- `PMMImputer` drew donors with the same seed for every missing value, and filled
+  columns with no observed values with 0.
+- Time-series imputers used `fillna(method=...)`, which was removed in pandas 3.
+- `HotDeckImputer` triggered a pandas 4 deprecation warning when stratifying by a
+  single column.
+- Docstring examples that used non-existent arguments (e.g. `n_neighbors=`).
 
-### Added
-- 16+ imputation methods:
-  - **Statistical:** Mean, Median
-  - **Time Series:** LOCF, NOCB
-  - **Distance-Based:** KNN, Hot Deck
-  - **Regression-Based:** Regression, Stochastic Regression, PMM, MICE
-  - **Tree-Based:** MissForest
-  - **Matrix Completion:** SoftImpute, Bayesian PCA
-  - **Deep Learning:** Autoencoder, GAIN
-  - **Advanced Statistical:** Gaussian Process
-- Base imputer class with unified API
-- Evaluation metrics: RMSE and MAE
-- Comprehensive test suite with pytest
-- CI/CD pipeline with GitHub Actions
-- Code quality checks with flake8
-- Type checking with mypy
-- Demo Jupyter notebook with examples
-- Example dataset in `data/` directory
-- Code of Conduct
-- Contributing guidelines
-- MIT License
+<!-- --8<-- [end:changelog] -->
 
-### Dependencies
-- Python 3.10+
-- pandas ^2.0
-- numpy ^1.24
-- scikit-learn ^1.4
-- fancyimpute 0.7.0
-- ppca ^0.0.4
-- matplotlib ^3.7
-- seaborn ^0.12
-
-### Development Dependencies
-- pytest ^7.0
-- flake8 ^6.0
-- mypy ^1.16.1
-- coverage ^7.9.2
-- nbconvert ^7.0
-- jupyter ^1.0
-
-## Version History
-
-### Versioning Strategy
-
-This project uses [Semantic Versioning](https://semver.org/):
-- **MAJOR** version for incompatible API changes
-- **MINOR** version for new functionality in a backwards compatible manner
-- **PATCH** version for backwards compatible bug fixes
-
-### Release Process
-
-1. Update version in `pyproject.toml`
-2. Update CHANGELOG.md with release date
-3. Create git tag: `git tag -a v0.1.0 -m "Release v0.1.0"`
-4. Push tag: `git push origin v0.1.0`
-5. Create GitHub release with notes from CHANGELOG
-
-### Upcoming Features
-
-Features planned for future releases:
-- Additional imputation methods (EM algorithm, etc.)
-- Performance benchmarks and comparisons
-- Interactive visualization dashboard
-- Plugin system for custom imputers
-- Documentation website with Sphinx/MkDocs
-- PyPI package publication
-- Improved error handling and logging
-- Parallel processing support for large datasets
-
----
-
-[Unreleased]: https://github.com/DiogoRibeiro7/imputation-showcase/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/DiogoRibeiro7/imputation-showcase/releases/tag/v0.1.0
+[Unreleased]: https://github.com/DiogoRibeiro7/imputation-methods/commits/main

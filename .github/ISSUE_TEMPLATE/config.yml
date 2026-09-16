@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Questions & Discussions
-    url: https://github.com/DiogoRibeiro7/imputation-showcase/discussions
-    about: Ask questions and discuss ideas with the community
-  - name: Email Support
-    url: mailto:diogo.debastos.ribeiro@gmail.com
-    about: Contact the maintainer directly for private inquiries
+  - name: Documentation
+    url: https://diogoribeiro7.github.io/imputation-methods/
+    about: Guides on choosing and evaluating imputation methods, plus the API reference
+  - name: Report a security vulnerability
+    url: https://github.com/DiogoRibeiro7/imputation-methods/security/advisories/new
+    about: Please report security issues privately, not as public issues

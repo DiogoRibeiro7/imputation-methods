@@ -1,7 +1,23 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "Imputation Showcase"
+type: software
+title: "imputation-methods: A unified pandas API for missing-data imputation"
+abstract: >-
+  A Python library that implements 42 missing-data imputation methods
+  (statistical, time-series, nearest-neighbor, regression, iterative,
+  matrix-completion, neural and ensemble) behind a single pandas DataFrame
+  interface, with metrics for evaluating imputations.
 version: 0.1.0
+license: MIT
+repository-code: "https://github.com/DiogoRibeiro7/imputation-methods"
+url: "https://diogoribeiro7.github.io/imputation-methods/"
+keywords:
+  - imputation
+  - missing data
+  - pandas
+  - scikit-learn
+  - time series
+  - statistics
 authors:
   - family-names: Ribeiro
     given-names: Diogo

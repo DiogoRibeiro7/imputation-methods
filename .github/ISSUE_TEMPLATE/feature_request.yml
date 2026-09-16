@@ -66,10 +66,9 @@ body:
       label: Example Usage
       description: If applicable, provide example code showing how this feature would be used
       placeholder: |
-        ```python
-        from imputation_showcase import NewFeature
-        # Example usage
-        ```
+        from imputation_methods import NewImputer
+
+        NewImputer(option=1).impute(df)
       render: python
 
   - type: dropdown
