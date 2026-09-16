@@ -1565,6 +1565,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        At a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#02-consistent-api-released-in-020" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1576,13 +1587,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#03-scikit-learn-compatibility" class="md-nav__link">
+  <a href="#03-scikit-learn-compatibility-and-input-validation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        0.3: scikit-learn compatibility
+        0.3: scikit-learn compatibility and input validation
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="0.3: scikit-learn compatibility and input validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fit-and-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fit and transform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimator-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimator conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1594,6 +1644,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="0.4: Statistical depth and evaluation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods-that-dont-match-their-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods that don't match their names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation toolkit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1703,6 +1792,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        At a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#02-consistent-api-released-in-020" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1714,13 +1814,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#03-scikit-learn-compatibility" class="md-nav__link">
+  <a href="#03-scikit-learn-compatibility-and-input-validation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        0.3: scikit-learn compatibility
+        0.3: scikit-learn compatibility and input validation
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="0.3: scikit-learn compatibility and input validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fit-and-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fit and transform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimator-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimator conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1732,6 +1871,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="0.4: Statistical depth and evaluation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-imputation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple imputation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods-that-dont-match-their-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods that don't match their names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-toolkit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation toolkit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1803,14 +1981,55 @@ when:</p>
 <li><strong>Imputers work in machine-learning pipelines.</strong> They can be fitted on training
   data and applied to new data, inside scikit-learn pipelines.</li>
 <li><strong>Behavior is predictable.</strong> All imputers follow the same conventions, for
-  example on errors, empty columns and output types, and each one documents its
-  edge cases.</li>
+  example on errors, empty columns, output types and invalid input, and each one
+  documents its edge cases.</li>
 <li><strong>Statistical claims hold.</strong> Every method does what its name and documentation
-  say.</li>
+  say, and tests check it.</li>
+<li><strong>Support is documented.</strong> Each release states which Python and dependency
+  versions it supports.</li>
 </ul>
 <p>Until 1.0, minor releases (0.x) may contain breaking changes. Renamed or removed
 APIs keep working for at least one minor release and raise a <code>FutureWarning</code>
 that explains what to use instead.</p>
+<h2 id="at-a-glance">At a glance<a class="headerlink" href="#at-a-glance" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Release</th>
+<th>Theme</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.2</td>
+<td>Consistent API</td>
+<td>Released in 0.2.0</td>
+</tr>
+<tr>
+<td>0.3</td>
+<td>scikit-learn compatibility and input validation</td>
+<td>Next</td>
+</tr>
+<tr>
+<td>0.4</td>
+<td>Statistical depth and evaluation</td>
+<td>Planned</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>Performance</td>
+<td>Planned</td>
+</tr>
+<tr>
+<td>1.0.0</td>
+<td>Stable release</td>
+<td>Planned</td>
+</tr>
+</tbody>
+</table>
+<p>Each milestone below lists its goal, the work, and when it counts as done. Where
+a section describes current behavior, it was measured on 0.2.0.</p>
 <h2 id="02-consistent-api-released-in-020">0.2: Consistent API <em>(released in 0.2.0)</em><a class="headerlink" href="#02-consistent-api-released-in-020" title="Permanent link">&para;</a></h2>
 <p>The renames go first, so their deprecation warnings run through several releases
 before 1.0 removes the old names.</p>
@@ -1833,59 +2052,239 @@ before 1.0 removes the old names.</p>
   unchanged; imputed columns come back as floating point (<code>float32</code>/<code>float64</code> keep
   their precision, nullable columns become <code>Float64</code>).</li>
 </ul>
-<h2 id="03-scikit-learn-compatibility">0.3: scikit-learn compatibility<a class="headerlink" href="#03-scikit-learn-compatibility" title="Permanent link">&para;</a></h2>
+<h2 id="03-scikit-learn-compatibility-and-input-validation">0.3: scikit-learn compatibility and input validation<a class="headerlink" href="#03-scikit-learn-compatibility-and-input-validation" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> fit an imputer on one dataset, apply it to another, and use it like any
+scikit-learn transformer: in <code>Pipeline</code>, <code>ColumnTransformer</code>, cross-validation and
+grid search.</p>
 <p>Today every imputer is stateless: <code>impute(df)</code> learns from and fills the same
-dataframe. You can't fit on training data and then transform validation or test
-data, so evaluation pipelines risk data leakage.</p>
+dataframe. You can't fit on training data and then fill validation or test data,
+so evaluation pipelines risk data leakage.</p>
+<h3 id="fit-and-transform">Fit and transform<a class="headerlink" href="#fit-and-transform" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Add <code>fit</code>, <code>transform</code> and <code>fit_transform</code>, keeping <code>impute(df)</code> as a shortcut
-  for <code>fit_transform</code>.</li>
-<li>Follow scikit-learn estimator conventions (<code>get_params</code>/<code>set_params</code>, <code>clone</code>,
-  parameters stored unchanged in <code>__init__</code>), so imputers work in <code>Pipeline</code>,
-  <code>ColumnTransformer</code> and <code>GridSearchCV</code>, with pandas output via
-  <code>set_output(transform="pandas")</code>.</li>
-<li>Check compliance with scikit-learn's estimator test suite.</li>
-<li>Document the imputers that can only fill the data they were given (for example
-  carry-forward and interpolation) and how they behave in <code>transform</code>.</li>
+<li>Add <code>fit(X, y=None)</code>, <code>transform(X)</code> and <code>fit_transform(X, y=None)</code> to every
+  imputer. <code>impute(df)</code> stays as a shortcut for <code>fit_transform</code>, and the
+  functional shortcuts keep working.</li>
+<li>Store what <code>fit</code> learns in attributes ending in <code>_</code>, such as <code>statistics_</code>,
+  <code>n_features_in_</code> and <code>feature_names_in_</code>. <code>transform</code> raises <code>NotFittedError</code>
+  before <code>fit</code>, and rejects data whose columns differ from the fitted ones.</li>
+<li>What each family keeps from <code>fit</code>:</li>
+<li><strong>Statistical</strong> imputers: the per-column statistic, or per-group statistics
+    for <code>GroupMeanImputer</code>.</li>
+<li><strong>Donor sampling</strong> imputers: the pool of observed donor values.</li>
+<li><strong>Neighbors, regression, iterative, matrix and neural</strong> imputers: the fitted
+    models, for example per-column regressors, PPCA loadings and trained networks.</li>
+<li><strong>Ensembles</strong>: each fitted member.</li>
+<li>Time-series imputers (carry-forward, interpolation, moving averages, trends,
+  seasonal and Kalman) fill a series from its own row order and have no reusable
+  model. Each gets a documented <code>transform</code> behavior: either it works on the new
+  data alone, or it continues from the end of the fitted series (for example,
+  <code>LOCFImputer</code> carrying the last training value forward).</li>
+<li>Stochastic imputers draw from <code>random_state</code> in <code>transform</code> too, so results are
+  reproducible.</li>
 </ul>
+<h3 id="estimator-conventions">Estimator conventions<a class="headerlink" href="#estimator-conventions" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Inherit from scikit-learn's <code>BaseEstimator</code> and <code>TransformerMixin</code>, for
+  <code>get_params</code>/<code>set_params</code>, <code>clone</code> and the HTML representation. Ensembles expose
+  their members' parameters, so a grid search can tune, for example,
+  <code>estimator__n_neighbors</code> inside <code>BaggingImputer</code>.</li>
+<li>Keep <code>__init__</code> to storing parameters, unchanged:</li>
+<li>25 of the 41 imputers validate parameters in <code>__init__</code>, including the
+    <code>on_error</code> check; validation moves to <code>fit</code>.</li>
+<li><code>MICEImputer</code>, <code>MissForestImputer</code>, <code>KNNImputer</code> and <code>AutoencoderImputer</code>
+    build their scikit-learn model in <code>__init__</code>, so changing a parameter after
+    construction has no effect. They will build it in <code>fit</code>.</li>
+<li>Rename the remaining parameters that differ from scikit-learn, with the same
+  deprecation period as in 0.2: <code>HybridImputer(methods=...)</code> and
+  <code>StackingImputer(base_imputers=...)</code> become <code>estimators=...</code>,
+  <code>BaggingImputer(base_imputer=...)</code> becomes <code>estimator=...</code>, and
+  <code>SoftImputeImputer(convergence_threshold=...)</code> becomes <code>tol=...</code>.</li>
+<li>Accept NumPy arrays as well as dataframes, support
+  <code>set_output(transform="pandas")</code>, and implement <code>get_feature_names_out</code>,
+  including the indicator columns that <code>IndicatorImputer</code> adds.</li>
+<li>Declare estimator tags. scikit-learn 1.6 replaced <code>_more_tags</code> with
+  <code>__sklearn_tags__</code>; either support both or raise the minimum scikit-learn
+  version from 1.4 to 1.6.</li>
+<li>Run scikit-learn's estimator checks (<code>parametrize_with_checks</code>) on every
+  imputer. A check that can't apply, for example to row-order imputers, is marked
+  as an expected failure with the reason.</li>
+</ul>
+<h3 id="input-validation">Input validation<a class="headerlink" href="#input-validation" title="Permanent link">&para;</a></h3>
+<p>Unusual input currently fails in different ways depending on the imputer:</p>
+<ul>
+<li><strong>Duplicate column names</strong> crash all 41 imputers with <code>AttributeError</code>. Raise
+  <code>ValueError</code> naming the duplicated columns.</li>
+<li><strong>Infinite values</strong>: 25 imputers carry <code>inf</code> into the result, sometimes filling
+  missing cells with <code>inf</code> or <code>NaN</code>. The other 16 raise either <code>ValueError</code> or
+  <code>ImputationError</code>, with messages ranging from "Input contains infinity" to
+  "SVD did not converge". Reject <code>inf</code> with a <code>ValueError</code> before fitting, as
+  scikit-learn's own imputers do.</li>
+<li><strong>Boolean columns</strong> work as predictors everywhere except in <code>LocalMeanImputer</code>,
+  which raises <code>TypeError</code>. Treat them as 0/1 in every imputer.</li>
+<li>Extend the shared contract tests to cover these cases, plus zero-row dataframes,
+  single rows and columns with a single observed value.</li>
+</ul>
+<p><strong>Done when:</strong> every imputer passes scikit-learn's estimator checks or documents
+why a check doesn't apply; the machine-learning pipeline example fits on training
+data and transforms test data inside <code>Pipeline</code>, <code>ColumnTransformer</code> and
+<code>GridSearchCV</code>; and the contract tests cover <code>fit</code>/<code>transform</code> on separate data
+and the invalid inputs above.</p>
 <h2 id="04-statistical-depth-and-evaluation">0.4: Statistical depth and evaluation<a class="headerlink" href="#04-statistical-depth-and-evaluation" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> each method does what its name says, and users can measure which
+method works for their data with tools in the package rather than notebook code.</p>
+<h3 id="multiple-imputation">Multiple imputation<a class="headerlink" href="#multiple-imputation" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Multiple imputation.</strong> <code>MICEImputer</code> returns one completed dataset. Support
-  generating several imputations, and pooling estimates across them with Rubin's
-  rules.</li>
-<li><strong>Expectation–maximization.</strong> <code>EMImputer</code> runs iterative chained-equation
-  imputation. Implement EM for the multivariate normal distribution, or rename the
-  class to match what it does.</li>
-<li><strong>Stacking.</strong> <code>StackingImputer(meta_strategy="weighted")</code> currently behaves like
-  <code>"mean"</code>. Learn the weights on held-out observed values, or remove the option.</li>
-<li><strong>Evaluation toolkit.</strong> Move the missingness simulators (MCAR, MAR, MNAR) from
-  the notebooks into the package, add helpers that score only the masked cells,
-  and add distribution-level metrics alongside RMSE and MAE.</li>
+<li><code>MICEImputer</code> is named after multiple imputation but returns one completed
+  dataset, without drawing from the posterior. Add <code>n_imputations</code> to generate
+  several datasets with <code>sample_posterior=True</code>, and a pooling function that
+  applies Rubin's rules: the pooled estimate, within- and between-imputation
+  variance, total variance, Barnard–Rubin degrees of freedom and the fraction of
+  missing information.</li>
+<li>Add a wrapper that turns any stochastic imputer (for example <code>PMMImputer</code>,
+  <code>HotDeckImputer</code> or <code>StochasticRegressionImputer</code>) into a multiple imputer by
+  running it with different seeds.</li>
+<li>Make the draws "proper", so that pooled variances aren't understated:
+  <code>StochasticRegressionImputer</code> adds residual noise to a single fitted regression,
+  and <code>PMMImputer</code> matches donors on fixed coefficients. Both should draw the
+  coefficients from their posterior or a bootstrap sample for each imputation.</li>
+<li>Expose the settings that <code>MICEImputer</code> and <code>MissForestImputer</code> hide. Today they
+  accept only <code>random_state</code> and <code>on_error</code>. Add <code>max_iter</code>, <code>tol</code>, <code>estimator</code>
+  and <code>imputation_order</code> to MICE, and <code>max_iter</code>, <code>n_estimators</code> and <code>max_depth</code>
+  to MissForest.</li>
 </ul>
+<h3 id="methods-that-dont-match-their-names">Methods that don't match their names<a class="headerlink" href="#methods-that-dont-match-their-names" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>EMImputer</code></strong> runs scikit-learn's <code>IterativeImputer</code> with <code>BayesianRidge</code>,
+  which is <code>MICEImputer</code> with a tolerance. Implement expectation–maximization for
+  the multivariate normal distribution (estimating the mean and covariance, then
+  imputing conditional expectations), or deprecate the class in favor of
+  <code>MICEImputer</code>.</li>
+<li><strong><code>StackingImputer(meta_strategy="weighted")</code></strong> behaves like <code>"mean"</code>. Learn
+  the weights by hiding observed cells, imputing them with each base imputer and
+  weighting by accuracy, or deprecate the option.</li>
+<li><strong><code>KalmanFilterImputer</code></strong> runs only the forward filter, so every value in a gap
+  equals the last filtered estimate, and its noise variances are fixed parameters.
+  Add a Rauch–Tung–Striebel smoother, so gaps use the observations on both sides,
+  and estimate the variances from the data by maximum likelihood.</li>
+<li><strong>Docstring audit.</strong> Check every imputer's documentation against its
+  implementation, and turn each documented property into a test. Examples:
+  <code>StochasticRegressionImputer</code> preserves variance, <code>PMMImputer</code> only imputes
+  values that were observed, and <code>EndOfDistributionImputer</code> fills at the mean plus
+  or minus <code>n_std</code> standard deviations.</li>
+</ul>
+<h3 id="evaluation-toolkit">Evaluation toolkit<a class="headerlink" href="#evaluation-toolkit" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Missingness simulators.</strong> Move <code>create_mcar</code>, <code>create_mar</code> and <code>create_mnar</code>
+  from <code>notebooks/02_method_comparison.ipynb</code> into the package, with a seed, and
+  return the mask alongside the data.</li>
+<li><strong>Masked scoring.</strong> Extend <code>rmse</code> and <code>mae</code>, which currently compare two
+  series, to score whole dataframes on the masked cells only, per column and
+  overall.</li>
+<li><strong>Distribution metrics.</strong> Add metrics that capture more than point accuracy:
+  normalized RMSE, per-column Wasserstein distance, error in the correlation
+  matrix, and for multiple imputation, the coverage of confidence intervals.</li>
+<li><strong>Method comparison.</strong> A helper that repeatedly hides observed cells, imputes
+  them with several imputers and reports the metrics, so choosing a method is
+  one function call.</li>
+<li><strong>Diagnostics.</strong> A summary of missingness per column and of missing-value
+  patterns, and Little's test for data missing completely at random.</li>
+</ul>
+<p><strong>Done when:</strong> a worked example performs multiple imputation and pooling end to
+end; every documented property of an imputer has a test; and the evaluation guide
+and comparison notebook use the package's simulators and metrics.</p>
 <h2 id="05-performance">0.5: Performance<a class="headerlink" href="#05-performance" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> every imputer scales predictably, and the documentation says how far.</p>
+<p>Runtime on a laptop, for correlated data with 3 columns and 15% of the values
+missing in two of them:</p>
+<table>
+<thead>
+<tr>
+<th>Imputer</th>
+<th>2,000 rows</th>
+<th>8,000 rows</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GaussianProcessImputer</code></td>
+<td>1.8 s</td>
+<td>253 s</td>
+<td>Exact Gaussian process on every observed row</td>
+</tr>
+<tr>
+<td><code>MissForestImputer</code></td>
+<td>16 s</td>
+<td>39 s</td>
+<td>Random forests refitted for every column and round</td>
+</tr>
+<tr>
+<td><code>LocalMeanImputer</code></td>
+<td>0.7 s</td>
+<td>3.7 s</td>
+<td>Distances recomputed for every missing cell</td>
+</tr>
+<tr>
+<td><code>KNNImputer</code></td>
+<td>0.04 s</td>
+<td>0.8 s</td>
+<td>For comparison</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li>Remove the per-cell Python loop in <code>LocalMeanImputer</code>, which computes the
-  distances again for every missing value.</li>
-<li>Speed up <code>KalmanFilterImputer</code>, whose filter recursion runs in pure Python for
-  every time step of every column.</li>
-<li>Publish benchmark results, covering accuracy and runtime by dataset size and
-  missingness pattern, in the documentation, generated from <code>benchmarks/</code>.</li>
+<li><strong><code>GaussianProcessImputer</code></strong>: the cost grows with the cube of the number of
+  rows. Cap the training rows with a <code>max_samples</code> parameter, and document the
+  practical limit.</li>
+<li><strong><code>LocalMeanImputer</code></strong> and <strong><code>PMMImputer</code></strong>: remove the per-cell Python loops.
+  Compute neighbors for all missing cells at once, and match donors in <code>PMMImputer</code>
+  by searching sorted predictions.</li>
+<li><strong><code>MissForestImputer</code></strong>, <strong><code>BaggingImputer</code></strong> and <strong><code>StackingImputer</code></strong>: add
+  <code>n_jobs</code> to fit members or columns in parallel.</li>
+<li><strong>Benchmarks.</strong> <code>benchmarks/benchmark_methods.py</code> covers 16 imputers on
+  synthetic Gaussian data with values missing completely at random, up to 10,000
+  rows. Extend it to every imputer, to data missing at random and not at random
+  (using the 0.4 simulators) and to real datasets. Publish accuracy and runtime
+  tables in the documentation, generated for each release.</li>
+<li><strong>Regression tracking.</strong> Run the tests marked <code>benchmark</code>, which are deselected
+  by default, on a schedule, and flag runtime regressions.</li>
 </ul>
+<p><strong>Done when:</strong> no imputer loops over cells in Python; each imputer's docstring
+gives its complexity or a size guideline; and the benchmark results are published.</p>
 <h2 id="100-stable-release">1.0.0: Stable release<a class="headerlink" href="#100-stable-release" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> a public API that only changes in a major release.</p>
 <ul>
-<li>Remove the APIs deprecated during 0.x.</li>
-<li>Freeze the public API and follow semantic versioning strictly from here on.</li>
-<li>Publish versioned documentation, so each release has matching docs. The site
-  currently tracks <code>main</code>.</li>
-<li>Distribute on conda-forge in addition to PyPI.</li>
+<li><strong>Remove deprecated APIs.</strong> This covers the old names from 0.2
+  (<code>KNNImputerMethod</code>, <code>BayesianPCAImputer</code>, <code>predictive_mean_matching</code>,
+  <code>bayesian_pca_impute</code>, and the parameters <code>max_iters</code>, <code>iterations</code>, <code>k</code> and
+  <code>method</code> where they were renamed), and anything deprecated in 0.3 to 0.5.</li>
+<li><strong>Change the <code>on_error</code> default</strong> to <code>"raise"</code>.</li>
+<li><strong>Freeze the public API.</strong> The public API is the names in
+  <code>imputation_methods.__all__</code>, with their signatures and defaults. A test compares
+  them with a stored snapshot, so an accidental change fails CI.</li>
+<li><strong>Release candidate.</strong> Publish <code>1.0.0rc1</code> on PyPI and collect feedback before
+  the final release.</li>
+<li><strong>Versioned documentation.</strong> Each release gets its own docs, with a version
+  switcher. The site currently tracks <code>main</code>.</li>
+<li><strong>Support policy.</strong> Document the minimum versions of Python, NumPy, pandas,
+  SciPy and scikit-learn and when support for each ends, for example following the
+  Scientific Python <a href="https://scientific-python.org/specs/spec-0000/">SPEC 0</a>.
+  Today: Python 3.10 to 3.14, NumPy 1.24+, pandas 2.0+, SciPy 1.10+ and
+  scikit-learn 1.4+. Python 3.10 reaches end of life in October 2026.</li>
+<li><strong>conda-forge.</strong> Distribute on conda-forge in addition to PyPI.</li>
 </ul>
 <h2 id="after-10">After 1.0<a class="headerlink" href="#after-10" title="Permanent link">&para;</a></h2>
 <p>These are worthwhile, but not needed for a stable 1.0:</p>
 <ul>
-<li>Categorical and mixed-type columns. All imputers currently require numeric
-  input.</li>
-<li>Other dataframe libraries, such as Polars, and out-of-core or distributed data.</li>
-<li>GPU acceleration.</li>
+<li><strong>Categorical and mixed-type columns.</strong> All imputers require numeric columns,
+  except for the grouping column of <code>GroupMeanImputer</code>. Mode, constant, hot-deck,
+  nearest-neighbor and random-forest imputation can all support categories.</li>
+<li><strong>Uncertainty for each imputed value</strong>, for example prediction intervals from
+  <code>KalmanFilterImputer</code>, <code>GaussianProcessImputer</code> and <code>PPCAImputer</code>, or the spread
+  across multiple imputations.</li>
+<li><strong>Other dataframe libraries</strong>, such as Polars, and out-of-core or distributed
+  data.</li>
+<li><strong>GPU acceleration</strong> for the neural imputers.</li>
 </ul>
 
 
