@@ -1695,6 +1695,12 @@
   <code>GroupMeanImputer</code> is the exception: its grouping column may be non-numeric.</li>
 <li><strong>Output</strong>: a new dataframe with the same index and columns. The input is never
   modified. <code>IndicatorImputer</code> also appends one indicator column per input column.</li>
+<li><strong>Output types</strong> follow one policy for every imputer:</li>
+<li>a column without missing values comes back unchanged, with the same values and
+    dtype;</li>
+<li>an imputed column comes back as floating point: <code>float32</code> and <code>float64</code> keep
+    their precision, and pandas nullable columns (<code>Int64</code>, <code>Float64</code>, ...) become
+    <code>Float64</code>, so values that couldn't be imputed stay <code>&lt;NA&gt;</code>.</li>
 <li><strong>Configuration</strong> happens in the constructor. Imputers with randomness accept a
   <code>random_state</code> for reproducible results.</li>
 <li><strong>Columns with no observed values</strong> carry no information, so every imputer that

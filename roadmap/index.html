@@ -1829,8 +1829,9 @@ before 1.0 removes the old names.</p>
 <li><strong>Empty columns</strong> <em>(done, unreleased)</em>. Every imputer that learns from the data
   leaves a column with no observed values as <code>NaN</code>; only imputers that fill in a
   constant chosen by the user fill it.</li>
-<li><strong>Output types.</strong> Define and test one dtype policy, for example whether integer
-  columns stay integer after imputation.</li>
+<li><strong>Output types</strong> <em>(done, unreleased)</em>. Columns without missing values come back
+  unchanged; imputed columns come back as floating point (<code>float32</code>/<code>float64</code> keep
+  their precision, nullable columns become <code>Float64</code>).</li>
 </ul>
 <h2 id="03-scikit-learn-compatibility">0.3: scikit-learn compatibility<a class="headerlink" href="#03-scikit-learn-compatibility" title="Permanent link">&para;</a></h2>
 <p>Today every imputer is stateless: <code>impute(df)</code> learns from and fills the same

@@ -1888,6 +1888,13 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   (it is maximum-likelihood probabilistic PCA), <code>predictive_mean_matching</code> to
   <code>pmm_impute</code> and <code>bayesian_pca_impute</code> to <code>ppca_impute</code>.</li>
 <li>Instance attributes use the new parameter names (e.g. <code>imputer.n_neighbors</code>).</li>
+<li><strong>One output dtype policy for every imputer.</strong> Columns without missing values are
+  returned unchanged, with the same dtype; imputed columns are floating point,
+  keeping <code>float32</code> or <code>float64</code>, and pandas nullable columns become <code>Float64</code> so
+  values that couldn't be imputed stay <code>&lt;NA&gt;</code>. Previously the imputers based on
+  scikit-learn (<code>KNNImputer</code>, <code>MICEImputer</code>, <code>MissForestImputer</code>, <code>EMImputer</code>,
+  <code>SoftImputeImputer</code>, <code>PPCAImputer</code>, <code>GAINImputer</code>) turned every column, including
+  complete integer columns, into <code>float64</code>.</li>
 <li><strong>Behavior change:</strong> a column with no observed values is now left as <code>NaN</code> by
   every imputer that learns from the data. <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>,
   <code>LocalMeanImputer</code> and <code>HybridImputer</code> used to fill it with 0, and
@@ -1907,6 +1914,9 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>24 imputers raised <code>TypeError</code> on pandas nullable integer columns (<code>Int64</code>) with
+  missing values, and <code>KalmanFilterImputer</code> and <code>LocalMeanImputer</code> on other nullable
+  columns; <code>float32</code> columns with missing values failed in 7 imputers under pandas 3.</li>
 <li><code>TrimmedMeanImputer</code> emitted a SciPy <code>SmallSampleWarning</code>, and <code>MedianImputer</code>,
   <code>ModeImputer</code>, <code>IndicatorImputer</code>, <code>GroupMeanImputer</code> and <code>ColdDeckImputer</code> a NumPy
   "Mean of empty slice" warning on older NumPy, for columns with no observed values.</li>
