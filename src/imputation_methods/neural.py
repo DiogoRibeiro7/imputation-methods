@@ -64,7 +64,9 @@ class AutoencoderImputer(BaseImputer):
             # Handle case where mean might be NaN (all values missing)
             if filled.isna().any().any():
                 filled = filled.fillna(0)
-            self._model.fit(filled, filled)
+            target = filled.to_numpy()
+            # scikit-learn expects a 1-D target when there is a single column.
+            self._model.fit(filled, target.ravel() if target.shape[1] == 1 else target)
             reconstructed = pd.DataFrame(
                 self._model.predict(filled),
                 columns=df.columns,

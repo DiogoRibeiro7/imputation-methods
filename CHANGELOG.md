@@ -32,7 +32,8 @@ First release on PyPI, as `imputation-methods`.
   - **Matrix completion**: `SoftImputeImputer`, `BayesianPCAImputer`
   - **Neural networks**: `AutoencoderImputer`, `GAINImputer`
   - **Ensembles**: `HybridImputer`, `StackingImputer`, `BaggingImputer`
-- A functional shortcut for every imputer, e.g. `knn_impute(df, k=3)`.
+- A functional shortcut for every imputer, e.g. `knn_impute(df, k=3)`, accepting
+  the same parameters and defaults as its class.
 - `rmse` and `mae` metrics for scoring imputations against ground truth.
 - Inline type hints (`py.typed`), checked with mypy in strict mode.
 - Documentation site with an API reference generated from docstrings.
@@ -81,6 +82,8 @@ First release on PyPI, as `imputation-methods`.
 - `HotDeckImputer` triggered a pandas 4 deprecation warning when stratifying by a
   single column.
 - Docstring examples that used non-existent arguments (e.g. `n_neighbors=`).
+- `AutoencoderImputer` triggered a scikit-learn `DataConversionWarning` on
+  single-column input.
 
 <!-- --8<-- [end:changelog] -->
 

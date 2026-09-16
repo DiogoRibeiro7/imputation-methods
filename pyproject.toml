@@ -192,6 +192,8 @@ branch = true
 source = ["src/imputation_methods", "*/site-packages/imputation_methods"]
 
 [tool.coverage.report]
+# CI fails if total coverage drops below this. Raise it as coverage improves.
+fail_under = 90
 show_missing = true
 skip_covered = true
 exclude_also = [

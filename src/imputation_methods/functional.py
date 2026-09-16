@@ -72,9 +72,11 @@ def knn_impute(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
     return KNNImputerMethod(k=k).impute(df)
 
 
-def predictive_mean_matching(df: pd.DataFrame, k: int = 5) -> pd.DataFrame:
+def predictive_mean_matching(
+    df: pd.DataFrame, k: int = 5, random_state: int | None = None
+) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`PMMImputer`."""
-    return PMMImputer(k=k).impute(df)
+    return PMMImputer(k=k, random_state=random_state).impute(df)
 
 
 def mice_impute(
@@ -128,23 +130,33 @@ def miss_forest_impute(
 
 def bayesian_pca_impute(
     df: pd.DataFrame,
-    n_components: int | None = None,
+    n_components: int | None = 1,
     min_obs: int = 1,
+    max_iter: int = 500,
+    tol: float = 1e-6,
 ) -> pd.DataFrame:
     """Wrapper for :class:`BayesianPCAImputer`."""
     return BayesianPCAImputer(
         n_components=n_components,
         min_obs=min_obs,
+        max_iter=max_iter,
+        tol=tol,
     ).impute(df)
 
 
 def soft_impute(
-    df: pd.DataFrame, max_iters: int = 100, init_fill_method: str = "zero"
+    df: pd.DataFrame,
+    max_iters: int = 100,
+    init_fill_method: str = "zero",
+    shrinkage_value: float | None = None,
+    convergence_threshold: float = 1e-3,
 ) -> pd.DataFrame:
     """Wrapper for :class:`SoftImputeImputer`."""
     return SoftImputeImputer(
         max_iters=max_iters,
         init_fill_method=init_fill_method,
+        shrinkage_value=shrinkage_value,
+        convergence_threshold=convergence_threshold,
     ).impute(df)
 
 
@@ -349,10 +361,23 @@ def hybrid_impute(
 
 
 def bayesian_ridge_impute(
-    df: pd.DataFrame, max_iter: int = 300, tol: float = 1e-3
+    df: pd.DataFrame,
+    max_iter: int = 300,
+    tol: float = 1e-3,
+    alpha_1: float = 1e-6,
+    alpha_2: float = 1e-6,
+    lambda_1: float = 1e-6,
+    lambda_2: float = 1e-6,
 ) -> pd.DataFrame:
     """Wrapper for :class:`BayesianRidgeImputer`."""
-    return BayesianRidgeImputer(max_iter=max_iter, tol=tol).impute(df)
+    return BayesianRidgeImputer(
+        max_iter=max_iter,
+        tol=tol,
+        alpha_1=alpha_1,
+        alpha_2=alpha_2,
+        lambda_1=lambda_1,
+        lambda_2=lambda_2,
+    ).impute(df)
 
 
 def stacking_impute(
@@ -383,10 +408,15 @@ def bagging_impute(
 
 
 def radius_neighbors_impute(
-    df: pd.DataFrame, radius: float = 1.0, weights: str = "distance"
+    df: pd.DataFrame,
+    radius: float = 1.0,
+    weights: str = "distance",
+    metric: str = "euclidean",
 ) -> pd.DataFrame:
     """Wrapper for :class:`RadiusNeighborsImputer`."""
-    return RadiusNeighborsImputer(radius=radius, weights=weights).impute(df)
+    return RadiusNeighborsImputer(radius=radius, weights=weights, metric=metric).impute(
+        df
+    )
 
 
 def local_mean_impute(
@@ -399,17 +429,26 @@ def local_mean_impute(
 
 
 def huber_impute(
-    df: pd.DataFrame, epsilon: float = 1.35, max_iter: int = 100
+    df: pd.DataFrame, epsilon: float = 1.35, max_iter: int = 100, alpha: float = 0.0001
 ) -> pd.DataFrame:
     """Wrapper for :class:`HuberImputer`."""
-    return HuberImputer(epsilon=epsilon, max_iter=max_iter).impute(df)
+    return HuberImputer(epsilon=epsilon, max_iter=max_iter, alpha=alpha).impute(df)
 
 
 def ransac_impute(
-    df: pd.DataFrame, max_trials: int = 100, random_state: int | None = None
+    df: pd.DataFrame,
+    max_trials: int = 100,
+    random_state: int | None = None,
+    min_samples: int | None = None,
+    residual_threshold: float | None = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`RANSACImputer`."""
-    return RANSACImputer(max_trials=max_trials, random_state=random_state).impute(df)
+    return RANSACImputer(
+        min_samples=min_samples,
+        residual_threshold=residual_threshold,
+        max_trials=max_trials,
+        random_state=random_state,
+    ).impute(df)
 
 
 def trimmed_mean_impute(df: pd.DataFrame, trim_fraction: float = 0.1) -> pd.DataFrame:

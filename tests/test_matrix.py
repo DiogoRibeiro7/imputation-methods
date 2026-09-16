@@ -147,3 +147,41 @@ def test_functional_wrappers() -> None:
     _, missing, _ = _low_rank_frame(n_rows=30, n_cols=4)
     assert soft_impute(missing, max_iters=10).notna().all().all()
     assert bayesian_pca_impute(missing, n_components=2).notna().all().all()
+
+
+def test_soft_impute() -> None:
+    df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
+    imputed = SoftImputeImputer().impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_bayesian_pca_imputer() -> None:
+    df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
+    imputed = BayesianPCAImputer().impute(df)
+    assert not imputed.isna().any().any()
+
+
+def test_bayesian_pca_single_column() -> None:
+    """Test Bayesian PCA with single column (cannot reduce dimensions)."""
+    df = pd.DataFrame({"a": [1, 2, np.nan, 4]})
+    imputed = BayesianPCAImputer().impute(df)
+    # Should return copy of original when only one column
+    pd.testing.assert_frame_equal(imputed, df)
+
+
+def test_soft_impute_different_init_methods() -> None:
+    """Test SoftImpute with different initialization methods."""
+    df = pd.DataFrame({"a": [1, np.nan, 3], "b": [4, 5, np.nan]})
+    imputed_zero = SoftImputeImputer(init_fill_method="zero").impute(df)
+    imputed_mean = SoftImputeImputer(init_fill_method="mean").impute(df)
+    assert not imputed_zero.isna().any().any()
+    assert not imputed_mean.isna().any().any()
+
+
+def test_bayesian_pca_with_n_components() -> None:
+    """Test Bayesian PCA with explicit number of components."""
+    df = pd.DataFrame(
+        {"a": [1, np.nan, 3, 4], "b": [4, 5, np.nan, 7], "c": [7, 8, 9, np.nan]}
+    )
+    imputed = BayesianPCAImputer(n_components=2).impute(df)
+    assert not imputed.isna().any().any()
