@@ -12,7 +12,8 @@ from scipy.special import expit
 from sklearn.neural_network import MLPRegressor
 
 from ._deprecation import renamed_parameters
-from .base import BaseImputer
+from ._utils import OnError, check_on_error, raise_or_fall_back
+from .base import BaseImputer, ImputationError
 from .statistical import MeanImputer
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class AutoencoderImputer(BaseImputer):
         hidden_layer_sizes: tuple[int, ...] = (10,),
         max_iter: int = 200,
         random_state: int | None = None,
+        on_error: OnError = None,
     ) -> None:
         """Initialize the imputer.
 
@@ -36,6 +38,10 @@ class AutoencoderImputer(BaseImputer):
                 the autoencoder.
             max_iter: Maximum training iterations.
             random_state: Random seed controlling network initialization.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation. The default, ``None``, falls back with a
+                ``FutureWarning``; it will change to ``"raise"`` in 1.0.0.
         """
         self.hidden_layer_sizes = hidden_layer_sizes
         self.max_iter = max_iter
@@ -46,6 +52,7 @@ class AutoencoderImputer(BaseImputer):
             max_iter=max_iter,
             random_state=random_state,
         )
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values using an autoencoder reconstruction.
@@ -75,13 +82,15 @@ class AutoencoderImputer(BaseImputer):
             )
             return df.where(~df.isna(), reconstructed)
         except (ValueError, np.linalg.LinAlgError) as e:
-            logger.warning(
-                "Autoencoder imputation failed (%s); falling back to mean imputation",
-                e,
+            raise_or_fall_back(
+                self.on_error,
+                imputer=type(self).__name__,
+                error=e,
+                fallback="mean imputation",
             )
             return MeanImputer().impute(df)
         except Exception as e:
-            raise RuntimeError(f"Autoencoder imputation failed: {e}") from e
+            raise ImputationError(f"{type(self).__name__} failed: {e}") from e
 
 
 class _MLP:

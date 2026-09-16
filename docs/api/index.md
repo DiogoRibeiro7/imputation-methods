@@ -24,6 +24,10 @@ Every imputer subclasses [`BaseImputer`](base.md) and exposes one method,
   them as `NaN`. `ConstantImputer` fills them with its constant, and
   `HybridImputer`, `BayesianRidgeImputer`, `HuberImputer`, `LocalMeanImputer` and
   `AutoencoderImputer` fall back to 0 (or a value reconstructed from 0). Drop or handle empty columns explicitly if that matters.
+- **Errors**: if a model can't be fitted (for example a singular matrix), imputers
+  with an `on_error` parameter either raise `ImputationError` (`on_error="raise"`)
+  or fall back to mean or median imputation (`on_error="fallback"`). Leaving it
+  unset falls back with a `FutureWarning`; from 1.0.0 the default is `"raise"`.
 - **Row order** matters only for the [time-series imputers](time-series.md); sort
   your data first.
 

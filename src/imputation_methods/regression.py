@@ -16,6 +16,7 @@ from sklearn.linear_model import (
 )
 
 from ._deprecation import renamed_parameters
+from ._utils import OnError, check_on_error, raise_or_fall_back
 from .base import BaseImputer
 
 logger = logging.getLogger(__name__)
@@ -38,6 +39,18 @@ class RegressionImputer(BaseImputer):
     Each incomplete column is regressed on all other columns, using the rows
     where it is observed. Gaps in the predictor columns are mean-filled first.
     """
+
+    def __init__(self, on_error: OnError = None) -> None:
+        """Initialize the imputer.
+
+        Args:
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation for that column. The default, ``None``,
+                falls back with a ``FutureWarning``; it will change to
+                ``"raise"`` in 1.0.0.
+        """
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Predict missing entries using other columns as features.
@@ -75,18 +88,21 @@ class RegressionImputer(BaseImputer):
                     predicted = reg.predict(x_missing)
                     result.loc[missing.index, column] = predicted
                 except (ValueError, np.linalg.LinAlgError) as e:
-                    logger.warning(
-                        "Regression failed for column %r (%s); using mean imputation",
-                        column,
-                        e,
+                    raise_or_fall_back(
+                        self.on_error,
+                        imputer=type(self).__name__,
+                        error=e,
+                        fallback="mean imputation",
+                        column=column,
                     )
                     result[column] = result[column].fillna(result[column].mean())
                 except Exception as e:
-                    logger.warning(
-                        "Unexpected error in regression for column %r (%s); "
-                        "using median imputation",
-                        column,
-                        e,
+                    raise_or_fall_back(
+                        self.on_error,
+                        imputer=type(self).__name__,
+                        error=e,
+                        fallback="median imputation",
+                        column=column,
                     )
                     result[column] = result[column].fillna(result[column].median())
 
@@ -164,12 +180,22 @@ class PMMImputer(BaseImputer):
     """
 
     @renamed_parameters(k="n_neighbors")
-    def __init__(self, n_neighbors: int = 5, random_state: int | None = None) -> None:
+    def __init__(
+        self,
+        n_neighbors: int = 5,
+        random_state: int | None = None,
+        on_error: OnError = None,
+    ) -> None:
         """Initialize the imputer.
 
         Args:
             n_neighbors: Number of donor candidates to consider.
             random_state: Seed for donor selection randomness.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation for that column. The default, ``None``,
+                falls back with a ``FutureWarning``; it will change to
+                ``"raise"`` in 1.0.0.
 
         Raises:
             ValueError: If n_neighbors is not a positive integer.
@@ -182,6 +208,7 @@ class PMMImputer(BaseImputer):
             raise ValueError(f"n_neighbors must be positive, got {n_neighbors}")
         self.n_neighbors = n_neighbors
         self.random_state = random_state
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute data using predictive mean matching.
@@ -226,18 +253,21 @@ class PMMImputer(BaseImputer):
                         nearest_idx = np.argsort(distances)[: self.n_neighbors]
                         result.at[i, column] = rng.choice(observed_values[nearest_idx])
                 except (ValueError, np.linalg.LinAlgError) as e:
-                    logger.warning(
-                        "PMM failed for column %r (%s); using mean imputation",
-                        column,
-                        e,
+                    raise_or_fall_back(
+                        self.on_error,
+                        imputer=type(self).__name__,
+                        error=e,
+                        fallback="mean imputation",
+                        column=column,
                     )
                     result[column] = result[column].fillna(result[column].mean())
                 except Exception as e:
-                    logger.warning(
-                        "Unexpected error in PMM for column %r (%s); "
-                        "using median imputation",
-                        column,
-                        e,
+                    raise_or_fall_back(
+                        self.on_error,
+                        imputer=type(self).__name__,
+                        error=e,
+                        fallback="median imputation",
+                        column=column,
                     )
                     result[column] = result[column].fillna(result[column].median())
 
@@ -510,6 +540,7 @@ class RANSACImputer(BaseImputer):
         residual_threshold: float | None = None,
         max_trials: int = 100,
         random_state: int | None = None,
+        on_error: OnError = None,
     ) -> None:
         """Initialize the RANSAC imputer.
 
@@ -518,11 +549,17 @@ class RANSACImputer(BaseImputer):
             residual_threshold: Inlier threshold
             max_trials: Maximum iterations
             random_state: Random seed
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use median imputation for that column. The default, ``None``,
+                falls back with a ``FutureWarning``; it will change to
+                ``"raise"`` in 1.0.0.
         """
         self.min_samples = min_samples
         self.residual_threshold = residual_threshold
         self.max_trials = max_trials
         self.random_state = random_state
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using RANSAC regression.
@@ -565,8 +602,14 @@ class RANSACImputer(BaseImputer):
                         model.fit(X_train, y_train)
                         predictions = model.predict(X_predict)
                         result.loc[predict_mask, column] = predictions
-                    except Exception:
-                        # Fall back to median if RANSAC fails
+                    except Exception as e:
+                        raise_or_fall_back(
+                            self.on_error,
+                            imputer=type(self).__name__,
+                            error=e,
+                            fallback="median imputation",
+                            column=column,
+                        )
                         result.loc[predict_mask, column] = result[column].median()
 
         return result
@@ -580,6 +623,7 @@ class GaussianProcessImputer(BaseImputer):
         kernel: RBF | None = None,
         alpha: float = 1e-10,
         random_state: int | None = None,
+        on_error: OnError = None,
     ) -> None:
         """Initialize the imputer.
 
@@ -587,10 +631,16 @@ class GaussianProcessImputer(BaseImputer):
             kernel: Kernel used by the Gaussian process. Defaults to ``RBF``.
             alpha: Added noise term to ensure numerical stability.
             random_state: Random seed for reproducibility.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation for that column. The default, ``None``,
+                falls back with a ``FutureWarning``; it will change to
+                ``"raise"`` in 1.0.0.
         """
         self.kernel = kernel or RBF()
         self.alpha = alpha
         self.random_state = random_state
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Predict missing entries with a Gaussian Process model.
@@ -631,19 +681,21 @@ class GaussianProcessImputer(BaseImputer):
                     predicted = gp.predict(x_missing)
                     result.loc[missing.index, column] = predicted
                 except (ValueError, np.linalg.LinAlgError) as e:
-                    logger.warning(
-                        "Gaussian process failed for column %r (%s); "
-                        "using mean imputation",
-                        column,
-                        e,
+                    raise_or_fall_back(
+                        self.on_error,
+                        imputer=type(self).__name__,
+                        error=e,
+                        fallback="mean imputation",
+                        column=column,
                     )
                     result[column] = result[column].fillna(result[column].mean())
                 except Exception as e:
-                    logger.warning(
-                        "Unexpected error in Gaussian process for column %r (%s); "
-                        "using median imputation",
-                        column,
-                        e,
+                    raise_or_fall_back(
+                        self.on_error,
+                        imputer=type(self).__name__,
+                        error=e,
+                        fallback="median imputation",
+                        column=column,
                     )
                     result[column] = result[column].fillna(result[column].median())
 

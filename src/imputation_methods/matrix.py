@@ -13,6 +13,7 @@ import pandas as pd
 from numpy.typing import NDArray
 
 from ._deprecation import renamed_module_attributes, renamed_parameters
+from ._utils import OnError, check_on_error, raise_or_fall_back
 from .base import BaseImputer
 from .statistical import MeanImputer
 
@@ -167,6 +168,7 @@ class SoftImputeImputer(BaseImputer):
         init_fill_method: str = "zero",
         shrinkage_value: float | None = None,
         convergence_threshold: float = 1e-3,
+        on_error: OnError = None,
     ) -> None:
         """Initialize the imputer.
 
@@ -178,6 +180,10 @@ class SoftImputeImputer(BaseImputer):
                 to 1/50 of the largest singular value of the initial fill.
             convergence_threshold: Stop when the relative change of the imputed
                 entries between iterations falls below this value.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation. The default, ``None``, falls back with a
+                ``FutureWarning``; it will change to ``"raise"`` in 1.0.0.
 
         Raises:
             ValueError: If an argument is out of range.
@@ -195,6 +201,7 @@ class SoftImputeImputer(BaseImputer):
         self.init_fill_method = init_fill_method
         self.shrinkage_value = shrinkage_value
         self.convergence_threshold = convergence_threshold
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values using a low-rank matrix approximation.
@@ -220,7 +227,12 @@ class SoftImputeImputer(BaseImputer):
                 init_fill_method=self.init_fill_method,
             )
         except np.linalg.LinAlgError as e:
-            logger.warning("SoftImpute failed (%s); falling back to mean imputation", e)
+            raise_or_fall_back(
+                self.on_error,
+                imputer=type(self).__name__,
+                error=e,
+                fallback="mean imputation",
+            )
             return MeanImputer().impute(df)
 
         result[modelled] = completed
@@ -257,6 +269,7 @@ class PPCAImputer(BaseImputer):
         min_obs: int = 1,
         max_iter: int = 500,
         tol: float = 1e-6,
+        on_error: OnError = None,
     ) -> None:
         """Initialize the imputer.
 
@@ -268,6 +281,10 @@ class PPCAImputer(BaseImputer):
             max_iter: Maximum number of EM iterations.
             tol: Stop when the relative change of the imputed entries between
                 iterations falls below this value.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation. The default, ``None``, falls back with a
+                ``FutureWarning``; it will change to ``"raise"`` in 1.0.0.
 
         Raises:
             ValueError: If an argument is out of range.
@@ -282,6 +299,7 @@ class PPCAImputer(BaseImputer):
         self.min_obs = min_obs
         self.max_iter = max_iter
         self.tol = tol
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values using a probabilistic PCA model.
@@ -324,7 +342,12 @@ class PPCAImputer(BaseImputer):
                 tol=self.tol,
             )
         except np.linalg.LinAlgError as e:
-            logger.warning("PPCA failed (%s); falling back to mean imputation", e)
+            raise_or_fall_back(
+                self.on_error,
+                imputer=type(self).__name__,
+                error=e,
+                fallback="mean imputation",
+            )
             return MeanImputer().impute(df)
 
         result[modelled] = completed * stds + means

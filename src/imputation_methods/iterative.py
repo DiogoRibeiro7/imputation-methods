@@ -11,34 +11,36 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.impute import IterativeImputer
 
-from ._utils import fit_transform_non_empty
-from .base import BaseImputer
+from ._utils import OnError, check_on_error, fit_transform_non_empty, raise_or_fall_back
+from .base import BaseImputer, ImputationError
 from .statistical import MeanImputer, MedianImputer
 
 logger = logging.getLogger(__name__)
 
 
 def _fit_transform_or_fallback(
-    imputer: Any, df: pd.DataFrame, name: str, fallback: BaseImputer
+    imputer: Any,
+    df: pd.DataFrame,
+    name: str,
+    fallback: BaseImputer,
+    fallback_name: str,
+    on_error: OnError,
 ) -> pd.DataFrame:
-    """Run a scikit-learn imputer, falling back to ``fallback`` on data errors.
+    """Run a scikit-learn imputer, handling data errors according to ``on_error``.
 
     Raises:
-        RuntimeError: If the imputer fails for any reason other than a
-            ``ValueError`` or ``LinAlgError``.
+        ImputationError: If the model fails and ``on_error`` is ``"raise"``, or it
+            fails with an error other than ``ValueError`` or ``LinAlgError``.
     """
     try:
         return fit_transform_non_empty(imputer, df)
     except (ValueError, np.linalg.LinAlgError) as e:
-        logger.warning(
-            "%s imputation failed (%s); falling back to %s",
-            name,
-            e,
-            type(fallback).__name__,
+        raise_or_fall_back(
+            on_error, imputer=name, error=e, fallback=fallback_name, stacklevel=4
         )
         return fallback.impute(df)
     except Exception as e:
-        raise RuntimeError(f"{name} imputation failed: {e}") from e
+        raise ImputationError(f"{name} failed: {e}") from e
 
 
 class MICEImputer(BaseImputer):
@@ -58,14 +60,21 @@ class MICEImputer(BaseImputer):
         True
     """
 
-    def __init__(self, random_state: int | None = None) -> None:
+    def __init__(
+        self, random_state: int | None = None, on_error: OnError = None
+    ) -> None:
         """Initialize the imputer.
 
         Args:
             random_state: Random seed used by the underlying estimator.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation. The default, ``None``, falls back with a
+                ``FutureWarning``; it will change to ``"raise"`` in 1.0.0.
         """
         self.random_state = random_state
         self._imputer = IterativeImputer(random_state=random_state)
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Perform MICE-based imputation.
@@ -81,7 +90,14 @@ class MICEImputer(BaseImputer):
             RuntimeError: If MICE imputation fails unexpectedly.
         """
         df = self._ensure_numeric(df)
-        return _fit_transform_or_fallback(self._imputer, df, "MICE", MeanImputer())
+        return _fit_transform_or_fallback(
+            self._imputer,
+            df,
+            type(self).__name__,
+            MeanImputer(),
+            "mean imputation",
+            self.on_error,
+        )
 
 
 class EMImputer(BaseImputer):
@@ -159,17 +175,24 @@ class MissForestImputer(BaseImputer):
         112-118.
     """
 
-    def __init__(self, random_state: int | None = None) -> None:
+    def __init__(
+        self, random_state: int | None = None, on_error: OnError = None
+    ) -> None:
         """Initialize the imputer.
 
         Args:
             random_state: Seed controlling the random forest randomness.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use median imputation. The default, ``None``, falls back with a
+                ``FutureWarning``; it will change to ``"raise"`` in 1.0.0.
         """
         self.random_state = random_state
         self._imputer = IterativeImputer(
             estimator=RandomForestRegressor(random_state=random_state),
             random_state=random_state,
         )
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using a random forest estimator.
@@ -186,5 +209,10 @@ class MissForestImputer(BaseImputer):
         """
         df = self._ensure_numeric(df)
         return _fit_transform_or_fallback(
-            self._imputer, df, "MissForest", MedianImputer()
+            self._imputer,
+            df,
+            type(self).__name__,
+            MedianImputer(),
+            "median imputation",
+            self.on_error,
         )
