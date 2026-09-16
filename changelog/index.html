@@ -1587,6 +1587,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="[Unreleased]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1613,7 +1641,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#changed" class="md-nav__link">
+  <a href="#changed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Changed
@@ -1682,6 +1710,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="[Unreleased]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1708,7 +1764,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#changed" class="md-nav__link">
+  <a href="#changed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Changed
@@ -1759,6 +1815,31 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Consistent parameter names across imputers, following scikit-learn conventions:</li>
+<li><code>max_iter</code> for iteration budgets: <code>SoftImputeImputer(max_iters=...)</code> and
+    <code>GAINImputer(iterations=...)</code> are now <code>max_iter=...</code>.</li>
+<li><code>n_neighbors</code> for neighbour and donor counts: <code>KNNImputer(k=...)</code> and
+    <code>PMMImputer(k=...)</code> are now <code>n_neighbors=...</code>.</li>
+<li><code>n_std</code> for the number of standard deviations in
+    <code>EndOfDistributionImputer(k=...)</code>.</li>
+<li><code>strategy</code> for the summary statistic in <code>GroupMeanImputer</code>,
+    <code>MovingAverageImputer</code> and <code>SeasonalImputer</code>, which used <code>method=...</code>.
+    <code>InterpolationImputer(method=...)</code> is unchanged; there it selects the
+    interpolation kind, as in pandas.</li>
+<li>The functional shortcuts follow the same names.</li>
+<li>Renamed <code>KNNImputerMethod</code> to <code>KNNImputer</code>, <code>BayesianPCAImputer</code> to <code>PPCAImputer</code>
+  (it is maximum-likelihood probabilistic PCA), <code>predictive_mean_matching</code> to
+  <code>pmm_impute</code> and <code>bayesian_pca_impute</code> to <code>ppca_impute</code>.</li>
+<li>Instance attributes use the new parameter names (e.g. <code>imputer.n_neighbors</code>).</li>
+</ul>
+<h3 id="deprecated">Deprecated<a class="headerlink" href="#deprecated" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The old class, function and parameter names above still work but emit a
+  <code>FutureWarning</code> starting with <code>imputation-methods:</code>, and will be removed in 1.0.0.
+  Run your code with <code>-W "error:imputation-methods:FutureWarning"</code> to find uses.</li>
+</ul>
 <h2 id="010-2026-09-16">[0.1.0] - 2026-09-16<a class="headerlink" href="#010-2026-09-16" title="Permanent link">&para;</a></h2>
 <p>First release on PyPI, as <code>imputation-methods</code>.</p>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
@@ -1786,7 +1867,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Inline type hints (<code>py.typed</code>), checked with mypy in strict mode.</li>
 <li>Documentation site with an API reference generated from docstrings.</li>
 </ul>
-<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Renamed the project from <code>imputation-showcase</code> to <code>imputation-methods</code> and moved
   the code to a <code>src/</code> layout split into submodules. Import everything from the

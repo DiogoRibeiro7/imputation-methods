@@ -1683,7 +1683,7 @@
 
 <h1 id="api-reference">API reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
 <p>Everything listed here can be imported directly from the top-level package:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanImputer</span><span class="p">,</span> <span class="n">KNNImputerMethod</span><span class="p">,</span> <span class="n">rmse</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanImputer</span><span class="p">,</span> <span class="n">KNNImputer</span><span class="p">,</span> <span class="n">rmse</span>
 </code></pre></div>
 <p>The submodules below only group related imputers; you don't need them for imports.</p>
 <h2 id="the-imputer-interface">The imputer interface<a class="headerlink" href="#the-imputer-interface" title="Permanent link">&para;</a></h2>
@@ -1705,7 +1705,7 @@
   your data first.</li>
 </ul>
 <p>Each imputer also has a <a href="functional/">functional shortcut</a>, for example
-<code>knn_impute(df, k=3)</code> for <code>KNNImputerMethod(k=3).impute(df)</code>.</p>
+<code>knn_impute(df, n_neighbors=3)</code> for <code>KNNImputer(n_neighbors=3).impute(df)</code>.</p>
 <h2 id="modules">Modules<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1739,7 +1739,7 @@
 <tr>
 <td><a href="neighbors/">Nearest neighbors</a></td>
 <td><code>imputation_methods.neighbors</code></td>
-<td><code>KNNImputerMethod</code>, <code>RadiusNeighborsImputer</code>, <code>LocalMeanImputer</code></td>
+<td><code>KNNImputer</code>, <code>RadiusNeighborsImputer</code>, <code>LocalMeanImputer</code></td>
 </tr>
 <tr>
 <td><a href="regression/">Regression</a></td>
@@ -1754,7 +1754,7 @@
 <tr>
 <td><a href="matrix/">Matrix completion</a></td>
 <td><code>imputation_methods.matrix</code></td>
-<td><code>SoftImputeImputer</code>, <code>BayesianPCAImputer</code></td>
+<td><code>SoftImputeImputer</code>, <code>PPCAImputer</code></td>
 </tr>
 <tr>
 <td><a href="neural/">Neural networks</a></td>

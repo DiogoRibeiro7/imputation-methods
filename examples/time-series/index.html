@@ -2076,7 +2076,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOCFImputer</span><span class="p">,</span> <span class="n">NOCBImputer</span><span class="p">,</span> <span class="n">KNNImputerMethod</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOCFImputer</span><span class="p">,</span> <span class="n">NOCBImputer</span><span class="p">,</span> <span class="n">KNNImputer</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Generate synthetic sensor data</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -2149,10 +2149,10 @@
 - Less intuitive than forward filling</p>
 <h3 id="3-knn-for-time-series">3. KNN for Time Series<a class="headerlink" href="#3-knn-for-time-series" title="Permanent link">&para;</a></h3>
 <p>Considers relationships between multiple sensors.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNNImputerMethod</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNNImputer</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># KNN works well when multiple correlated sensors exist</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">knn_imputer</span> <span class="o">=</span> <span class="n">KNNImputerMethod</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">knn_imputer</span> <span class="o">=</span> <span class="n">KNNImputer</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">df_knn</span> <span class="o">=</span> <span class="n">knn_imputer</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df_numeric</span><span class="p">)</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">df_knn</span><span class="p">[</span><span class="s1">'timestamp'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'timestamp'</span><span class="p">]</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
@@ -2297,7 +2297,7 @@
 <a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="c1"># Usage</span>
 <a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="n">df_seasonal</span> <span class="o">=</span> <span class="n">seasonal_impute</span><span class="p">(</span><span class="n">df_numeric</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>  <span class="c1"># Daily pattern</span>
 </code></pre></div>
-<p>The built-in <code>SeasonalImputer(period=24, method='median')</code> implements the same per-phase median and also fills any values it cannot match with the column mean.</p>
+<p>The built-in <code>SeasonalImputer(period=24, strategy='median')</code> implements the same per-phase median and also fills any values it cannot match with the column mean.</p>
 <h2 id="key-takeaways">Key Takeaways<a class="headerlink" href="#key-takeaways" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>LOCF</strong> is simple and fast, best for slowly changing variables</li>

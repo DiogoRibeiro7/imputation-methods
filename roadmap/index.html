@@ -1815,20 +1815,13 @@ that explains what to use instead.</p>
 <p>The renames go first, so their deprecation warnings run through several releases
 before 1.0 removes the old names.</p>
 <ul>
-<li><strong>Parameter names.</strong> Use one name per concept across all imputers:</li>
-<li>The iteration budget is currently <code>max_iter</code> in five imputers, <code>max_iters</code> in
-    <code>SoftImputeImputer</code> and <code>iterations</code> in <code>GAINImputer</code>.</li>
-<li>The neighbor count is <code>k</code> in <code>KNNImputerMethod</code> and <code>PMMImputer</code> but
-    <code>n_neighbors</code> in <code>LocalMeanImputer</code>. <code>EndOfDistributionImputer</code> also uses <code>k</code>,
-    for a number of standard deviations.</li>
-<li><code>method</code> means a summary statistic in <code>GroupMeanImputer</code>,
-    <code>MovingAverageImputer</code> and <code>SeasonalImputer</code>, but the interpolation kind in
-    <code>InterpolationImputer</code>.</li>
-<li><strong>Class and function names.</strong></li>
-<li>Rename <code>KNNImputerMethod</code>, the only class not ending in <code>Imputer</code>.</li>
-<li>Rename <code>BayesianPCAImputer</code>, which implements maximum-likelihood probabilistic
-    PCA without priors.</li>
-<li>Rename <code>predictive_mean_matching</code>, the only shortcut not named <code>*_impute</code>.</li>
+<li><strong>Parameter names</strong> <em>(done, unreleased)</em>. One name per concept: <code>max_iter</code> for
+  iteration budgets, <code>n_neighbors</code> for neighbor and donor counts, <code>n_std</code> in
+  <code>EndOfDistributionImputer</code>, and <code>strategy</code> for summary statistics. Old names
+  work until 1.0 with a <code>FutureWarning</code>.</li>
+<li><strong>Class and function names</strong> <em>(done, unreleased)</em>. <code>KNNImputerMethod</code> is now
+  <code>KNNImputer</code>, <code>BayesianPCAImputer</code> is <code>PPCAImputer</code>, and
+  <code>predictive_mean_matching</code> is <code>pmm_impute</code>.</li>
 <li><strong>Explicit fallbacks.</strong> Thirteen error handlers quietly replace the requested
   method with mean or median imputation, logging at most a warning (for example
   when MICE, KNN or a regression fails to fit). Make this a choice, for example

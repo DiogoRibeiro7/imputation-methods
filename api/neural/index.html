@@ -1876,8 +1876,7 @@ the autoencoder.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/imputation_methods/neural.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
 <span class="normal"><a href="#__codelineno-0-27">27</a></span>
 <span class="normal"><a href="#__codelineno-0-28">28</a></span>
 <span class="normal"><a href="#__codelineno-0-29">29</a></span>
@@ -1898,29 +1897,30 @@ the autoencoder.</p>
 <span class="normal"><a href="#__codelineno-0-44">44</a></span>
 <span class="normal"><a href="#__codelineno-0-45">45</a></span>
 <span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">hidden_layer_sizes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,),</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        hidden_layer_sizes: Architecture of the ``MLPRegressor`` used as</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">            the autoencoder.</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        max_iter: Maximum training iterations.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        random_state: Random seed controlling network initialization.</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    """</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="n">hidden_layer_sizes</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">MLPRegressor</span><span class="p">(</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="n">hidden_layer_sizes</span><span class="p">,</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">activation</span><span class="o">=</span><span class="s2">"relu"</span><span class="p">,</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">hidden_layer_sizes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,),</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        hidden_layer_sizes: Architecture of the ``MLPRegressor`` used as</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">            the autoencoder.</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        max_iter: Maximum training iterations.</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">        random_state: Random seed controlling network initialization.</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    """</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="n">hidden_layer_sizes</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">MLPRegressor</span><span class="p">(</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="n">hidden_layer_sizes</span><span class="p">,</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">activation</span><span class="o">=</span><span class="s2">"relu"</span><span class="p">,</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -2032,8 +2032,7 @@ the autoencoder.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/imputation_methods/neural.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-50">50</a></span>
 <span class="normal"><a href="#__codelineno-0-51">51</a></span>
 <span class="normal"><a href="#__codelineno-0-52">52</a></span>
 <span class="normal"><a href="#__codelineno-0-53">53</a></span>
@@ -2066,41 +2065,42 @@ the autoencoder.</p>
 <span class="normal"><a href="#__codelineno-0-80">80</a></span>
 <span class="normal"><a href="#__codelineno-0-81">81</a></span>
 <span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="w">    </span><span class="sd">"""Fill missing values using an autoencoder reconstruction.</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">        df: Dataframe with missing values.</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        Dataframe with imputed values predicted by the autoencoder.</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">        RuntimeError: If autoencoder training or prediction fails.</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    """</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="n">filled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="c1"># Handle case where mean might be NaN (all values missing)</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="k">if</span> <span class="n">filled</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>            <span class="n">filled</span> <span class="o">=</span> <span class="n">filled</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="n">target</span> <span class="o">=</span> <span class="n">filled</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="c1"># scikit-learn expects a 1-D target when there is a single column.</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">filled</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">target</span><span class="p">)</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="n">reconstructed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">filled</span><span class="p">),</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="p">)</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="n">reconstructed</span><span class="p">)</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>            <span class="s2">"Autoencoder imputation failed (</span><span class="si">%s</span><span class="s2">); falling back to mean imputation"</span><span class="p">,</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>            <span class="n">e</span><span class="p">,</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="p">)</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Autoencoder imputation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+<span class="normal"><a href="#__codelineno-0-83">83</a></span>
+<span class="normal"><a href="#__codelineno-0-84">84</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="w">    </span><span class="sd">"""Fill missing values using an autoencoder reconstruction.</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        df: Dataframe with missing values.</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">        Dataframe with imputed values predicted by the autoencoder.</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">        RuntimeError: If autoencoder training or prediction fails.</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    """</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="n">filled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="c1"># Handle case where mean might be NaN (all values missing)</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="k">if</span> <span class="n">filled</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>            <span class="n">filled</span> <span class="o">=</span> <span class="n">filled</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">target</span> <span class="o">=</span> <span class="n">filled</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="c1"># scikit-learn expects a 1-D target when there is a single column.</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">filled</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">target</span><span class="p">)</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="n">reconstructed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">filled</span><span class="p">),</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>            <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>        <span class="p">)</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="n">reconstructed</span><span class="p">)</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>            <span class="s2">"Autoencoder imputation failed (</span><span class="si">%s</span><span class="s2">); falling back to mean imputation"</span><span class="p">,</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>            <span class="n">e</span><span class="p">,</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="p">)</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Autoencoder imputation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2124,7 +2124,7 @@ the autoencoder.</p>
 
 
 <a href="#imputation_methods.neural.GAINImputer" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">GAINImputer</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">hint_rate</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">iterations</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">random_state</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">GAINImputer</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">hint_rate</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">random_state</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2153,7 +2153,7 @@ accurate. Columns with no observed values are left untouched.</p>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="gp">... </span>    <span class="p">{</span><span class="s2">"a"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="s2">"b"</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]}</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="gp">... </span><span class="p">)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">imputed</span> <span class="o">=</span> <span class="n">GAINImputer</span><span class="p">(</span><span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">imputed</span> <span class="o">=</span> <span class="n">GAINImputer</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">imputed</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="go">True</span>
 </code></pre></div>
@@ -2230,7 +2230,7 @@ revealed to the discriminator.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>iterations</code>
+                <code>max_iter</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></code>
@@ -2311,8 +2311,7 @@ revealed to the discriminator.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/imputation_methods/neural.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-252">252</a></span>
-<span class="normal"><a href="#__codelineno-0-253">253</a></span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-253">253</a></span>
 <span class="normal"><a href="#__codelineno-0-254">254</a></span>
 <span class="normal"><a href="#__codelineno-0-255">255</a></span>
 <span class="normal"><a href="#__codelineno-0-256">256</a></span>
@@ -2351,47 +2350,50 @@ revealed to the discriminator.</p>
 <span class="normal"><a href="#__codelineno-0-289">289</a></span>
 <span class="normal"><a href="#__codelineno-0-290">290</a></span>
 <span class="normal"><a href="#__codelineno-0-291">291</a></span>
-<span class="normal"><a href="#__codelineno-0-292">292</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-252" name="__codelineno-0-252"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-0-253" name="__codelineno-0-253"></a>    <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a>    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
-<a id="__codelineno-0-255" name="__codelineno-0-255"></a>    <span class="n">hint_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
-<a id="__codelineno-0-256" name="__codelineno-0-256"></a>    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
-<a id="__codelineno-0-257" name="__codelineno-0-257"></a>    <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a>    <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a>    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-260" name="__codelineno-0-260"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
-<a id="__codelineno-0-262" name="__codelineno-0-262"></a>
-<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    The defaults are those of the reference implementation.</span>
+<span class="normal"><a href="#__codelineno-0-292">292</a></span>
+<span class="normal"><a href="#__codelineno-0-293">293</a></span>
+<span class="normal"><a href="#__codelineno-0-294">294</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-253" name="__codelineno-0-253"></a><span class="nd">@renamed_parameters</span><span class="p">(</span><span class="n">iterations</span><span class="o">=</span><span class="s2">"max_iter"</span><span class="p">)</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-255" name="__codelineno-0-255"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-256" name="__codelineno-0-256"></a>    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+<a id="__codelineno-0-257" name="__codelineno-0-257"></a>    <span class="n">hint_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a>    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a>    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+<a id="__codelineno-0-260" name="__codelineno-0-260"></a>    <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a>    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-262" name="__codelineno-0-262"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
 <a id="__codelineno-0-264" name="__codelineno-0-264"></a>
-<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-266" name="__codelineno-0-266"></a><span class="sd">        batch_size: Rows per training step (capped at the number of rows).</span>
-<a id="__codelineno-0-267" name="__codelineno-0-267"></a><span class="sd">        hint_rate: Probability that each entry of the missingness mask is</span>
-<a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="sd">            revealed to the discriminator.</span>
-<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="sd">        alpha: Weight of the reconstruction loss on observed entries.</span>
-<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">        iterations: Number of training steps.</span>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">        learning_rate: Adam learning rate for both networks.</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">        random_state: Seed for initialisation, batching, noise and hints.</span>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a><span class="sd">        ValueError: If an argument is out of range.</span>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">    """</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"batch_size must be &gt;= 1, got </span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">hint_rate</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"hint_rate must be in [0, 1], got </span><span class="si">{</span><span class="n">hint_rate</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a>    <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"alpha must be &gt;= 0, got </span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a>    <span class="k">if</span> <span class="n">iterations</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"iterations must be &gt;= 1, got </span><span class="si">{</span><span class="n">iterations</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a>    <span class="k">if</span> <span class="n">learning_rate</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"learning_rate must be &gt; 0, got </span><span class="si">{</span><span class="n">learning_rate</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">hint_rate</span> <span class="o">=</span> <span class="n">hint_rate</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="n">iterations</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
+<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">    The defaults are those of the reference implementation.</span>
+<a id="__codelineno-0-266" name="__codelineno-0-266"></a>
+<a id="__codelineno-0-267" name="__codelineno-0-267"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="sd">        batch_size: Rows per training step (capped at the number of rows).</span>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="sd">        hint_rate: Probability that each entry of the missingness mask is</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">            revealed to the discriminator.</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">        alpha: Weight of the reconstruction loss on observed entries.</span>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">        max_iter: Number of training steps.</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="sd">        learning_rate: Adam learning rate for both networks.</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">        random_state: Seed for initialisation, batching, noise and hints.</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">        ValueError: If an argument is out of range.</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="sd">    """</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>    <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"batch_size must be &gt;= 1, got </span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">hint_rate</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"hint_rate must be in [0, 1], got </span><span class="si">{</span><span class="n">hint_rate</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>    <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"alpha must be &gt;= 0, got </span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a>    <span class="k">if</span> <span class="n">max_iter</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_iter must be &gt;= 1, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span class="k">if</span> <span class="n">learning_rate</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"learning_rate must be &gt; 0, got </span><span class="si">{</span><span class="n">learning_rate</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">hint_rate</span> <span class="o">=</span> <span class="n">hint_rate</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -2480,9 +2482,7 @@ revealed to the discriminator.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/imputation_methods/neural.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-294">294</a></span>
-<span class="normal"><a href="#__codelineno-0-295">295</a></span>
-<span class="normal"><a href="#__codelineno-0-296">296</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-296">296</a></span>
 <span class="normal"><a href="#__codelineno-0-297">297</a></span>
 <span class="normal"><a href="#__codelineno-0-298">298</a></span>
 <span class="normal"><a href="#__codelineno-0-299">299</a></span>
@@ -2514,41 +2514,43 @@ revealed to the discriminator.</p>
 <span class="normal"><a href="#__codelineno-0-325">325</a></span>
 <span class="normal"><a href="#__codelineno-0-326">326</a></span>
 <span class="normal"><a href="#__codelineno-0-327">327</a></span>
-<span class="normal"><a href="#__codelineno-0-328">328</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a><span class="w">    </span><span class="sd">"""Train GAIN on ``df`` and fill its missing values.</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-298" name="__codelineno-0-298"></a><span class="sd">        df: Dataframe with missing values.</span>
-<a id="__codelineno-0-299" name="__codelineno-0-299"></a>
-<a id="__codelineno-0-300" name="__codelineno-0-300"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-301" name="__codelineno-0-301"></a><span class="sd">        Imputed dataframe. Observed values are unchanged.</span>
-<a id="__codelineno-0-302" name="__codelineno-0-302"></a><span class="sd">    """</span>
-<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-304" name="__codelineno-0-304"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="n">modelled</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
-<a id="__codelineno-0-306" name="__codelineno-0-306"></a>    <span class="k">if</span> <span class="n">modelled</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-<a id="__codelineno-0-307" name="__codelineno-0-307"></a>        <span class="k">return</span> <span class="n">result</span>
-<a id="__codelineno-0-308" name="__codelineno-0-308"></a>
-<a id="__codelineno-0-309" name="__codelineno-0-309"></a>    <span class="n">values</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-<a id="__codelineno-0-310" name="__codelineno-0-310"></a>    <span class="n">observed</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-<a id="__codelineno-0-311" name="__codelineno-0-311"></a>    <span class="n">minimum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-0-312" name="__codelineno-0-312"></a>    <span class="c1"># As in the reference implementation, the small offset keeps constant</span>
-<a id="__codelineno-0-313" name="__codelineno-0-313"></a>    <span class="c1"># columns at their value instead of letting the generator move them.</span>
-<a id="__codelineno-0-314" name="__codelineno-0-314"></a>    <span class="n">value_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">minimum</span> <span class="o">+</span> <span class="mf">1e-6</span>
-<a id="__codelineno-0-315" name="__codelineno-0-315"></a>    <span class="n">scaled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">observed</span><span class="p">,</span> <span class="p">(</span><span class="n">values</span> <span class="o">-</span> <span class="n">minimum</span><span class="p">)</span> <span class="o">/</span> <span class="n">value_range</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<a id="__codelineno-0-316" name="__codelineno-0-316"></a>
-<a id="__codelineno-0-317" name="__codelineno-0-317"></a>    <span class="n">completed</span> <span class="o">=</span> <span class="n">_gain_impute</span><span class="p">(</span>
-<a id="__codelineno-0-318" name="__codelineno-0-318"></a>        <span class="n">scaled</span><span class="p">,</span>
-<a id="__codelineno-0-319" name="__codelineno-0-319"></a>        <span class="n">observed</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
-<a id="__codelineno-0-320" name="__codelineno-0-320"></a>        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-<a id="__codelineno-0-321" name="__codelineno-0-321"></a>        <span class="n">hint_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hint_rate</span><span class="p">,</span>
-<a id="__codelineno-0-322" name="__codelineno-0-322"></a>        <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
-<a id="__codelineno-0-323" name="__codelineno-0-323"></a>        <span class="n">iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="p">,</span>
-<a id="__codelineno-0-324" name="__codelineno-0-324"></a>        <span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
-<a id="__codelineno-0-325" name="__codelineno-0-325"></a>        <span class="n">rng</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">),</span>
-<a id="__codelineno-0-326" name="__codelineno-0-326"></a>    <span class="p">)</span>
-<a id="__codelineno-0-327" name="__codelineno-0-327"></a>    <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">observed</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">completed</span> <span class="o">*</span> <span class="n">value_range</span> <span class="o">+</span> <span class="n">minimum</span><span class="p">)</span>
-<a id="__codelineno-0-328" name="__codelineno-0-328"></a>    <span class="k">return</span> <span class="n">result</span>
+<span class="normal"><a href="#__codelineno-0-328">328</a></span>
+<span class="normal"><a href="#__codelineno-0-329">329</a></span>
+<span class="normal"><a href="#__codelineno-0-330">330</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-296" name="__codelineno-0-296"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a><span class="w">    </span><span class="sd">"""Train GAIN on ``df`` and fill its missing values.</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a><span class="sd">        df: Dataframe with missing values.</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a><span class="sd">        Imputed dataframe. Observed values are unchanged.</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a><span class="sd">    """</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>    <span class="n">modelled</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>    <span class="k">if</span> <span class="n">modelled</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a>    <span class="n">values</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a>    <span class="n">observed</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a>    <span class="n">minimum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-314" name="__codelineno-0-314"></a>    <span class="c1"># As in the reference implementation, the small offset keeps constant</span>
+<a id="__codelineno-0-315" name="__codelineno-0-315"></a>    <span class="c1"># columns at their value instead of letting the generator move them.</span>
+<a id="__codelineno-0-316" name="__codelineno-0-316"></a>    <span class="n">value_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">minimum</span> <span class="o">+</span> <span class="mf">1e-6</span>
+<a id="__codelineno-0-317" name="__codelineno-0-317"></a>    <span class="n">scaled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">observed</span><span class="p">,</span> <span class="p">(</span><span class="n">values</span> <span class="o">-</span> <span class="n">minimum</span><span class="p">)</span> <span class="o">/</span> <span class="n">value_range</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<a id="__codelineno-0-318" name="__codelineno-0-318"></a>
+<a id="__codelineno-0-319" name="__codelineno-0-319"></a>    <span class="n">completed</span> <span class="o">=</span> <span class="n">_gain_impute</span><span class="p">(</span>
+<a id="__codelineno-0-320" name="__codelineno-0-320"></a>        <span class="n">scaled</span><span class="p">,</span>
+<a id="__codelineno-0-321" name="__codelineno-0-321"></a>        <span class="n">observed</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+<a id="__codelineno-0-322" name="__codelineno-0-322"></a>        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+<a id="__codelineno-0-323" name="__codelineno-0-323"></a>        <span class="n">hint_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hint_rate</span><span class="p">,</span>
+<a id="__codelineno-0-324" name="__codelineno-0-324"></a>        <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+<a id="__codelineno-0-325" name="__codelineno-0-325"></a>        <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+<a id="__codelineno-0-326" name="__codelineno-0-326"></a>        <span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
+<a id="__codelineno-0-327" name="__codelineno-0-327"></a>        <span class="n">rng</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">),</span>
+<a id="__codelineno-0-328" name="__codelineno-0-328"></a>    <span class="p">)</span>
+<a id="__codelineno-0-329" name="__codelineno-0-329"></a>    <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">observed</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">completed</span> <span class="o">*</span> <span class="n">value_range</span> <span class="o">+</span> <span class="n">minimum</span><span class="p">)</span>
+<a id="__codelineno-0-330" name="__codelineno-0-330"></a>    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

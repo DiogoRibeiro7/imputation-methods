@@ -1293,19 +1293,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#imputation_methods.matrix.BayesianPCAImputer" class="md-nav__link">
+  <a href="#imputation_methods.matrix.PPCAImputer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BayesianPCAImputer
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;PPCAImputer
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label=" BayesianPCAImputer">
+    <nav class="md-nav" aria-label=" PPCAImputer">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#imputation_methods.matrix.BayesianPCAImputer.impute" class="md-nav__link">
+  <a href="#imputation_methods.matrix.PPCAImputer.impute" class="md-nav__link">
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;impute
@@ -1702,19 +1702,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#imputation_methods.matrix.BayesianPCAImputer" class="md-nav__link">
+  <a href="#imputation_methods.matrix.PPCAImputer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BayesianPCAImputer
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;PPCAImputer
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label=" BayesianPCAImputer">
+    <nav class="md-nav" aria-label=" PPCAImputer">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#imputation_methods.matrix.BayesianPCAImputer.impute" class="md-nav__link">
+  <a href="#imputation_methods.matrix.PPCAImputer.impute" class="md-nav__link">
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;impute
@@ -1792,7 +1792,7 @@ on unmaintained third-party solvers.</p>
 
 
 <a href="#imputation_methods.matrix.SoftImputeImputer" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SoftImputeImputer</span><span class="p">(</span><span class="n">max_iters</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">init_fill_method</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">'zero'</span><span class="p">,</span> <span class="n">shrinkage_value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">convergence_threshold</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SoftImputeImputer</span><span class="p">(</span><span class="n">max_iter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">init_fill_method</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">'zero'</span><span class="p">,</span> <span class="n">shrinkage_value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">convergence_threshold</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1840,7 +1840,7 @@ Journal of Machine Learning Research, 11, 2287-2322.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>max_iters</code>
+                <code>max_iter</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></code>
@@ -1940,8 +1940,7 @@ entries between iterations falls below this value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/imputation_methods/matrix.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-162">162</a></span>
-<span class="normal"><a href="#__codelineno-0-163">163</a></span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-163">163</a></span>
 <span class="normal"><a href="#__codelineno-0-164">164</a></span>
 <span class="normal"><a href="#__codelineno-0-165">165</a></span>
 <span class="normal"><a href="#__codelineno-0-166">166</a></span>
@@ -1973,40 +1972,43 @@ entries between iterations falls below this value.</p>
 <span class="normal"><a href="#__codelineno-0-192">192</a></span>
 <span class="normal"><a href="#__codelineno-0-193">193</a></span>
 <span class="normal"><a href="#__codelineno-0-194">194</a></span>
-<span class="normal"><a href="#__codelineno-0-195">195</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-162" name="__codelineno-0-162"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-0-163" name="__codelineno-0-163"></a>    <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-164" name="__codelineno-0-164"></a>    <span class="n">max_iters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-<a id="__codelineno-0-165" name="__codelineno-0-165"></a>    <span class="n">init_fill_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"zero"</span><span class="p">,</span>
-<a id="__codelineno-0-166" name="__codelineno-0-166"></a>    <span class="n">shrinkage_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-167" name="__codelineno-0-167"></a>    <span class="n">convergence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
-<a id="__codelineno-0-168" name="__codelineno-0-168"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-169" name="__codelineno-0-169"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
-<a id="__codelineno-0-170" name="__codelineno-0-170"></a>
-<a id="__codelineno-0-171" name="__codelineno-0-171"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-172" name="__codelineno-0-172"></a><span class="sd">        max_iters: Maximum number of SVD iterations.</span>
-<a id="__codelineno-0-173" name="__codelineno-0-173"></a><span class="sd">        init_fill_method: How to initialise missing entries before solving:</span>
-<a id="__codelineno-0-174" name="__codelineno-0-174"></a><span class="sd">            ``"zero"``, ``"mean"``, ``"median"`` or ``"min"``.</span>
-<a id="__codelineno-0-175" name="__codelineno-0-175"></a><span class="sd">        shrinkage_value: Amount subtracted from each singular value. Defaults</span>
-<a id="__codelineno-0-176" name="__codelineno-0-176"></a><span class="sd">            to 1/50 of the largest singular value of the initial fill.</span>
-<a id="__codelineno-0-177" name="__codelineno-0-177"></a><span class="sd">        convergence_threshold: Stop when the relative change of the imputed</span>
-<a id="__codelineno-0-178" name="__codelineno-0-178"></a><span class="sd">            entries between iterations falls below this value.</span>
-<a id="__codelineno-0-179" name="__codelineno-0-179"></a>
-<a id="__codelineno-0-180" name="__codelineno-0-180"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-181" name="__codelineno-0-181"></a><span class="sd">        ValueError: If an argument is out of range.</span>
-<a id="__codelineno-0-182" name="__codelineno-0-182"></a><span class="sd">    """</span>
-<a id="__codelineno-0-183" name="__codelineno-0-183"></a>    <span class="k">if</span> <span class="n">init_fill_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_INIT_FILL_METHODS</span><span class="p">:</span>
-<a id="__codelineno-0-184" name="__codelineno-0-184"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<a id="__codelineno-0-185" name="__codelineno-0-185"></a>            <span class="sa">f</span><span class="s2">"init_fill_method must be one of </span><span class="si">{</span><span class="n">_INIT_FILL_METHODS</span><span class="si">}</span><span class="s2">, "</span>
-<a id="__codelineno-0-186" name="__codelineno-0-186"></a>            <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">init_fill_method</span><span class="si">!r}</span><span class="s2">"</span>
-<a id="__codelineno-0-187" name="__codelineno-0-187"></a>        <span class="p">)</span>
-<a id="__codelineno-0-188" name="__codelineno-0-188"></a>    <span class="k">if</span> <span class="n">max_iters</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-189" name="__codelineno-0-189"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_iters must be &gt;= 1, got </span><span class="si">{</span><span class="n">max_iters</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-190" name="__codelineno-0-190"></a>    <span class="k">if</span> <span class="n">shrinkage_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">shrinkage_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-191" name="__codelineno-0-191"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"shrinkage_value must be &gt;= 0, got </span><span class="si">{</span><span class="n">shrinkage_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-192" name="__codelineno-0-192"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span> <span class="o">=</span> <span class="n">max_iters</span>
-<a id="__codelineno-0-193" name="__codelineno-0-193"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">init_fill_method</span> <span class="o">=</span> <span class="n">init_fill_method</span>
-<a id="__codelineno-0-194" name="__codelineno-0-194"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">shrinkage_value</span> <span class="o">=</span> <span class="n">shrinkage_value</span>
-<a id="__codelineno-0-195" name="__codelineno-0-195"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">convergence_threshold</span> <span class="o">=</span> <span class="n">convergence_threshold</span>
+<span class="normal"><a href="#__codelineno-0-195">195</a></span>
+<span class="normal"><a href="#__codelineno-0-196">196</a></span>
+<span class="normal"><a href="#__codelineno-0-197">197</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-163" name="__codelineno-0-163"></a><span class="nd">@renamed_parameters</span><span class="p">(</span><span class="n">max_iters</span><span class="o">=</span><span class="s2">"max_iter"</span><span class="p">)</span>
+<a id="__codelineno-0-164" name="__codelineno-0-164"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-165" name="__codelineno-0-165"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-166" name="__codelineno-0-166"></a>    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<a id="__codelineno-0-167" name="__codelineno-0-167"></a>    <span class="n">init_fill_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"zero"</span><span class="p">,</span>
+<a id="__codelineno-0-168" name="__codelineno-0-168"></a>    <span class="n">shrinkage_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-169" name="__codelineno-0-169"></a>    <span class="n">convergence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+<a id="__codelineno-0-170" name="__codelineno-0-170"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-171" name="__codelineno-0-171"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
+<a id="__codelineno-0-172" name="__codelineno-0-172"></a>
+<a id="__codelineno-0-173" name="__codelineno-0-173"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-174" name="__codelineno-0-174"></a><span class="sd">        max_iter: Maximum number of SVD iterations.</span>
+<a id="__codelineno-0-175" name="__codelineno-0-175"></a><span class="sd">        init_fill_method: How to initialise missing entries before solving:</span>
+<a id="__codelineno-0-176" name="__codelineno-0-176"></a><span class="sd">            ``"zero"``, ``"mean"``, ``"median"`` or ``"min"``.</span>
+<a id="__codelineno-0-177" name="__codelineno-0-177"></a><span class="sd">        shrinkage_value: Amount subtracted from each singular value. Defaults</span>
+<a id="__codelineno-0-178" name="__codelineno-0-178"></a><span class="sd">            to 1/50 of the largest singular value of the initial fill.</span>
+<a id="__codelineno-0-179" name="__codelineno-0-179"></a><span class="sd">        convergence_threshold: Stop when the relative change of the imputed</span>
+<a id="__codelineno-0-180" name="__codelineno-0-180"></a><span class="sd">            entries between iterations falls below this value.</span>
+<a id="__codelineno-0-181" name="__codelineno-0-181"></a>
+<a id="__codelineno-0-182" name="__codelineno-0-182"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-183" name="__codelineno-0-183"></a><span class="sd">        ValueError: If an argument is out of range.</span>
+<a id="__codelineno-0-184" name="__codelineno-0-184"></a><span class="sd">    """</span>
+<a id="__codelineno-0-185" name="__codelineno-0-185"></a>    <span class="k">if</span> <span class="n">init_fill_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_INIT_FILL_METHODS</span><span class="p">:</span>
+<a id="__codelineno-0-186" name="__codelineno-0-186"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="__codelineno-0-187" name="__codelineno-0-187"></a>            <span class="sa">f</span><span class="s2">"init_fill_method must be one of </span><span class="si">{</span><span class="n">_INIT_FILL_METHODS</span><span class="si">}</span><span class="s2">, "</span>
+<a id="__codelineno-0-188" name="__codelineno-0-188"></a>            <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">init_fill_method</span><span class="si">!r}</span><span class="s2">"</span>
+<a id="__codelineno-0-189" name="__codelineno-0-189"></a>        <span class="p">)</span>
+<a id="__codelineno-0-190" name="__codelineno-0-190"></a>    <span class="k">if</span> <span class="n">max_iter</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-191" name="__codelineno-0-191"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_iter must be &gt;= 1, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-192" name="__codelineno-0-192"></a>    <span class="k">if</span> <span class="n">shrinkage_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">shrinkage_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-193" name="__codelineno-0-193"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"shrinkage_value must be &gt;= 0, got </span><span class="si">{</span><span class="n">shrinkage_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-194" name="__codelineno-0-194"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+<a id="__codelineno-0-195" name="__codelineno-0-195"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">init_fill_method</span> <span class="o">=</span> <span class="n">init_fill_method</span>
+<a id="__codelineno-0-196" name="__codelineno-0-196"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">shrinkage_value</span> <span class="o">=</span> <span class="n">shrinkage_value</span>
+<a id="__codelineno-0-197" name="__codelineno-0-197"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">convergence_threshold</span> <span class="o">=</span> <span class="n">convergence_threshold</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -2095,9 +2097,7 @@ entries between iterations falls below this value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/imputation_methods/matrix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-197">197</a></span>
-<span class="normal"><a href="#__codelineno-0-198">198</a></span>
-<span class="normal"><a href="#__codelineno-0-199">199</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-199">199</a></span>
 <span class="normal"><a href="#__codelineno-0-200">200</a></span>
 <span class="normal"><a href="#__codelineno-0-201">201</a></span>
 <span class="normal"><a href="#__codelineno-0-202">202</a></span>
@@ -2123,35 +2123,37 @@ entries between iterations falls below this value.</p>
 <span class="normal"><a href="#__codelineno-0-222">222</a></span>
 <span class="normal"><a href="#__codelineno-0-223">223</a></span>
 <span class="normal"><a href="#__codelineno-0-224">224</a></span>
-<span class="normal"><a href="#__codelineno-0-225">225</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-197" name="__codelineno-0-197"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="w">    </span><span class="sd">"""Fill missing values using a low-rank matrix approximation.</span>
-<a id="__codelineno-0-199" name="__codelineno-0-199"></a>
-<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-201" name="__codelineno-0-201"></a><span class="sd">        df: Dataframe with potential NaN values.</span>
-<a id="__codelineno-0-202" name="__codelineno-0-202"></a>
-<a id="__codelineno-0-203" name="__codelineno-0-203"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-204" name="__codelineno-0-204"></a><span class="sd">        Dataframe with missing entries imputed by SoftImpute.</span>
-<a id="__codelineno-0-205" name="__codelineno-0-205"></a><span class="sd">    """</span>
-<a id="__codelineno-0-206" name="__codelineno-0-206"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-207" name="__codelineno-0-207"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<a id="__codelineno-0-208" name="__codelineno-0-208"></a>    <span class="n">modelled</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
-<a id="__codelineno-0-209" name="__codelineno-0-209"></a>    <span class="k">if</span> <span class="n">modelled</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-<a id="__codelineno-0-210" name="__codelineno-0-210"></a>        <span class="k">return</span> <span class="n">result</span>
-<a id="__codelineno-0-211" name="__codelineno-0-211"></a>
-<a id="__codelineno-0-212" name="__codelineno-0-212"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-213" name="__codelineno-0-213"></a>        <span class="n">completed</span> <span class="o">=</span> <span class="n">_soft_impute</span><span class="p">(</span>
-<a id="__codelineno-0-214" name="__codelineno-0-214"></a>            <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
-<a id="__codelineno-0-215" name="__codelineno-0-215"></a>            <span class="n">shrinkage_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shrinkage_value</span><span class="p">,</span>
-<a id="__codelineno-0-216" name="__codelineno-0-216"></a>            <span class="n">max_iters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">,</span>
-<a id="__codelineno-0-217" name="__codelineno-0-217"></a>            <span class="n">convergence_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">convergence_threshold</span><span class="p">,</span>
-<a id="__codelineno-0-218" name="__codelineno-0-218"></a>            <span class="n">init_fill_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_fill_method</span><span class="p">,</span>
-<a id="__codelineno-0-219" name="__codelineno-0-219"></a>        <span class="p">)</span>
-<a id="__codelineno-0-220" name="__codelineno-0-220"></a>    <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-0-221" name="__codelineno-0-221"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"SoftImpute failed (</span><span class="si">%s</span><span class="s2">); falling back to mean imputation"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-<a id="__codelineno-0-222" name="__codelineno-0-222"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-223" name="__codelineno-0-223"></a>
-<a id="__codelineno-0-224" name="__codelineno-0-224"></a>    <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed</span>
-<a id="__codelineno-0-225" name="__codelineno-0-225"></a>    <span class="k">return</span> <span class="n">result</span>
+<span class="normal"><a href="#__codelineno-0-225">225</a></span>
+<span class="normal"><a href="#__codelineno-0-226">226</a></span>
+<span class="normal"><a href="#__codelineno-0-227">227</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-199" name="__codelineno-0-199"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="w">    </span><span class="sd">"""Fill missing values using a low-rank matrix approximation.</span>
+<a id="__codelineno-0-201" name="__codelineno-0-201"></a>
+<a id="__codelineno-0-202" name="__codelineno-0-202"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-203" name="__codelineno-0-203"></a><span class="sd">        df: Dataframe with potential NaN values.</span>
+<a id="__codelineno-0-204" name="__codelineno-0-204"></a>
+<a id="__codelineno-0-205" name="__codelineno-0-205"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-206" name="__codelineno-0-206"></a><span class="sd">        Dataframe with missing entries imputed by SoftImpute.</span>
+<a id="__codelineno-0-207" name="__codelineno-0-207"></a><span class="sd">    """</span>
+<a id="__codelineno-0-208" name="__codelineno-0-208"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<a id="__codelineno-0-210" name="__codelineno-0-210"></a>    <span class="n">modelled</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>    <span class="k">if</span> <span class="n">modelled</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+<a id="__codelineno-0-212" name="__codelineno-0-212"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a>
+<a id="__codelineno-0-214" name="__codelineno-0-214"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-215" name="__codelineno-0-215"></a>        <span class="n">completed</span> <span class="o">=</span> <span class="n">_soft_impute</span><span class="p">(</span>
+<a id="__codelineno-0-216" name="__codelineno-0-216"></a>            <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+<a id="__codelineno-0-217" name="__codelineno-0-217"></a>            <span class="n">shrinkage_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shrinkage_value</span><span class="p">,</span>
+<a id="__codelineno-0-218" name="__codelineno-0-218"></a>            <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+<a id="__codelineno-0-219" name="__codelineno-0-219"></a>            <span class="n">convergence_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">convergence_threshold</span><span class="p">,</span>
+<a id="__codelineno-0-220" name="__codelineno-0-220"></a>            <span class="n">init_fill_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_fill_method</span><span class="p">,</span>
+<a id="__codelineno-0-221" name="__codelineno-0-221"></a>        <span class="p">)</span>
+<a id="__codelineno-0-222" name="__codelineno-0-222"></a>    <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-0-223" name="__codelineno-0-223"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"SoftImpute failed (</span><span class="si">%s</span><span class="s2">); falling back to mean imputation"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+<a id="__codelineno-0-224" name="__codelineno-0-224"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a>
+<a id="__codelineno-0-226" name="__codelineno-0-226"></a>    <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed</span>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a>    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2170,12 +2172,12 @@ entries between iterations falls below this value.</p>
 
 
 
-<h2 id="imputation_methods.matrix.BayesianPCAImputer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">BayesianPCAImputer</span>
+<h2 id="imputation_methods.matrix.PPCAImputer" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PPCAImputer</span>
 
 
-<a href="#imputation_methods.matrix.BayesianPCAImputer" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">BayesianPCAImputer</span><span class="p">(</span><span class="n">n_components</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">min_obs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">1e-06</span><span class="p">)</span>
+<a href="#imputation_methods.matrix.PPCAImputer" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">PPCAImputer</span><span class="p">(</span><span class="n">n_components</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">min_obs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">1e-06</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2194,11 +2196,11 @@ priors are placed on the loadings.</p>
 <p><span class="doc-section-title">Examples:</span></p>
     <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianPCAImputer</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">imputation_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPCAImputer</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="gp">... </span>    <span class="p">{</span><span class="s2">"a"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="s2">"b"</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]}</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="gp">... </span><span class="p">)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">BayesianPCAImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">PPCAImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="go">True</span>
 </code></pre></div>
 
@@ -2325,9 +2327,7 @@ iterations falls below this value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/imputation_methods/matrix.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-252">252</a></span>
-<span class="normal"><a href="#__codelineno-0-253">253</a></span>
-<span class="normal"><a href="#__codelineno-0-254">254</a></span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-254">254</a></span>
 <span class="normal"><a href="#__codelineno-0-255">255</a></span>
 <span class="normal"><a href="#__codelineno-0-256">256</a></span>
 <span class="normal"><a href="#__codelineno-0-257">257</a></span>
@@ -2355,37 +2355,39 @@ iterations falls below this value.</p>
 <span class="normal"><a href="#__codelineno-0-279">279</a></span>
 <span class="normal"><a href="#__codelineno-0-280">280</a></span>
 <span class="normal"><a href="#__codelineno-0-281">281</a></span>
-<span class="normal"><a href="#__codelineno-0-282">282</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-252" name="__codelineno-0-252"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-0-253" name="__codelineno-0-253"></a>    <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a>    <span class="n">n_components</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-255" name="__codelineno-0-255"></a>    <span class="n">min_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-256" name="__codelineno-0-256"></a>    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
-<a id="__codelineno-0-257" name="__codelineno-0-257"></a>    <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
-<a id="__codelineno-0-260" name="__codelineno-0-260"></a>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-262" name="__codelineno-0-262"></a><span class="sd">        n_components: Number of latent dimensions. ``None`` uses 2. The value</span>
-<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">            is capped at ``n_columns - 1`` so the model stays low-rank.</span>
-<a id="__codelineno-0-264" name="__codelineno-0-264"></a><span class="sd">        min_obs: Minimum number of observed values a column needs to take</span>
-<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">            part in the model. Other columns are mean-imputed.</span>
-<a id="__codelineno-0-266" name="__codelineno-0-266"></a><span class="sd">        max_iter: Maximum number of EM iterations.</span>
-<a id="__codelineno-0-267" name="__codelineno-0-267"></a><span class="sd">        tol: Stop when the relative change of the imputed entries between</span>
-<a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="sd">            iterations falls below this value.</span>
-<a id="__codelineno-0-269" name="__codelineno-0-269"></a>
-<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">        ValueError: If an argument is out of range.</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">    """</span>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a>    <span class="k">if</span> <span class="n">n_components</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_components</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"n_components must be &gt;= 1, got </span><span class="si">{</span><span class="n">n_components</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a>    <span class="k">if</span> <span class="n">min_obs</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"min_obs must be &gt;= 1, got </span><span class="si">{</span><span class="n">min_obs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="k">if</span> <span class="n">max_iter</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_iter must be &gt;= 1, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span> <span class="o">=</span> <span class="n">min_obs</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+<span class="normal"><a href="#__codelineno-0-282">282</a></span>
+<span class="normal"><a href="#__codelineno-0-283">283</a></span>
+<span class="normal"><a href="#__codelineno-0-284">284</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-255" name="__codelineno-0-255"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-256" name="__codelineno-0-256"></a>    <span class="n">n_components</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-0-257" name="__codelineno-0-257"></a>    <span class="n">min_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a>    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a>    <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+<a id="__codelineno-0-260" name="__codelineno-0-260"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="w">    </span><span class="sd">"""Initialize the imputer.</span>
+<a id="__codelineno-0-262" name="__codelineno-0-262"></a>
+<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-264" name="__codelineno-0-264"></a><span class="sd">        n_components: Number of latent dimensions. ``None`` uses 2. The value</span>
+<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">            is capped at ``n_columns - 1`` so the model stays low-rank.</span>
+<a id="__codelineno-0-266" name="__codelineno-0-266"></a><span class="sd">        min_obs: Minimum number of observed values a column needs to take</span>
+<a id="__codelineno-0-267" name="__codelineno-0-267"></a><span class="sd">            part in the model. Other columns are mean-imputed.</span>
+<a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="sd">        max_iter: Maximum number of EM iterations.</span>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="sd">        tol: Stop when the relative change of the imputed entries between</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">            iterations falls below this value.</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="sd">        ValueError: If an argument is out of range.</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">    """</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>    <span class="k">if</span> <span class="n">n_components</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_components</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"n_components must be &gt;= 1, got </span><span class="si">{</span><span class="n">n_components</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="k">if</span> <span class="n">min_obs</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"min_obs must be &gt;= 1, got </span><span class="si">{</span><span class="n">min_obs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>    <span class="k">if</span> <span class="n">max_iter</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_iter must be &gt;= 1, got </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span> <span class="o">=</span> <span class="n">min_obs</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -2405,11 +2407,11 @@ iterations falls below this value.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="imputation_methods.matrix.BayesianPCAImputer.impute" class="doc doc-heading">
+<h3 id="imputation_methods.matrix.PPCAImputer.impute" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">impute</span>
 
 
-<a href="#imputation_methods.matrix.BayesianPCAImputer.impute" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#imputation_methods.matrix.PPCAImputer.impute" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">impute</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="pandas.DataFrame" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="pandas.DataFrame" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a></span>
 </code></pre></div>
 
@@ -2494,9 +2496,7 @@ iterations falls below this value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/imputation_methods/matrix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-284">284</a></span>
-<span class="normal"><a href="#__codelineno-0-285">285</a></span>
-<span class="normal"><a href="#__codelineno-0-286">286</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-286">286</a></span>
 <span class="normal"><a href="#__codelineno-0-287">287</a></span>
 <span class="normal"><a href="#__codelineno-0-288">288</a></span>
 <span class="normal"><a href="#__codelineno-0-289">289</a></span>
@@ -2542,55 +2542,57 @@ iterations falls below this value.</p>
 <span class="normal"><a href="#__codelineno-0-329">329</a></span>
 <span class="normal"><a href="#__codelineno-0-330">330</a></span>
 <span class="normal"><a href="#__codelineno-0-331">331</a></span>
-<span class="normal"><a href="#__codelineno-0-332">332</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="w">    </span><span class="sd">"""Fill missing values using a probabilistic PCA model.</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">        df: Dataframe with missing values.</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a><span class="sd">        Dataframe with missing entries filled via probabilistic PCA. A</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">        single-column dataframe is returned unchanged, since PPCA needs at</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">        least two columns.</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="sd">    """</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"PPCA needs at least two columns; returning input copy"</span><span class="p">)</span>
-<a id="__codelineno-0-298" name="__codelineno-0-298"></a>        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<a id="__codelineno-0-299" name="__codelineno-0-299"></a>
-<a id="__codelineno-0-300" name="__codelineno-0-300"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<a id="__codelineno-0-301" name="__codelineno-0-301"></a>    <span class="n">enough_obs</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span>
-<a id="__codelineno-0-302" name="__codelineno-0-302"></a>    <span class="n">modelled</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">enough_obs</span><span class="p">]</span>
-<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelled</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-<a id="__codelineno-0-304" name="__codelineno-0-304"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-<a id="__codelineno-0-305" name="__codelineno-0-305"></a>            <span class="s2">"Fewer than two columns have </span><span class="si">%d</span><span class="s2"> observations; using mean imputation"</span><span class="p">,</span>
-<a id="__codelineno-0-306" name="__codelineno-0-306"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span><span class="p">,</span>
-<a id="__codelineno-0-307" name="__codelineno-0-307"></a>        <span class="p">)</span>
-<a id="__codelineno-0-308" name="__codelineno-0-308"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-309" name="__codelineno-0-309"></a>
-<a id="__codelineno-0-310" name="__codelineno-0-310"></a>    <span class="n">values</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-<a id="__codelineno-0-311" name="__codelineno-0-311"></a>    <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-0-312" name="__codelineno-0-312"></a>    <span class="n">stds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-0-313" name="__codelineno-0-313"></a>    <span class="n">stds</span><span class="p">[</span><span class="o">~</span><span class="p">(</span><span class="n">stds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<a id="__codelineno-0-314" name="__codelineno-0-314"></a>    <span class="n">requested</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span>
-<a id="__codelineno-0-315" name="__codelineno-0-315"></a>    <span class="n">n_components</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">requested</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-0-316" name="__codelineno-0-316"></a>
-<a id="__codelineno-0-317" name="__codelineno-0-317"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-318" name="__codelineno-0-318"></a>        <span class="n">completed</span> <span class="o">=</span> <span class="n">_ppca_impute</span><span class="p">(</span>
-<a id="__codelineno-0-319" name="__codelineno-0-319"></a>            <span class="p">(</span><span class="n">values</span> <span class="o">-</span> <span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="n">stds</span><span class="p">,</span>
-<a id="__codelineno-0-320" name="__codelineno-0-320"></a>            <span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span>
-<a id="__codelineno-0-321" name="__codelineno-0-321"></a>            <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
-<a id="__codelineno-0-322" name="__codelineno-0-322"></a>            <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span>
-<a id="__codelineno-0-323" name="__codelineno-0-323"></a>        <span class="p">)</span>
-<a id="__codelineno-0-324" name="__codelineno-0-324"></a>    <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-0-325" name="__codelineno-0-325"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"PPCA failed (</span><span class="si">%s</span><span class="s2">); falling back to mean imputation"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-<a id="__codelineno-0-326" name="__codelineno-0-326"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<a id="__codelineno-0-327" name="__codelineno-0-327"></a>
-<a id="__codelineno-0-328" name="__codelineno-0-328"></a>    <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed</span> <span class="o">*</span> <span class="n">stds</span> <span class="o">+</span> <span class="n">means</span>
-<a id="__codelineno-0-329" name="__codelineno-0-329"></a>    <span class="n">excluded</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">~</span><span class="n">enough_obs</span><span class="p">]</span>
-<a id="__codelineno-0-330" name="__codelineno-0-330"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">excluded</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-331" name="__codelineno-0-331"></a>        <span class="n">result</span><span class="p">[</span><span class="n">excluded</span><span class="p">]</span> <span class="o">=</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">excluded</span><span class="p">])</span>
-<a id="__codelineno-0-332" name="__codelineno-0-332"></a>    <span class="k">return</span> <span class="n">result</span>
+<span class="normal"><a href="#__codelineno-0-332">332</a></span>
+<span class="normal"><a href="#__codelineno-0-333">333</a></span>
+<span class="normal"><a href="#__codelineno-0-334">334</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="k">def</span><span class="w"> </span><span class="nf">impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="w">    </span><span class="sd">"""Fill missing values using a probabilistic PCA model.</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">        df: Dataframe with missing values.</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">        Dataframe with missing entries filled via probabilistic PCA. A</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="sd">        single-column dataframe is returned unchanged, since PPCA needs at</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a><span class="sd">        least two columns.</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a><span class="sd">    """</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"PPCA needs at least two columns; returning input copy"</span><span class="p">)</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="n">enough_obs</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a>    <span class="n">modelled</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">enough_obs</span><span class="p">]</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelled</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>            <span class="s2">"Fewer than two columns have </span><span class="si">%d</span><span class="s2"> observations; using mean imputation"</span><span class="p">,</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span><span class="p">,</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>        <span class="p">)</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a>    <span class="n">values</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a>    <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-314" name="__codelineno-0-314"></a>    <span class="n">stds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-315" name="__codelineno-0-315"></a>    <span class="n">stds</span><span class="p">[</span><span class="o">~</span><span class="p">(</span><span class="n">stds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<a id="__codelineno-0-316" name="__codelineno-0-316"></a>    <span class="n">requested</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span>
+<a id="__codelineno-0-317" name="__codelineno-0-317"></a>    <span class="n">n_components</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">requested</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-318" name="__codelineno-0-318"></a>
+<a id="__codelineno-0-319" name="__codelineno-0-319"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-320" name="__codelineno-0-320"></a>        <span class="n">completed</span> <span class="o">=</span> <span class="n">_ppca_impute</span><span class="p">(</span>
+<a id="__codelineno-0-321" name="__codelineno-0-321"></a>            <span class="p">(</span><span class="n">values</span> <span class="o">-</span> <span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="n">stds</span><span class="p">,</span>
+<a id="__codelineno-0-322" name="__codelineno-0-322"></a>            <span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span>
+<a id="__codelineno-0-323" name="__codelineno-0-323"></a>            <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+<a id="__codelineno-0-324" name="__codelineno-0-324"></a>            <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span>
+<a id="__codelineno-0-325" name="__codelineno-0-325"></a>        <span class="p">)</span>
+<a id="__codelineno-0-326" name="__codelineno-0-326"></a>    <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-0-327" name="__codelineno-0-327"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"PPCA failed (</span><span class="si">%s</span><span class="s2">); falling back to mean imputation"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+<a id="__codelineno-0-328" name="__codelineno-0-328"></a>        <span class="k">return</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<a id="__codelineno-0-329" name="__codelineno-0-329"></a>
+<a id="__codelineno-0-330" name="__codelineno-0-330"></a>    <span class="n">result</span><span class="p">[</span><span class="n">modelled</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed</span> <span class="o">*</span> <span class="n">stds</span> <span class="o">+</span> <span class="n">means</span>
+<a id="__codelineno-0-331" name="__codelineno-0-331"></a>    <span class="n">excluded</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">~</span><span class="n">enough_obs</span><span class="p">]</span>
+<a id="__codelineno-0-332" name="__codelineno-0-332"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">excluded</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-333" name="__codelineno-0-333"></a>        <span class="n">result</span><span class="p">[</span><span class="n">excluded</span><span class="p">]</span> <span class="o">=</span> <span class="n">MeanImputer</span><span class="p">()</span><span class="o">.</span><span class="n">impute</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">excluded</span><span class="p">])</span>
+<a id="__codelineno-0-334" name="__codelineno-0-334"></a>    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
