@@ -10,7 +10,7 @@ Always analyze your missing data before choosing an imputation strategy.
 
 ```python
 import pandas as pd
-import missingno as msno
+import missingno as msno  # Separate package: pip install missingno
 import matplotlib.pyplot as plt
 
 def analyze_missingness(df):
@@ -113,7 +113,7 @@ train, test = train_test_split(df_imputed)
 # Split first
 train, test = train_test_split(df)
 
-# Fit imputer on training data only
+# Impute each split separately (impute() only sees the rows it is given)
 imputer = KNNImputerMethod(k=5)
 train_imputed = imputer.impute(train)
 test_imputed = imputer.impute(test)
@@ -136,8 +136,8 @@ class ImputationTransformer:
         self.imputer = imputer
 
     def fit(self, X, y=None):
-        # Imputers in this library don't need fitting on training data
-        # But we store the imputer for consistency
+        # Imputers in this library have no fitted state: impute() estimates
+        # everything from the data passed to transform()
         return self
 
     def transform(self, X):
@@ -147,7 +147,7 @@ class ImputationTransformer:
         return self.transform(X)
 
 # Create pipeline
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 pipeline = Pipeline([
     ('impute', ImputationTransformer(KNNImputerMethod(k=5))),
@@ -178,8 +178,9 @@ def prepare_for_imputation(df):
     df_processed = df.copy()
 
     # Separate numeric and categorical
-    numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
-    categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+    numeric_cols = df.select_dtypes(include='number').columns
+    # 'string' also selects pandas 3's default str dtype
+    categorical_cols = df.select_dtypes(include=['object', 'string', 'category']).columns
 
     # Encode categorical variables
     label_encoders = {}
@@ -197,7 +198,7 @@ def prepare_for_imputation(df):
 df_processed, encoders, num_cols, cat_cols = prepare_for_imputation(df)
 
 # Impute
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 imputer = KNNImputerMethod(k=5)
 df_imputed = imputer.impute(df_processed)
 
@@ -266,7 +267,7 @@ class VersionedImputer:
         )
 
 # Usage
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 imputer = VersionedImputer(
     imputer=KNNImputerMethod(k=5),
@@ -331,7 +332,7 @@ class RobustImputer:
                 raise RuntimeError("All imputation strategies failed") from e2
 
 # Usage
-from imputation_showcase import KNNImputerMethod, MeanImputer
+from imputation_methods import KNNImputerMethod, MeanImputer
 
 robust_imputer = RobustImputer(
     primary_imputer=KNNImputerMethod(k=5),
@@ -439,52 +440,54 @@ print(monitored_imputer.get_stats_summary())
 KNN is sensitive to feature scales:
 
 ```python
+import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
-# Scale before imputation
+# Scale before imputation. StandardScaler ignores NaNs when fitting
+# and keeps them in the output, so it only uses observed values.
 scaler = StandardScaler()
-
-# Fit on observed values only
-observed_mask = ~df.isna()
-for col in df.columns:
-    if observed_mask[col].any():
-        df.loc[observed_mask[col], col] = scaler.fit_transform(
-            df.loc[observed_mask[col], [col]]
-        )
+df_scaled = pd.DataFrame(
+    scaler.fit_transform(df), columns=df.columns, index=df.index
+)
 
 # Now impute
 imputer = KNNImputerMethod(k=5)
-df_imputed = imputer.impute(df)
+df_imputed = imputer.impute(df_scaled)
 
 # Scale back if needed
-df_imputed = scaler.inverse_transform(df_imputed)
+df_imputed = pd.DataFrame(
+    scaler.inverse_transform(df_imputed), columns=df.columns, index=df.index
+)
 ```
 
 ### 2. Sample for Large Datasets
 
-For very large datasets, consider sampling:
+For very large datasets, consider imputing smaller subsets of rows at a time:
 
 ```python
 def smart_impute_large_dataset(df, imputer, sample_size=10000):
-    """Impute large dataset using sampling strategy."""
+    """Impute large dataset in row subsets of at most sample_size rows."""
 
     if len(df) <= sample_size:
         # Small enough, impute directly
         return imputer.impute(df)
 
     # For large datasets, use simple imputation
-    # or sample-based strategy
-    from imputation_showcase import MeanImputer
+    # or a subset-based strategy
+    from imputation_methods import MeanImputer
 
     if len(df) > 1000000:
         # Very large: use fast method
         return MeanImputer().impute(df)
     else:
-        # Large: use imputer on sample, apply patterns
-        sample = df.sample(n=sample_size, random_state=42)
-        # Train on sample (method-dependent)
-        return imputer.impute(df)
+        # Large: impute consecutive chunks. Imputers keep no fitted state,
+        # so each chunk is imputed from its own rows only.
+        chunks = [
+            imputer.impute(df.iloc[start:start + sample_size])
+            for start in range(0, len(df), sample_size)
+        ]
+        return pd.concat(chunks)
 
 # Usage
 df_imputed = smart_impute_large_dataset(large_df, KNNImputerMethod(k=5))
@@ -516,7 +519,7 @@ def parallel_impute(df, imputer, n_jobs=-1):
                        index=df.index)
 
 # Usage (only works for column-independent methods)
-from imputation_showcase import MedianImputer
+from imputation_methods import MedianImputer
 df_imputed = parallel_impute(df, MedianImputer(), n_jobs=4)
 ```
 
@@ -528,7 +531,7 @@ df_imputed = parallel_impute(df, MedianImputer(), n_jobs=4)
 import unittest
 import pandas as pd
 import numpy as np
-from imputation_showcase import MeanImputer, KNNImputerMethod
+from imputation_methods import MeanImputer, KNNImputerMethod
 
 class TestImputationPipeline(unittest.TestCase):
     """Test imputation logic."""
@@ -601,7 +604,7 @@ def test_end_to_end_pipeline():
     )
 
     # Impute
-    from imputation_showcase import KNNImputerMethod
+    from imputation_methods import KNNImputerMethod
     imputer = KNNImputerMethod(k=5)
     X_train_imputed = imputer.impute(X_train)
     X_test_imputed = imputer.impute(X_test)
@@ -656,6 +659,8 @@ imputer = KNNImputerMethod(k=5)
 
 ```python
 # WRONG for large datasets
+from imputation_methods import MissForestImputer
+
 imputer = MissForestImputer()  # Too slow for >100K rows
 df_imputed = imputer.impute(very_large_df)
 ```
@@ -689,4 +694,4 @@ df_imputed = imputer.impute(df)
 - See [Examples](../examples/time-series.md) for complete implementations
 - Review [Evaluation](evaluation.md) for quality assessment
 - Check [Method Selection](selection.md) for choosing the right approach
-- Consult [API Reference](../api/methods.md) for technical details
+- Consult [API Reference](../api/index.md) for technical details

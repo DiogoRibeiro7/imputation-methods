@@ -28,7 +28,7 @@ graph TD
 
     J -->|Limited| Q[Mean or Median]
     J -->|Moderate| R[KNN]
-    J -->|High| S[Autoencoder or GAIN]
+    J -->|High| S[Autoencoder]
 ```
 
 ## By Use Case
@@ -38,7 +38,7 @@ graph TD
 **Recommended:** Mean or Median Imputation
 
 ```python
-from imputation_showcase import MeanImputer, MedianImputer
+from imputation_methods import MeanImputer, MedianImputer
 
 # For normally distributed data
 imputer = MeanImputer()
@@ -65,7 +65,7 @@ df_imputed = imputer.impute(df)
 **Recommended:** LOCF, NOCB, or KNN
 
 ```python
-from imputation_showcase import LOCFImputer, NOCBImputer, KNNImputerMethod
+from imputation_methods import LOCFImputer, NOCBImputer, KNNImputerMethod
 
 # For slowly changing variables
 imputer = LOCFImputer()
@@ -98,7 +98,7 @@ elif num_sensors > 3:
 **Recommended:** KNN, MICE, or MissForest
 
 ```python
-from imputation_showcase import KNNImputerMethod, MICEImputer, MissForestImputer
+from imputation_methods import KNNImputerMethod, MICEImputer, MissForestImputer
 
 # General purpose - good balance
 imputer = KNNImputerMethod(k=5)
@@ -149,7 +149,7 @@ pipeline.fit(X_train, y_train)
 **Recommended:** MICE or PMM
 
 ```python
-from imputation_showcase import MICEImputer, PMMImputer
+from imputation_methods import MICEImputer, PMMImputer
 
 # Standard approach in statistics
 imputer = MICEImputer(random_state=42)
@@ -166,19 +166,19 @@ df_imputed = imputer.impute(df)
 - Account for uncertainty (in full MICE implementation)
 - PMM guarantees realistic values
 
-**Important:** For proper statistical inference, use multiple imputation (create multiple imputed datasets). This library provides single imputation; for multiple imputation, consider the `mice` or `miceforest` packages.
+**Important:** For proper statistical inference, use multiple imputation (create multiple imputed datasets). This library provides single imputation; for multiple imputation, consider the R `mice` package or the Python `miceforest` package.
 
 ### 5. High-Dimensional Data
 
 **Recommended:** Bayesian PCA, SoftImpute, or Autoencoder
 
 ```python
-from imputation_showcase import BayesianPCAImputer, SoftImputeImputer, AutoencoderImputer
+from imputation_methods import BayesianPCAImputer, SoftImputeImputer, AutoencoderImputer
 
 # For low-rank structure (e.g., recommendations)
 imputer = SoftImputeImputer(max_iters=100)
 
-# Probabilistic approach
+# Probabilistic approach (n_components is capped at n_columns - 1)
 imputer = BayesianPCAImputer(n_components=10)
 
 # For very large datasets with non-linearity
@@ -194,14 +194,20 @@ df_imputed = imputer.impute(df)
 **Choosing components:**
 ```python
 from sklearn.decomposition import PCA
+from imputation_methods import MeanImputer
+
+# PCA needs complete data: fill with the mean first. BayesianPCAImputer
+# standardizes columns, so standardize here too.
+df_filled = MeanImputer().impute(df)
+df_filled = (df_filled - df_filled.mean()) / df_filled.std()
 
 # Determine good n_components
 pca = PCA()
-pca.fit(df_filled)  # Fill with mean first
+pca.fit(df_filled)
 
 # Find number of components explaining 90% variance
 cumsum = np.cumsum(pca.explained_variance_ratio_)
-n_components = np.argmax(cumsum >= 0.90) + 1
+n_components = int(np.argmax(cumsum >= 0.90) + 1)
 
 imputer = BayesianPCAImputer(n_components=n_components)
 ```
@@ -211,7 +217,7 @@ imputer = BayesianPCAImputer(n_components=n_components)
 **Recommended:** KNN or Mean/Median
 
 ```python
-from imputation_showcase import KNNImputerMethod, MeanImputer
+from imputation_methods import KNNImputerMethod, MeanImputer
 
 # For real-time systems
 imputer = MeanImputer()  # Fastest
@@ -219,7 +225,8 @@ imputer = MeanImputer()  # Fastest
 # For batch processing with higher accuracy
 imputer = KNNImputerMethod(k=5)
 
-# Save imputer parameters for consistency
+# Save the imputer configuration for consistency (imputers hold no fitted
+# state: impute() re-estimates everything from the data it receives)
 import joblib
 joblib.dump(imputer, 'imputer_model.pkl')
 ```
@@ -227,7 +234,7 @@ joblib.dump(imputer, 'imputer_model.pkl')
 **Production considerations:**
 - **Latency:** Mean/Median < KNN < MICE < MissForest
 - **Memory:** Most methods have low memory footprint
-- **Consistency:** Use same imputer fitted on training data
+- **Consistency:** Use the same imputer configuration for training and serving
 - **Monitoring:** Track missingness patterns over time
 
 **Production checklist:**
@@ -274,7 +281,7 @@ class ProductionImputer:
 Any method works, but simple ones are often sufficient:
 
 ```python
-from imputation_showcase import MeanImputer, MedianImputer
+from imputation_methods import MeanImputer, MedianImputer
 
 # Choose based on distribution
 if data_is_normal:
@@ -288,7 +295,7 @@ else:
 Use methods that leverage relationships:
 
 ```python
-from imputation_showcase import KNNImputerMethod, MICEImputer, RegressionImputer
+from imputation_methods import KNNImputerMethod, MICEImputer, RegressionImputer
 
 # For moderate datasets
 imputer = KNNImputerMethod(k=5)
@@ -309,7 +316,7 @@ Most difficult; consider domain-specific approaches or models that account for m
 df['was_missing'] = df['feature'].isna().astype(int)
 
 # Then impute
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 imputer = KNNImputerMethod(k=5)
 df[['feature']] = imputer.impute(df[['feature']])
 ```
@@ -319,7 +326,7 @@ df[['feature']] = imputer.impute(df[['feature']])
 **Small (<1,000 rows):**
 ```python
 # Can use any method, prefer simpler ones
-from imputation_showcase import MeanImputer, KNNImputerMethod, MICEImputer
+from imputation_methods import MeanImputer, KNNImputerMethod, MICEImputer
 
 imputer = MICEImputer()  # Even complex methods are fast
 ```
@@ -327,7 +334,7 @@ imputer = MICEImputer()  # Even complex methods are fast
 **Medium (1,000-100,000 rows):**
 ```python
 # Balance accuracy and speed
-from imputation_showcase import KNNImputerMethod, PMM Imputer
+from imputation_methods import KNNImputerMethod, PMMImputer
 
 imputer = KNNImputerMethod(k=5)  # Good default
 ```
@@ -335,16 +342,16 @@ imputer = KNNImputerMethod(k=5)  # Good default
 **Large (>100,000 rows):**
 ```python
 # Prioritize speed
-from imputation_showcase import MeanImputer, MedianImputer
+from imputation_methods import KNNImputerMethod, MeanImputer, MedianImputer
 
 imputer = MeanImputer()  # O(n) complexity
 
-# Or use sampling for complex methods
+# Or use sampling for complex methods. Imputers keep no fitted state, so
+# this imputes only the sampled rows (e.g. for a quick method comparison).
 sample_size = 10000
-df_sample = df.sample(n=sample_size)
+df_sample = df.sample(n=sample_size, random_state=42)
 imputer = KNNImputerMethod(k=5)
-imputer_fitted = imputer.impute(df_sample)  # Fit on sample
-# Apply learned patterns to full data
+df_sample_imputed = imputer.impute(df_sample)
 ```
 
 ### Missingness Percentage
@@ -373,7 +380,7 @@ imputer_fitted = imputer.impute(df_sample)  # Fit on sample
 When unsure, compare multiple methods:
 
 ```python
-from imputation_showcase import (
+from imputation_methods import (
     MeanImputer, KNNImputerMethod, MICEImputer,
     MissForestImputer, rmse
 )
@@ -382,7 +389,8 @@ from sklearn.ensemble import RandomForestRegressor
 
 # Introduce artificial missingness for validation
 df_complete = df.copy()
-mask = create_missing_mask(df, missing_rate=0.2)
+rng = np.random.default_rng(42)
+mask = rng.random(df.shape) < 0.2  # 20% missing completely at random
 df_missing = df_complete.copy()
 df_missing[mask] = np.nan
 
@@ -425,13 +433,13 @@ print(results_df.sort_values('downstream_r2', ascending=False))
 
 | Scenario | Top Choice | Alternative | Avoid |
 |----------|-----------|-------------|-------|
-| **Prototype/Quick** | Mean/Median | KNN | MissForest, GAIN |
+| **Prototype/Quick** | Mean/Median | KNN | MissForest, Autoencoder |
 | **Time Series** | LOCF | KNN | Mean/Median |
 | **ML Pipeline** | KNN | MICE, MissForest | Hot Deck |
 | **Small Data** | MICE | PMM, MissForest | Mean/Median |
 | **Large Data** | Mean/Median | KNN (sampled) | MissForest, GP |
 | **High Dimensional** | Bayesian PCA | SoftImpute | KNN |
-| **Production** | Mean/KNN | - | MissForest, GAIN |
+| **Production** | Mean/KNN | - | MissForest, GP |
 | **Non-linear** | MissForest | Autoencoder | Regression |
 | **Preserve Distribution** | PMM | Hot Deck | Mean |
 
@@ -479,4 +487,4 @@ for n_comp in [2, 5, 10, 15]:
 - Review [Evaluation Metrics](evaluation.md) to assess imputation quality
 - Check [Best Practices](best-practices.md) for production deployment
 - See [Examples](../examples/time-series.md) for complete workflows
-- Consult [API Reference](../api/methods.md) for technical details
+- Consult [API Reference](../api/index.md) for technical details

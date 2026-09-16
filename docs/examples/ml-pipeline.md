@@ -13,7 +13,7 @@ Real-world ML systems need robust imputation as part of the preprocessing pipeli
 
 ## Full Example
 
-For a complete, runnable implementation, see `examples/ml_pipeline_example.py` in the repository.
+For a complete, runnable implementation, see [`examples/ml_pipeline_example.py`](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/examples/ml_pipeline_example.py) in the repository.
 
 ## Problem Description
 
@@ -30,7 +30,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Ridge
 from sklearn.metrics import r2_score, mean_squared_error
-from imputation_showcase import KNNImputerMethod, MICEImputer, MeanImputer
+from imputation_methods import KNNImputerMethod, MICEImputer, MeanImputer
 
 # Load data with missing values
 df = pd.read_csv('housing_data.csv')
@@ -78,7 +78,7 @@ class ImputedPipeline:
         Initialize pipeline.
 
         Args:
-            imputer: Imputation method from imputation_showcase
+            imputer: Imputation method from imputation_methods
             model: ML model (sklearn-compatible)
             scaler: Whether to apply StandardScaler
         """
@@ -143,7 +143,7 @@ print(f"Test R²: {test_score:.4f}")
 Evaluate multiple imputation strategies:
 
 ```python
-from imputation_showcase import (
+from imputation_methods import (
     MeanImputer, MedianImputer, KNNImputerMethod,
     MICEImputer, MissForestImputer
 )
@@ -466,14 +466,13 @@ predictions = adaptive_pipeline.predict(X_test)
 
 ## Complete Example Code
 
-Run the full example:
+Run the full example from the repository root (it needs the `viz` extra):
 
 ```bash
-cd examples/
-python ml_pipeline_example.py
+poetry run python examples/ml_pipeline_example.py
 ```
 
-This will generate:
+This will generate (plots are saved in `examples/`):
 - Performance comparison across methods
 - Visualization of results
 - Predictions vs actual values plot

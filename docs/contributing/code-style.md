@@ -4,13 +4,13 @@ Comprehensive code style and quality guidelines for the project.
 
 ## Overview
 
-This project follows PEP 8 with some modifications for consistency and readability. We use automated tools to enforce style guidelines.
+This project follows PEP 8 with some modifications for consistency and readability. We use automated tools to enforce style guidelines: Ruff for linting, import sorting and formatting, and mypy in strict mode for type checking.
 
 ## Style Guidelines
 
 ### Line Length
 
-- **Maximum: 88 characters** (Black default)
+- **Maximum: 88 characters** (Ruff `line-length = 88`)
 - Exception: Long URLs or strings that can't be broken
 
 ```python
@@ -40,7 +40,7 @@ Organize imports in this order:
 # Standard library
 import os
 import sys
-from typing import Optional, Union
+from typing import Any
 
 # Third-party
 import numpy as np
@@ -48,14 +48,15 @@ import pandas as pd
 from sklearn.impute import KNNImputer
 
 # Local
-from imputation_showcase.imputation_methods import BaseImputer
-from imputation_showcase import rmse, mae
+from imputation_methods import BaseImputer, mae, rmse
 ```
 
-Use `isort` to automatically organize imports:
+Inside `src/imputation_methods`, import sibling modules relatively (for example `from .base import BaseImputer`).
+
+Ruff's isort rules (`I`) check import order; apply the fixes automatically with:
 
 ```bash
-poetry run isort imputation_showcase tests
+poetry run ruff check --select I --fix .
 ```
 
 ### Naming Conventions
@@ -133,12 +134,13 @@ _PRIVATE_CONSTANT = 42
 
 ### Type Hints
 
-All public functions must have type hints:
+All functions must have type hints (mypy runs in strict mode). Use built-in generics and `X | None` unions; source modules start with `from __future__ import annotations`:
 
 ```python
-from typing import Optional, Union
-import pandas as pd
+from __future__ import annotations
+
 import numpy as np
+import pandas as pd
 
 # Good
 def impute(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -156,9 +158,9 @@ def calculate_metric(
 # Complex types
 def process_data(
     df: pd.DataFrame,
-    columns: Optional[list[str]] = None,
-    fill_value: Union[int, float] = 0
-) -> tuple[pd.DataFrame, dict]:
+    columns: list[str] | None = None,
+    fill_value: int | float = 0
+) -> tuple[pd.DataFrame, dict[str, float]]:
     """Process data with options."""
     pass
 ```
@@ -204,7 +206,7 @@ def example_function(param1: int, param2: str, param3: bool = False) -> dict:
     if param1 < 0:
         raise ValueError("param1 must be non-negative")
 
-    return {'key': 'value'}
+    return {'key': 'value'} if param2 else {}
 ```
 
 ### Class Docstrings
@@ -233,7 +235,8 @@ class ExampleImputer(BaseImputer):
         >>> df = pd.DataFrame({'a': [1, 2, np.nan, 4]})
         >>> imputer = ExampleImputer(param1=5)
         >>> result = imputer.impute(df)
-        >>> print(result)
+        >>> bool(result.notna().all().all())
+        True
 
     References:
         - Author Name. "Paper Title." Journal, Year.
@@ -258,14 +261,16 @@ class ExampleImputer(BaseImputer):
 ```python
 """Module docstring describing the file's purpose."""
 
+from __future__ import annotations
+
 # Imports (organized by category)
 import os
-from typing import Optional
+from typing import Any
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from imputation_showcase import BaseImputer
+from imputation_methods import BaseImputer
 
 # Constants
 DEFAULT_VALUE = 42
@@ -430,13 +435,13 @@ message = "Processing {} rows".format(count)
 
 ```python
 # Good
-def function(items: Optional[list] = None) -> list:
+def function(items: list[str] | None = None) -> list[str]:
     if items is None:
         items = []
     return items
 
 # Avoid
-def function(items: list = []) -> list:  # Dangerous!
+def function(items: list[str] = []) -> list[str]:  # Dangerous! (Ruff B006)
     return items
 ```
 
@@ -459,6 +464,10 @@ for idx in range(len(items)):
 ## Testing Style
 
 ```python
+import pandas as pd
+import pytest
+
+
 class TestFeature:
     """Test class for feature."""
 
@@ -490,18 +499,15 @@ Run these tools before committing:
 
 ```bash
 # Format code
-poetry run black .
+poetry run ruff format .
 
-# Sort imports
-poetry run isort .
-
-# Lint code
-poetry run flake8 imputation_showcase tests
+# Lint code (including import sorting)
+poetry run ruff check .
 
 # Type check
-poetry run mypy imputation_showcase/
+poetry run mypy
 
-# Run all checks
+# Run all checks (Ruff lint + format, mypy, file hygiene hooks)
 poetry run pre-commit run --all-files
 ```
 
@@ -509,32 +515,33 @@ poetry run pre-commit run --all-files
 
 ### pyproject.toml
 
-```toml
-[tool.black]
-line-length = 88
-target-version = ['py310']
+All tool configuration lives in `pyproject.toml` (abridged):
 
-[tool.isort]
-profile = "black"
-line_length = 88
+```toml
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM", "NPY", "PT", "RUF", "G"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["imputation_methods"]
 
 [tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
+files = ["src/imputation_methods"]
+strict = true
+warn_unreachable = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
+testpaths = ["tests", "src/imputation_methods"]
+addopts = ["-ra", "--strict-markers", "--doctest-modules", "-m", "not benchmark"]
 ```
 
 ## Next Steps
 
 - Review [Development Setup](development.md) for environment configuration
 - Check [Contributing Guidelines](guidelines.md) for the contribution process
-- Start contributing with issues labeled ["good first issue"](https://github.com/DiogoRibeiro7/imputation-showcase/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+- Start contributing with issues labeled ["good first issue"](https://github.com/DiogoRibeiro7/imputation-methods/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 Happy coding with style! ✨

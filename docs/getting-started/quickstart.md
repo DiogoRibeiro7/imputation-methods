@@ -9,7 +9,7 @@ This guide will help you perform your first imputation in just a few minutes.
 ```python
 import pandas as pd
 import numpy as np
-from imputation_showcase.imputation_methods import MeanImputer
+from imputation_methods import MeanImputer
 ```
 
 ### Step 2: Create Data with Missing Values
@@ -55,12 +55,12 @@ print(f"\nMissing values: {df_imputed.isna().sum().sum()}")
 
 Output:
 ```
-   temperature   humidity  pressure
-0    20.500000  65.000000   1013.00
-1    21.300000  70.000000   1014.50
-2    20.925000  69.000000   1015.00
-3    19.800000  72.000000   1014.00
-4    22.100000  69.000000   1016.00
+   temperature  humidity  pressure
+0       20.500      65.0    1013.0
+1       21.300      70.0    1014.5
+2       20.925      69.0    1015.0
+3       19.800      72.0    1014.0
+4       22.100      69.0    1016.0
 
 Missing values: 0
 ```
@@ -72,7 +72,7 @@ Missing values: 0
 For more accurate imputation using similar observations:
 
 ```python
-from imputation_showcase.imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 # Use 3 nearest neighbors
 knn_imputer = KNNImputerMethod(k=3)
@@ -86,7 +86,7 @@ print(df_knn)
 For data with outliers:
 
 ```python
-from imputation_showcase.imputation_methods import MedianImputer
+from imputation_methods import MedianImputer
 
 median_imputer = MedianImputer()
 df_median = median_imputer.impute(df)
@@ -99,7 +99,7 @@ print(df_median)
 When you have ground truth (original complete data):
 
 ```python
-from imputation_showcase.imputation_methods import rmse, mae
+from imputation_methods import rmse, mae
 
 # Assume df_complete is your original data before introducing missing values
 df_complete = pd.DataFrame({
@@ -119,7 +119,7 @@ print(f"MAE: {error_mae:.4f}")
 ## Comparing Multiple Methods
 
 ```python
-from imputation_showcase.imputation_methods import (
+from imputation_methods import (
     MeanImputer,
     MedianImputer,
     KNNImputerMethod,
@@ -166,7 +166,7 @@ df_imputed.to_csv("data/imputed_data.csv", index=False)
 ```python
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from imputation_showcase.imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(
@@ -200,15 +200,14 @@ predictions = model.predict(X_test_imputed)
     ```
 
 !!! warning "Train/Test Split"
-    When using imputation in ML pipelines, fit the imputer on training data only:
+    Imputers have no separate `fit`/`transform` step: `impute(df)` estimates everything from the dataframe it is given. In ML pipelines, split first and impute each split separately so test rows never influence the training imputations:
     ```python
     # ✓ Correct
-    imputer.fit(X_train)  # Fit on training data
-    X_train_imp = imputer.transform(X_train)
-    X_test_imp = imputer.transform(X_test)
+    X_train_imp = imputer.impute(X_train)  # Uses training rows only
+    X_test_imp = imputer.impute(X_test)
 
     # ✗ Incorrect (data leakage)
-    imputer.fit(X)  # Don't fit on combined data
+    X_imp = imputer.impute(X)  # Don't impute the combined data before splitting
     ```
 
 !!! info "Missing Data Pattern"
@@ -220,6 +219,6 @@ predictions = model.predict(X_test_imputed)
 ## Next Steps
 
 - [Basic Concepts](concepts.md) - Learn about missing data patterns
-- [Methods Overview](../user-guide/methods.md) - Explore all 16+ methods
+- [Methods Overview](../user-guide/methods.md) - Explore the imputation methods
 - [Examples](../examples/time-series.md) - See practical use cases
 - [Best Practices](../user-guide/best-practices.md) - Production guidelines

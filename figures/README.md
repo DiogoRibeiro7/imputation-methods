@@ -15,7 +15,8 @@ This directory contains static visualizations generated from the imputation demo
 To regenerate these figures, run:
 
 ```bash
-poetry run python generate_figures.py
+poetry install --extras viz
+poetry run python scripts/generate_figures.py
 ```
 
 ## Dataset

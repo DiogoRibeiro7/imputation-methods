@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import load_diabetes
 
-from imputation_showcase.imputation_methods import (
+from imputation_methods import (
+    KNNImputerMethod,
     MeanImputer,
     MedianImputer,
-    KNNImputerMethod,
     MICEImputer,
-    rmse,
     mae,
+    rmse,
 )
 
 
@@ -46,9 +46,7 @@ def test_full_pipeline_diabetes_dataset() -> None:
         )
 
         # Verify shape preserved
-        assert imputed.shape == df.shape, (
-            f"{imputer.__class__.__name__} changed shape"
-        )
+        assert imputed.shape == df.shape, f"{imputer.__class__.__name__} changed shape"
 
         # Verify index preserved
         pd.testing.assert_index_equal(imputed.index, df.index)
@@ -67,11 +65,13 @@ def test_full_pipeline_diabetes_dataset() -> None:
 
 def test_sequential_imputation() -> None:
     """Test that imputers can be chained together."""
-    df = pd.DataFrame({
-        "a": [1, 2, np.nan, 4, 5],
-        "b": [6, np.nan, 8, 9, 10],
-        "c": [11, 12, 13, np.nan, 15],
-    })
+    df = pd.DataFrame(
+        {
+            "a": [1, 2, np.nan, 4, 5],
+            "b": [6, np.nan, 8, 9, 10],
+            "c": [11, 12, 13, np.nan, 15],
+        }
+    )
 
     # First pass: mean imputation
     step1 = MeanImputer().impute(df)
@@ -87,10 +87,12 @@ def test_sequential_imputation() -> None:
 
 def test_data_type_preservation() -> None:
     """Test that imputers preserve numeric data types."""
-    df = pd.DataFrame({
-        "int_col": pd.Series([1, 2, pd.NA, 4], dtype="Int64"),
-        "float_col": pd.Series([1.5, np.nan, 3.5, 4.5], dtype="float64"),
-    })
+    df = pd.DataFrame(
+        {
+            "int_col": pd.Series([1, 2, pd.NA, 4], dtype="Int64"),
+            "float_col": pd.Series([1.5, np.nan, 3.5, 4.5], dtype="float64"),
+        }
+    )
 
     # Convert to float for imputation (required by our imputers)
     df_float = df.astype("float64")
@@ -137,10 +139,12 @@ def test_empty_dataframe_handling() -> None:
 
 def test_large_proportion_missing() -> None:
     """Test imputers with high percentage of missing data."""
-    df = pd.DataFrame({
-        "a": [1, np.nan, np.nan, np.nan, 5],
-        "b": [np.nan, 2, np.nan, np.nan, 6],
-    })
+    df = pd.DataFrame(
+        {
+            "a": [1, np.nan, np.nan, np.nan, 5],
+            "b": [np.nan, 2, np.nan, np.nan, 6],
+        }
+    )
 
     # 60% missing data - should still work
     imputers = [
@@ -158,10 +162,12 @@ def test_large_proportion_missing() -> None:
 
 def test_reproducibility_with_random_state() -> None:
     """Test that random_state ensures reproducible results."""
-    df = pd.DataFrame({
-        "a": [1, 2, np.nan, 4, 5],
-        "b": [6, np.nan, 8, 9, 10],
-    })
+    df = pd.DataFrame(
+        {
+            "a": [1, 2, np.nan, 4, 5],
+            "b": [6, np.nan, 8, 9, 10],
+        }
+    )
 
     # Run twice with same random state
     imputer1 = MICEImputer(random_state=42)
@@ -176,10 +182,12 @@ def test_reproducibility_with_random_state() -> None:
 
 def test_comparison_across_imputers() -> None:
     """Test that different imputers produce different but valid results."""
-    df = pd.DataFrame({
-        "a": [1, 2, np.nan, 4, 5],
-        "b": [6, 7, 8, np.nan, 10],
-    })
+    df = pd.DataFrame(
+        {
+            "a": [1, 2, np.nan, 4, 5],
+            "b": [6, 7, 8, np.nan, 10],
+        }
+    )
 
     mean_result = MeanImputer().impute(df)
     median_result = MedianImputer().impute(df)

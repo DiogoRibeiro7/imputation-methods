@@ -1,13 +1,13 @@
-site_name: Imputation Showcase
-site_description: Comprehensive library for handling missing data with 16+ imputation techniques
+site_name: imputation-methods
+site_description: A unified pandas API for 40+ missing-data imputation methods
 site_author: Diogo Ribeiro
-site_url: https://DiogoRibeiro7.github.io/imputation-showcase
+site_url: https://diogoribeiro7.github.io/imputation-methods/
 
-repo_name: DiogoRibeiro7/imputation-showcase
-repo_url: https://github.com/DiogoRibeiro7/imputation-showcase
+repo_name: DiogoRibeiro7/imputation-methods
+repo_url: https://github.com/DiogoRibeiro7/imputation-methods
 edit_uri: edit/main/docs/
 
-copyright: Copyright &copy; 2024 Diogo Ribeiro
+copyright: Copyright &copy; 2025-2026 Diogo Ribeiro
 
 theme:
   name: material
@@ -48,10 +48,23 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
+          paths: [src]
+          inventories:
+            - https://docs.python.org/3/objects.inv
+            - https://pandas.pydata.org/docs/objects.inv
+            - https://numpy.org/doc/stable/objects.inv
           options:
+            docstring_style: google
+            members_order: source
+            filters: ["!^_"]
+            merge_init_into_class: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
             show_source: true
-            show_root_heading: true
-            show_root_full_path: false
+            show_root_heading: false
+            show_root_toc_entry: false
+            heading_level: 2
             show_symbol_type_heading: true
             show_symbol_type_toc: true
 
@@ -62,7 +75,9 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
   - pymdownx.tabbed:
       alternate_style: true
   - tables
@@ -82,8 +97,6 @@ extra:
       link: https://github.com/DiogoRibeiro7
     - icon: fontawesome/solid/envelope
       link: mailto:diogo.debastos.ribeiro@gmail.com
-  version:
-    provider: mike
 
 nav:
   - Home: index.md
@@ -101,8 +114,19 @@ nav:
       - ML Pipelines: examples/ml-pipeline.md
       - Custom Imputers: examples/custom-imputers.md
   - API Reference:
-      - Imputation Methods: api/methods.md
-      - Evaluation: api/evaluation.md
+      - Overview: api/index.md
+      - Base class: api/base.md
+      - Statistical: api/statistical.md
+      - Donor sampling: api/sampling.md
+      - Time series: api/time-series.md
+      - Nearest neighbors: api/neighbors.md
+      - Regression: api/regression.md
+      - Iterative: api/iterative.md
+      - Matrix completion: api/matrix.md
+      - Neural networks: api/neural.md
+      - Ensembles: api/ensemble.md
+      - Functional API: api/functional.md
+      - Metrics: api/metrics.md
   - Contributing:
       - Guidelines: contributing/guidelines.md
       - Development Setup: contributing/development.md

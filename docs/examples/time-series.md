@@ -13,7 +13,7 @@ Time series data has unique characteristics that require specialized imputation 
 
 ## Full Example
 
-For a complete, runnable implementation, see `examples/time_series_example.py` in the repository.
+For a complete, runnable implementation, see [`examples/time_series_example.py`](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/examples/time_series_example.py) in the repository.
 
 ## Problem Description
 
@@ -27,9 +27,10 @@ For a complete, runnable implementation, see `examples/time_series_example.py` i
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from imputation_showcase import LOCFImputer, NOCBImputer, KNNImputerMethod
+from imputation_methods import LOCFImputer, NOCBImputer, KNNImputerMethod
 
 # Generate synthetic sensor data
+np.random.seed(42)
 timestamps = [datetime(2024, 1, 1) + timedelta(hours=i) for i in range(168)]  # 1 week
 temperature = 20 + 5 * np.sin(2 * np.pi * np.arange(168) / 24) + np.random.normal(0, 0.5, 168)
 humidity = 60 - 10 * np.sin(2 * np.pi * np.arange(168) / 24) + np.random.normal(0, 2, 168)
@@ -41,8 +42,10 @@ df = pd.DataFrame({
     'humidity': humidity
 })
 
+# Keep the complete data as ground truth for evaluation
+df_complete = df.copy()
+
 # Introduce 15% missingness
-np.random.seed(42)
 for col in ['temperature', 'humidity']:
     mask = np.random.rand(len(df)) < 0.15
     df.loc[mask, col] = np.nan
@@ -57,7 +60,7 @@ print(f"Missing values: {df.isna().sum().sum()}")
 Best for slowly changing variables.
 
 ```python
-from imputation_showcase import LOCFImputer
+from imputation_methods import LOCFImputer
 
 # Separate numeric columns for imputation
 numeric_cols = ['temperature', 'humidity']
@@ -90,7 +93,7 @@ print(df_locf.head(10))
 Useful for backward-looking analysis.
 
 ```python
-from imputation_showcase import NOCBImputer
+from imputation_methods import NOCBImputer
 
 nocb_imputer = NOCBImputer()
 df_nocb = nocb_imputer.impute(df_numeric)
@@ -114,7 +117,7 @@ print("NOCB Imputation Complete")
 Considers relationships between multiple sensors.
 
 ```python
-from imputation_showcase import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 
 # KNN works well when multiple correlated sensors exist
 knn_imputer = KNNImputerMethod(k=5)
@@ -145,9 +148,9 @@ print("KNN Imputation Complete")
 Compare methods using metrics:
 
 ```python
-from imputation_showcase import rmse, mae
+from imputation_methods import rmse, mae
 
-# Assuming we have ground truth for validation
+# Compare against the ground truth kept in the Quick Start (df_complete)
 methods = {
     'LOCF': df_locf,
     'NOCB': df_nocb,
@@ -225,27 +228,28 @@ df_rolling = rolling_mean_impute(df_numeric, window=5)
 df_rolling['timestamp'] = df['timestamp']
 ```
 
+The library also ships this approach as `MovingAverageImputer(window=5)` (with `WeightedMovingAverageImputer` for exponential weighting), and `InterpolationImputer` for linear, polynomial or spline interpolation.
+
 ## Real-World Considerations
 
 ### 1. Handling Long Gaps
 
 ```python
 def impute_with_gap_limit(df, imputer, max_gap=3):
-    """Impute only if gap is smaller than max_gap."""
+    """Impute only gaps of at most max_gap consecutive missing values."""
     df_imputed = df.copy()
 
     for col in df.columns:
-        # Identify gaps
+        # Identify gaps and the length of the gap each missing value belongs to
         is_missing = df[col].isna()
-        gap_sizes = is_missing.groupby((~is_missing).cumsum()).cumsum()
+        gap_id = (~is_missing).cumsum()
+        gap_length = is_missing.groupby(gap_id).transform('sum')
+        long_gaps = is_missing & (gap_length > max_gap)
 
-        # Only impute small gaps
-        small_gaps = gap_sizes <= max_gap
-        df_to_impute = df[[col]].copy()
-        df_to_impute.loc[is_missing & ~small_gaps, col] = np.nan
-
-        # Impute small gaps
-        df_imputed[col] = imputer.impute(df_to_impute)[col]
+        # Impute, then restore NaN inside gaps that are too long
+        imputed = imputer.impute(df[[col]])[col]
+        imputed[long_gaps] = np.nan
+        df_imputed[col] = imputed
 
     return df_imputed
 
@@ -257,7 +261,7 @@ df_smart = impute_with_gap_limit(df_numeric, LOCFImputer(), max_gap=3)
 
 ```python
 # For multiple correlated time series
-from imputation_showcase import MICEImputer
+from imputation_methods import MICEImputer
 
 # MICE can handle complex dependencies
 mice_imputer = MICEImputer(random_state=42)
@@ -288,6 +292,8 @@ def seasonal_impute(df, period=24):
 df_seasonal = seasonal_impute(df_numeric, period=24)  # Daily pattern
 ```
 
+The built-in `SeasonalImputer(period=24, method='median')` implements the same per-phase median and also fills any values it cannot match with the column mean.
+
 ## Key Takeaways
 
 1. **LOCF** is simple and fast, best for slowly changing variables
@@ -299,14 +305,13 @@ df_seasonal = seasonal_impute(df_numeric, period=24)  # Daily pattern
 
 ## Complete Example Code
 
-Run the full example with visualizations:
+Run the full example with visualizations from the repository root (it needs the `viz` extra):
 
 ```bash
-cd examples/
-python time_series_example.py
+poetry run python examples/time_series_example.py
 ```
 
-This will generate:
+This will generate (plots are saved in `examples/`):
 - Comparison plots for different methods
 - Performance metrics
 - Detailed analysis of a specific time window

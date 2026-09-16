@@ -1,446 +1,188 @@
-# Contributing to Imputation Showcase
+# Contributing to imputation-methods
 
-First off, thank you for considering contributing to Imputation Showcase! It's people like you that make this project better for everyone. We welcome contributions from the community and are pleased to have you join us.
+Thanks for your interest in improving imputation-methods. This guide covers how to
+report problems, set up a development environment, and get a change merged.
 
-## Table of Contents
+By participating you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+Please report unacceptable behavior to
+[diogo.debastos.ribeiro@gmail.com](mailto:diogo.debastos.ribeiro@gmail.com).
 
-- [Code of Conduct](#code-of-conduct)
-- [How Can I Contribute?](#how-can-i-contribute)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting Enhancements](#suggesting-enhancements)
-  - [Adding New Imputation Methods](#adding-new-imputation-methods)
-  - [Improving Documentation](#improving-documentation)
-  - [Code Contributions](#code-contributions)
-- [Development Setup](#development-setup)
-- [Coding Standards](#coding-standards)
-- [Testing Guidelines](#testing-guidelines)
-- [Documentation Standards](#documentation-standards)
-- [Pull Request Process](#pull-request-process)
-- [Getting Help](#getting-help)
+## Reporting bugs and requesting features
 
-## Code of Conduct
-
-This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [diogo.debastos.ribeiro@gmail.com](mailto:diogo.debastos.ribeiro@gmail.com).
-
-## How Can I Contribute?
-
-### Reporting Bugs
-
-Before creating bug reports, please check the [issue tracker](https://github.com/DiogoRibeiro7/imputation-showcase/issues) to avoid duplicates. When you create a bug report, include as many details as possible:
-
-**Template for Bug Reports:**
-
-```markdown
-**Description:**
-A clear and concise description of the bug.
-
-**To Reproduce:**
-Steps to reproduce the behavior:
-1. Import module '...'
-2. Call function '....'
-3. See error
-
-**Expected Behavior:**
-What you expected to happen.
-
-**Actual Behavior:**
-What actually happened.
-
-**Environment:**
-- OS: [e.g., Ubuntu 22.04, macOS 13.0, Windows 11]
-- Python version: [e.g., 3.10.5]
-- Package version: [e.g., 0.1.0]
-- Installation method: [e.g., pip, poetry, from source]
-
-**Additional Context:**
-Any other information about the problem.
-
-**Stack Trace:**
-```python
-# Paste full error traceback here
-```
-```
-
-### Suggesting Enhancements
-
-Enhancement suggestions are tracked as GitHub issues. When creating an enhancement suggestion, please include:
-
-- **Clear title and description** of the suggested enhancement
-- **Use case** - explain why this would be useful
-- **Possible implementation** - if you have ideas on how to implement it
-- **Alternatives considered** - what other solutions you've thought about
-
-### Adding New Imputation Methods
-
-We're always interested in adding new imputation techniques! If you'd like to contribute a new method:
-
-1. **Check existing methods** - ensure it's not already implemented
-2. **Research the method** - understand the algorithm thoroughly
-3. **Follow the pattern** - inherit from `BaseImputer` and implement `impute()`
-4. **Add tests** - comprehensive unit tests are required
-5. **Document it** - add docstrings with examples
-6. **Update README** - add the method to the Available Methods table
-
-**Example Structure:**
-
-```python
-class NewImputer(BaseImputer):
-    """Brief description of the imputation method.
-
-    Longer description explaining:
-    - How the method works
-    - When to use it
-    - Advantages and disadvantages
-
-    Parameters:
-        param1: Description of parameter 1
-        param2: Description of parameter 2
-
-    Examples:
-        >>> import pandas as pd
-        >>> import numpy as np
-        >>> from imputation_showcase import NewImputer
-        >>> df = pd.DataFrame({"a": [1, 2, np.nan, 4]})
-        >>> imputer = NewImputer()
-        >>> imputed = imputer.impute(df)
-    """
-
-    def __init__(self, param1=default1, param2=default2):
-        self.param1 = param1
-        self.param2 = param2
-
-    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = self._ensure_numeric(df)
-        # Implementation here
-        return result
-```
-
-### Improving Documentation
-
-Documentation improvements are always welcome! This includes:
-
-- Fixing typos or clarifying existing documentation
-- Adding examples to docstrings
-- Improving the README
-- Creating tutorials or guides
-- Adding code comments for complex logic
-
-### Code Contributions
-
-We actively welcome your pull requests for:
-
-- Bug fixes
-- New features
-- Performance improvements
-- Code refactoring
-- Test improvements
-
-## Development Setup
-
-### Prerequisites
-
-- Python 3.10 or higher
-- [Poetry](https://python-poetry.org/docs/) for dependency management
-- Git for version control
-
-### Setting Up Your Environment
-
-1. **Fork the repository** on GitHub
-
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/imputation-showcase.git
-   cd imputation-showcase
-   ```
-
-3. **Add upstream remote:**
-   ```bash
-   git remote add upstream https://github.com/DiogoRibeiro7/imputation-showcase.git
-   ```
-
-4. **Install dependencies:**
-   ```bash
-   poetry install
-   ```
-
-5. **Activate the virtual environment:**
-   ```bash
-   poetry shell
-   ```
-
-6. **Install pre-commit hooks:**
-   ```bash
-   poetry run pre-commit install
-   ```
-
-7. **Create a branch** for your changes:
-   ```bash
-   git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/your-bug-fix
-   ```
-
-## Coding Standards
-
-### Python Style Guide
-
-This project follows [PEP 8](https://pep8.org/) with some modifications:
-
-- **Line length:** Maximum 88 characters (Black default)
-- **Imports:** Organized with `isort`
-- **Docstrings:** Google-style format
-- **Type hints:** Required for all function signatures
-
-### Code Quality Tools
-
-We use several tools to maintain code quality:
+Search the [issue tracker](https://github.com/DiogoRibeiro7/imputation-methods/issues)
+first, then open an issue using the bug report or feature request template. For bugs,
+a minimal dataframe that reproduces the problem plus your Python, pandas, NumPy,
+scikit-learn and imputation-methods versions make a fix much faster:
 
 ```bash
-# Run linting
-poetry run flake8 imputation_showcase tests
-
-# Run type checking
-poetry run mypy imputation_showcase/
-
-# Run all pre-commit hooks
-poetry run pre-commit run --all-files
+python -c "import sys, pandas, numpy, sklearn, imputation_methods as m; print(sys.version, pandas.__version__, numpy.__version__, sklearn.__version__, m.__version__)"
 ```
 
-### Type Hints
+Security vulnerabilities should be reported privately; see [SECURITY.md](SECURITY.md).
 
-All functions should include type hints:
+## Development setup
 
-```python
-def impute(self, df: pd.DataFrame) -> pd.DataFrame:
-    """Impute missing values."""
-    # implementation
-```
-
-### Docstring Format
-
-Use Google-style docstrings:
-
-```python
-def example_function(param1: int, param2: str) -> bool:
-    """Brief description of what the function does.
-
-    Longer description if needed, explaining the behavior,
-    algorithm, or any important details.
-
-    Args:
-        param1: Description of param1
-        param2: Description of param2
-
-    Returns:
-        Description of return value
-
-    Raises:
-        ValueError: When and why this is raised
-        TypeError: When and why this is raised
-
-    Examples:
-        >>> example_function(42, "test")
-        True
-    """
-```
-
-## Testing Guidelines
-
-### Writing Tests
-
-- **Location:** Place tests in `tests/` directory
-- **Naming:** Test files should be named `test_*.py`
-- **Coverage:** Aim for >80% code coverage
-- **Test structure:** Use pytest fixtures and parametrize when appropriate
-
-### Test Categories
-
-1. **Unit tests** - Test individual methods in isolation
-2. **Integration tests** - Test multiple components together
-3. **Edge cases** - Test boundary conditions and error handling
-
-### Example Test
-
-```python
-import pytest
-import pandas as pd
-import numpy as np
-from imputation_showcase import MeanImputer
-
-def test_mean_imputer_basic():
-    """Test basic mean imputation functionality."""
-    df = pd.DataFrame({
-        'a': [1.0, 2.0, np.nan, 4.0],
-        'b': [5.0, np.nan, 7.0, 8.0]
-    })
-    imputer = MeanImputer()
-    result = imputer.impute(df)
-
-    assert not result.isna().any().any()
-    assert result.loc[2, 'a'] == pytest.approx(2.333, rel=1e-2)
-
-def test_mean_imputer_no_missing():
-    """Test mean imputer with no missing values."""
-    df = pd.DataFrame({'a': [1.0, 2.0, 3.0]})
-    imputer = MeanImputer()
-    result = imputer.impute(df)
-
-    pd.testing.assert_frame_equal(result, df)
-```
-
-### Running Tests
+You need Python 3.10+, Git and [Poetry](https://python-poetry.org/docs/#installation) 2.2+.
 
 ```bash
-# Run all tests
-poetry run pytest
-
-# Run with coverage
-poetry run coverage run -m pytest
-poetry run coverage report
-
-# Run specific test file
-poetry run pytest tests/test_imputation_methods.py
-
-# Run with verbose output
-poetry run pytest -v
-
-# Run tests matching a pattern
-poetry run pytest -k "mean"
+git clone https://github.com/<your-username>/imputation-methods.git
+cd imputation-methods
+poetry install                    # package + test and lint tools
+poetry run pre-commit install     # run Ruff and mypy on every commit
 ```
 
-## Documentation Standards
+Optional dependency groups: `poetry install --with docs` (MkDocs) and
+`poetry install --with notebooks` (Jupyter). The plotting libraries used by the
+notebooks and examples come from the `viz` extra: `poetry install --extras viz`.
 
-### Code Documentation
+Not using Poetry? Dependency groups are standard ([PEP 735](https://peps.python.org/pep-0735/)),
+so `pip install -e . --group dev` (pip 25.1+) or `uv pip install -e . --group dev`
+work too.
 
-- Every public class and function must have a docstring
-- Docstrings should include examples when appropriate
-- Complex algorithms should have inline comments explaining the logic
+### Project layout
 
-### README Updates
-
-If your change affects the public API or adds new features:
-
-1. Update the relevant sections in README.md
-2. Add usage examples
-3. Update the Available Methods table if adding new imputers
-
-### CHANGELOG Updates
-
-For significant changes, add an entry to CHANGELOG.md under "Unreleased" section:
-
-```markdown
-### Added
-- New imputation method: XYZ Imputer
-
-### Changed
-- Improved performance of KNN imputation by 20%
-
-### Fixed
-- Bug in MICE imputer with single column dataframes
+```text
+src/imputation_methods/   the package, one module per family of imputers
+  base.py                 BaseImputer, the interface every imputer implements
+  functional.py           *_impute(df, ...) shortcuts
+tests/                    pytest suite (test_contract.py runs against every imputer)
+docs/                     MkDocs site; docs/api/ is generated from docstrings
+examples/, notebooks/     runnable examples (need the viz extra)
+benchmarks/, scripts/     performance comparison and figure generation
 ```
 
-## Pull Request Process
+## Checks
 
-### Before Submitting
+CI runs all of these; run them locally before opening a pull request.
 
-1. **Update your branch** with latest upstream:
-   ```bash
-   git fetch upstream
-   git rebase upstream/main
-   ```
+| Check | Command |
+| --- | --- |
+| Tests (+ doctests) | `poetry run pytest` |
+| Coverage | `poetry run pytest --cov` |
+| Lint | `poetry run ruff check .` |
+| Format | `poetry run ruff format .` |
+| Types (strict) | `poetry run mypy` |
+| Docs | `poetry run mkdocs build --strict` (needs `--with docs`) |
+| Everything pre-commit runs | `poetry run pre-commit run --all-files` |
 
-2. **Run all checks:**
-   ```bash
-   poetry run flake8 .
-   poetry run mypy imputation_showcase/
-   poetry run pytest
-   poetry run coverage run -m pytest
-   ```
+Wall-clock performance tests are skipped by default because timings are noisy on
+shared machines; run them with `poetry run pytest -m benchmark`.
 
-3. **Update documentation** if needed
+CI also tests Python 3.10–3.14, Windows and macOS, and the **oldest** dependency
+versions allowed by `pyproject.toml`. If you raise a minimum version, change it in
+`pyproject.toml` and mention it in the changelog.
 
-4. **Add tests** for new functionality
+## Coding guidelines
 
-### Submitting Your PR
+- **Style**: Ruff formatting and linting (line length 88).
+- **Types**: annotate all public functions; mypy runs in strict mode on `src/`.
+- **Docstrings**: Google style, with an `Examples:` section where practical. Examples
+  are executed as doctests, so keep them fast and deterministic.
+- **Logging**: use the module logger with lazy formatting
+  (`logger.warning("... %s", value)`). Log handled fallbacks at `WARNING`; don't
+  log and then raise.
+- **Randomness**: accept `random_state: int | None` and create a local
+  `np.random.default_rng(random_state)`; never use the global NumPy random state.
 
-1. **Push to your fork:**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+### Adding an imputer
 
-2. **Create Pull Request** on GitHub with a clear title and description
+1. Subclass `BaseImputer` in the module for its family and implement `impute`:
 
-3. **Fill out the PR template** completely
+    ```python
+    class MyImputer(BaseImputer):
+        """One-line summary.
 
-4. **Link related issues** using keywords (e.g., "Fixes #123")
+        Longer explanation of the method and when to use it.
 
-### PR Template
+        Examples:
+            >>> import numpy as np
+            >>> import pandas as pd
+            >>> from imputation_methods import MyImputer
+            >>> df = pd.DataFrame({"a": [1.0, np.nan, 3.0]})
+            >>> MyImputer().impute(df)["a"].tolist()
+            [1.0, 2.0, 3.0]
 
-```markdown
-## Description
-Brief description of what this PR does.
+        References:
+            Author, A. (Year). Title. Venue.
+        """
 
-## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
+        def __init__(self, strength: float = 1.0) -> None:
+            """Initialize the imputer.
 
-## Testing
-- [ ] All existing tests pass
-- [ ] New tests added for new functionality
-- [ ] Coverage maintained or improved
+            Args:
+                strength: What this parameter controls.
 
-## Checklist
-- [ ] Code follows the project's style guidelines
-- [ ] Self-review of code completed
-- [ ] Comments added for complex logic
-- [ ] Documentation updated
-- [ ] No new warnings generated
-- [ ] Tests added and passing
-- [ ] CHANGELOG.md updated (if applicable)
+            Raises:
+                ValueError: If ``strength`` is negative.
+            """
+            if strength < 0:
+                raise ValueError(f"strength must be >= 0, got {strength}")
+            self.strength = strength
 
-## Additional Notes
-Any additional information, context, or screenshots.
-```
+        def impute(self, df: pd.DataFrame) -> pd.DataFrame:
+            """Fill missing values.
 
-### Review Process
+            Args:
+                df: Numeric dataframe with missing values.
 
-1. **Automated checks** must pass (CI/CD pipeline)
-2. **Code review** by maintainers
-3. **Requested changes** should be addressed
-4. **Approval** by at least one maintainer
-5. **Merge** by maintainers
+            Returns:
+                A new dataframe with the same index and columns.
+            """
+            df = self._ensure_numeric(df)
+            result = df.copy()
+            ...
+            return result
+    ```
 
-## Getting Help
+2. Never modify `df` in place; return a new dataframe with the same index and columns.
+3. Add a `my_impute(df, ...)` shortcut to `functional.py`.
+4. Export both from `src/imputation_methods/__init__.py` (keep `__all__` sorted).
+5. Add tests. `tests/test_contract.py` picks up the new class automatically; add a
+   `KWARGS` entry there if it can't be built with default arguments.
+6. Add the class to the module's page under `docs/api/` if it's in a new module,
+   to the methods table in `README.md`, and to `CHANGELOG.md`.
 
-### Resources
+## Pull requests
 
-- **Documentation:** [README.md](README.md)
-- **Issues:** [GitHub Issues](https://github.com/DiogoRibeiro7/imputation-showcase/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/DiogoRibeiro7/imputation-showcase/discussions)
+1. Create a branch from `main` (`git switch -c fix/short-description`).
+2. Keep each pull request focused on one change, with tests.
+3. Add an entry under `## [Unreleased]` in [CHANGELOG.md](CHANGELOG.md) for
+   user-visible changes.
+4. Make sure the checks above pass, then open the pull request and fill in the template.
 
-### Contact
+A maintainer will review it; please respond to comments by pushing new commits
+rather than force-pushing, so the review history stays readable.
 
-- **Email:** [diogo.debastos.ribeiro@gmail.com](mailto:diogo.debastos.ribeiro@gmail.com)
-- **Issues:** For bug reports and feature requests
+## Releasing
 
-### Questions?
+Maintainers only. Releases are published to PyPI by
+[`.github/workflows/release.yml`](.github/workflows/release.yml) using
+[trusted publishing](https://docs.pypi.org/trusted-publishers/), so no API tokens
+are stored in the repository.
 
-Don't hesitate to ask questions by:
-- Opening a [GitHub Discussion](https://github.com/DiogoRibeiro7/imputation-showcase/discussions)
-- Creating an issue labeled "question"
-- Emailing the maintainer
+### One-time setup
 
-## Recognition
+1. On PyPI, add a *pending* trusted publisher
+   (<https://pypi.org/manage/account/publishing/>) for project `imputation-methods`:
+   owner `DiogoRibeiro7`, repository `imputation-methods`, workflow `release.yml`,
+   environment `pypi`. Do the same on TestPyPI with environment `testpypi`.
+2. In the GitHub repository settings, create the environments `pypi` and
+   `testpypi`. Adding yourself as a required reviewer on `pypi` gives you a manual
+   approval step before anything is uploaded.
+3. For the documentation site, enable GitHub Pages with source "Deploy from a
+   branch", branch `gh-pages`, after the first run of the Docs workflow.
 
-Contributors will be recognized in:
-- The project's README (if significant contribution)
-- Release notes for the version including their contribution
-- GitHub's automatic contributor tracking
+### Each release
 
-Thank you for contributing to Imputation Showcase! Your efforts help make this project better for everyone.
-
----
-
-**Note:** This is a living document. If you have suggestions for improving these guidelines, please open an issue or submit a pull request.
+1. Update `version` in `pyproject.toml` (following [Semantic Versioning](https://semver.org/))
+   and `version`/`date-released` in `CITATION.cff`.
+2. In `CHANGELOG.md`, rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD`, add a
+   fresh empty `## [Unreleased]` section above it, and update the comparison links
+   at the bottom.
+3. Commit, open a pull request, and merge it once CI passes.
+4. Optional dry run: run the **Release** workflow manually with `testpypi`, then
+   `pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ imputation-methods`.
+5. Create a GitHub release with tag `vX.Y.Z` targeting `main`, using the changelog
+   entry as release notes. Publishing the release builds the distributions, checks
+   that the tag matches the package version, and uploads to PyPI. The **Docs**
+   workflow redeploys the documentation at the same time.

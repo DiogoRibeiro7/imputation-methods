@@ -21,12 +21,16 @@ body:
   - type: textarea
     id: reproduce
     attributes:
-      label: Steps to Reproduce
-      description: Steps to reproduce the behavior
+      label: Minimal Reproducible Example
+      description: A short, self-contained snippet with a small dataframe that shows the problem
       placeholder: |
-        1. Import module '...'
-        2. Call function '....'
-        3. See error
+        import numpy as np
+        import pandas as pd
+        from imputation_methods import MeanImputer
+
+        df = pd.DataFrame({"a": [1.0, np.nan, 3.0]})
+        MeanImputer().impute(df)
+      render: python
     validations:
       required: true
 
@@ -56,21 +60,14 @@ body:
       placeholder: Paste the full error message here
       render: python
 
-  - type: input
-    id: version
+  - type: textarea
+    id: versions
     attributes:
-      label: Package Version
-      description: What version of imputation-showcase are you using?
-      placeholder: e.g., 0.1.0
-    validations:
-      required: true
-
-  - type: input
-    id: python-version
-    attributes:
-      label: Python Version
-      description: What version of Python are you using?
-      placeholder: e.g., 3.10.5
+      label: Versions
+      description: |
+        Output of:
+        `python -c "import sys, pandas, numpy, sklearn, imputation_methods as m; print(sys.version, pandas.__version__, numpy.__version__, sklearn.__version__, m.__version__)"`
+      render: text
     validations:
       required: true
 
@@ -94,7 +91,9 @@ body:
       description: How did you install the package?
       options:
         - pip
+        - uv
         - poetry
+        - conda
         - from source
         - other
     validations:
