@@ -16,6 +16,7 @@ from sklearn.linear_model import (
 )
 
 from ._deprecation import renamed_parameters
+from ._dtypes import preserve_dtypes
 from ._utils import OnError, check_on_error, raise_or_fall_back
 from .base import BaseImputer
 
@@ -52,6 +53,7 @@ class RegressionImputer(BaseImputer):
         """
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Predict missing entries using other columns as features.
 
@@ -125,6 +127,7 @@ class StochasticRegressionImputer(BaseImputer):
         """
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Predict missing entries and add Gaussian noise.
 
@@ -210,6 +213,7 @@ class PMMImputer(BaseImputer):
         self.random_state = random_state
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute data using predictive mean matching.
 
@@ -355,6 +359,7 @@ class BayesianRidgeImputer(BaseImputer):
         self.lambda_1 = lambda_1
         self.lambda_2 = lambda_2
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using Bayesian ridge regression.
 
@@ -465,6 +470,7 @@ class HuberImputer(BaseImputer):
         self.max_iter = max_iter
         self.alpha = alpha
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using Huber regression.
 
@@ -560,6 +566,7 @@ class RANSACImputer(BaseImputer):
         self.random_state = random_state
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using RANSAC regression.
 
@@ -641,6 +648,7 @@ class GaussianProcessImputer(BaseImputer):
         self.random_state = random_state
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Predict missing entries with a Gaussian Process model.
 

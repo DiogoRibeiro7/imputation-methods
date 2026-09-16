@@ -46,8 +46,9 @@ before 1.0 removes the old names.
 - **Empty columns** *(done, unreleased)*. Every imputer that learns from the data
   leaves a column with no observed values as `NaN`; only imputers that fill in a
   constant chosen by the user fill it.
-- **Output types.** Define and test one dtype policy, for example whether integer
-  columns stay integer after imputation.
+- **Output types** *(done, unreleased)*. Columns without missing values come back
+  unchanged; imputed columns come back as floating point (`float32`/`float64` keep
+  their precision, nullable columns become `Float64`).
 
 ## 0.3: scikit-learn compatibility
 

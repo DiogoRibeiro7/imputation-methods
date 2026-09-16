@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from ._dtypes import preserve_dtypes
 from .base import BaseImputer
 from .statistical import MeanImputer, MedianImputer
 from .time_series import InterpolationImputer
@@ -103,6 +104,7 @@ class HybridImputer(BaseImputer):
 
         self.methods = methods
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using hybrid fallback chain.
 
@@ -270,6 +272,7 @@ class StackingImputer(BaseImputer):
         self.base_imputers = base_imputers
         self.meta_strategy = meta_strategy
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using stacking ensemble.
 
@@ -444,6 +447,7 @@ class BaggingImputer(BaseImputer):
         self.max_samples = max_samples
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using bootstrap aggregating.
 

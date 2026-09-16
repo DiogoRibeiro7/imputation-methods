@@ -10,6 +10,7 @@ import pandas as pd
 from scipy import stats
 
 from ._deprecation import renamed_parameters
+from ._dtypes import preserve_dtypes
 from ._utils import observed_median
 from .base import BaseImputer
 
@@ -28,6 +29,7 @@ class MeanImputer(BaseImputer):
         2.333...
     """
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill each column's missing values with that column's mean.
 
@@ -60,6 +62,7 @@ class MedianImputer(BaseImputer):
         2.0
     """
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill each column's missing values with that column's median.
 
@@ -107,6 +110,7 @@ class ModeImputer(BaseImputer):
         """
         self.dropna = dropna
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using the mode of each column.
 
@@ -173,6 +177,7 @@ class ConstantImputer(BaseImputer):
         """
         self.fill_value = fill_value
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using constant value(s).
 
@@ -235,6 +240,7 @@ class QuantileImputer(BaseImputer):
 
         self.quantile = quantile
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using specified quantile.
 
@@ -291,6 +297,7 @@ class TrimmedMeanImputer(BaseImputer):
 
         self.trim_fraction = trim_fraction
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using trimmed mean.
 
@@ -352,6 +359,7 @@ class EndOfDistributionImputer(BaseImputer):
         self.position = position
         self.n_std = n_std
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute at distribution edges.
 
@@ -427,6 +435,7 @@ class GroupMeanImputer(BaseImputer):
         self.strategy = strategy
         self.global_fallback = global_fallback
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using group-wise statistics.
 
@@ -516,6 +525,7 @@ class IndicatorImputer(BaseImputer):
         self.strategy = strategy
         self.indicator_prefix = indicator_prefix
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute and add indicator columns.
 

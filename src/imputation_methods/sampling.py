@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 
+from ._dtypes import preserve_dtypes
 from ._utils import observed_median
 from .base import BaseImputer
 
@@ -43,6 +44,7 @@ class RandomSamplingImputer(BaseImputer):
         """
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute by random sampling.
 
@@ -96,6 +98,7 @@ class HotDeckImputer(BaseImputer):
         self.stratify_cols = stratify_cols or []
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values by sampling existing observations.
 
@@ -180,6 +183,7 @@ class ColdDeckImputer(BaseImputer):
         self.reference_values = reference_values
         self.random_state = random_state
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using cold deck reference values.
 

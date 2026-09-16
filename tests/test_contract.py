@@ -120,6 +120,27 @@ def test_handles_a_single_column(
     )
 
 
+@pytest.mark.parametrize("cls", IMPUTERS, ids=lambda c: c.__name__)
+def test_output_dtypes_follow_the_policy(
+    cls: type[BaseImputer], frame: pd.DataFrame
+) -> None:
+    """Complete columns come back unchanged; imputed columns as floating point."""
+    mixed = frame.assign(
+        a=frame["a"].astype("float32"),
+        b=frame["b"].astype("Float64"),
+        c=frame["c"].mul(10).round().astype("Int64"),
+        complete=pd.array(range(len(frame)), dtype="Int64"),
+    )
+
+    result = _build(cls).impute(mixed)
+
+    assert str(result["a"].dtype) == "float32"
+    assert str(result["b"].dtype) == "Float64"
+    assert str(result["c"].dtype) == "Float64"
+    pd.testing.assert_series_equal(result["g"], mixed["g"])
+    pd.testing.assert_series_equal(result["complete"], mixed["complete"])
+
+
 # Imputers that fill with a constant chosen by the user, so they need no data.
 FILLS_EMPTY_COLUMNS = {"ConstantImputer"}
 

@@ -13,6 +13,7 @@ import pandas as pd
 from numpy.typing import NDArray
 
 from ._deprecation import renamed_module_attributes, renamed_parameters
+from ._dtypes import preserve_dtypes
 from ._utils import OnError, check_on_error, raise_or_fall_back
 from .base import BaseImputer
 from .statistical import MeanImputer
@@ -203,6 +204,7 @@ class SoftImputeImputer(BaseImputer):
         self.convergence_threshold = convergence_threshold
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values using a low-rank matrix approximation.
 
@@ -301,6 +303,7 @@ class PPCAImputer(BaseImputer):
         self.tol = tol
         self.on_error = check_on_error(on_error)
 
+    @preserve_dtypes
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Fill missing values using a probabilistic PCA model.
 
