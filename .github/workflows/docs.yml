@@ -1,9 +1,19 @@
 name: Docs
 
-# Deploys the MkDocs site to the gh-pages branch. Requires GitHub Pages to be
-# enabled for the repository with "Deploy from a branch: gh-pages".
+# Deploys the MkDocs site to the gh-pages branch, served by GitHub Pages.
+# Runs when the documentation sources change on main (the API reference is
+# generated from docstrings in src/, and the changelog page includes
+# CHANGELOG.md), on every release, and on demand.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "src/**"
+      - "CHANGELOG.md"
+      - ".github/workflows/docs.yml"
   release:
     types: [published]
   workflow_dispatch:

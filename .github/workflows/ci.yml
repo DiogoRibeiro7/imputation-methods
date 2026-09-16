@@ -119,10 +119,11 @@ jobs:
           jupyter nbconvert --to notebook --execute
           --output-dir "$RUNNER_TEMP/notebooks" notebooks/*.ipynb
       - name: Run example scripts
-        working-directory: ${{ runner.temp }}
+        # From the repository root, as documented: the scripts write their
+        # figures to examples/.
         run: |
-          for script in "$GITHUB_WORKSPACE"/examples/*.py; do
-            echo "::group::$(basename "$script")"
+          for script in examples/*.py; do
+            echo "::group::$script"
             python "$script"
             echo "::endgroup::"
           done

@@ -201,3 +201,5 @@ cython_debug/
 .wheel-venv/
 # poetry.lock is the canonical lock file; ignore stray uv lock files
 uv.lock
+# Figures written by the example scripts
+examples/*.png
