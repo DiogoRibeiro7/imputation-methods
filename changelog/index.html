@@ -1623,6 +1623,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1663,7 +1674,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
+  <a href="#fixed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Fixed
@@ -1757,6 +1768,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1797,7 +1819,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
+  <a href="#fixed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Fixed
@@ -1853,7 +1875,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Consistent parameter names across imputers, following scikit-learn conventions:</li>
 <li><code>max_iter</code> for iteration budgets: <code>SoftImputeImputer(max_iters=...)</code> and
     <code>GAINImputer(iterations=...)</code> are now <code>max_iter=...</code>.</li>
-<li><code>n_neighbors</code> for neighbour and donor counts: <code>KNNImputer(k=...)</code> and
+<li><code>n_neighbors</code> for neighbor and donor counts: <code>KNNImputer(k=...)</code> and
     <code>PMMImputer(k=...)</code> are now <code>n_neighbors=...</code>.</li>
 <li><code>n_std</code> for the number of standard deviations in
     <code>EndOfDistributionImputer(k=...)</code>.</li>
@@ -1866,6 +1888,12 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   (it is maximum-likelihood probabilistic PCA), <code>predictive_mean_matching</code> to
   <code>pmm_impute</code> and <code>bayesian_pca_impute</code> to <code>ppca_impute</code>.</li>
 <li>Instance attributes use the new parameter names (e.g. <code>imputer.n_neighbors</code>).</li>
+<li><strong>Behavior change:</strong> a column with no observed values is now left as <code>NaN</code> by
+  every imputer that learns from the data. <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>,
+  <code>LocalMeanImputer</code> and <code>HybridImputer</code> used to fill it with 0, and
+  <code>AutoencoderImputer</code> with values reconstructed from 0. <code>HybridImputer</code> therefore
+  no longer guarantees a result without <code>NaN</code> when a column is entirely empty; add
+  <code>ConstantImputer</code> to its <code>methods</code> to fill such columns with a fixed value.</li>
 </ul>
 <h3 id="deprecated">Deprecated<a class="headerlink" href="#deprecated" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1876,6 +1904,12 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   isn't set, the imputer still falls back but now emits a <code>FutureWarning</code>; the
   default will become <code>on_error="raise"</code> in 1.0.0. Unexpected errors that previously
   raised a plain <code>RuntimeError</code> now raise <code>ImputationError</code>, a subclass.</li>
+</ul>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>TrimmedMeanImputer</code> emitted a SciPy <code>SmallSampleWarning</code>, and <code>MedianImputer</code>,
+  <code>ModeImputer</code>, <code>IndicatorImputer</code>, <code>GroupMeanImputer</code> and <code>ColdDeckImputer</code> a NumPy
+  "Mean of empty slice" warning on older NumPy, for columns with no observed values.</li>
 </ul>
 <h2 id="010-2026-09-16">[0.1.0] - 2026-09-16<a class="headerlink" href="#010-2026-09-16" title="Permanent link">&para;</a></h2>
 <p>First release on PyPI, as <code>imputation-methods</code>.</p>
@@ -1932,7 +1966,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
   reference values.</li>
 <li>Faster, vectorized <code>GroupMeanImputer</code> and <code>SeasonalImputer</code>.</li>
 </ul>
-<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>StochasticRegressionImputer</code> raised <code>ValueError</code> whenever more than one column had
   missing values; <code>RegressionImputer</code>, <code>PMMImputer</code> and <code>GaussianProcessImputer</code>

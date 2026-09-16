@@ -1826,10 +1826,9 @@ before 1.0 removes the old names.</p>
   <code>on_error="raise" | "fallback"</code>. Falling back without asking emits a
   <code>FutureWarning</code>, and the default becomes <code>"raise"</code> in 1.0, so a result never
   comes from a different method than the one the user asked for.</li>
-<li><strong>Empty columns.</strong> Most imputers leave a column with no observed values as
-  <code>NaN</code>, but <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>, <code>LocalMeanImputer</code> and
-  <code>HybridImputer</code> fill it with 0, and <code>AutoencoderImputer</code> with a value
-  reconstructed from 0. Settle on one documented behavior.</li>
+<li><strong>Empty columns</strong> <em>(done, unreleased)</em>. Every imputer that learns from the data
+  leaves a column with no observed values as <code>NaN</code>; only imputers that fill in a
+  constant chosen by the user fill it.</li>
 <li><strong>Output types.</strong> Define and test one dtype policy, for example whether integer
   columns stay integer after imputation.</li>
 </ul>

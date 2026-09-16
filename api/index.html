@@ -1697,10 +1697,11 @@
   modified. <code>IndicatorImputer</code> also appends one indicator column per input column.</li>
 <li><strong>Configuration</strong> happens in the constructor. Imputers with randomness accept a
   <code>random_state</code> for reproducible results.</li>
-<li><strong>Columns with no observed values</strong> carry no information, so most imputers leave
-  them as <code>NaN</code>. <code>ConstantImputer</code> fills them with its constant, and
-  <code>HybridImputer</code>, <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>, <code>LocalMeanImputer</code> and
-  <code>AutoencoderImputer</code> fall back to 0 (or a value reconstructed from 0). Drop or handle empty columns explicitly if that matters.</li>
+<li><strong>Columns with no observed values</strong> carry no information, so every imputer that
+  learns from the data leaves them as <code>NaN</code>. Only imputers that fill in a constant
+  you choose, <code>ConstantImputer</code> and <code>IndicatorImputer(strategy="zero")</code>, fill them.
+  To use a fixed value for empty columns, fill them explicitly, for example with
+  <code>HybridImputer(methods=[..., ConstantImputer(0)])</code>.</li>
 <li><strong>Errors</strong>: if a model can't be fitted (for example a singular matrix), imputers
   with an <code>on_error</code> parameter either raise <code>ImputationError</code> (<code>on_error="raise"</code>)
   or fall back to mean or median imputation (<code>on_error="fallback"</code>). Leaving it
