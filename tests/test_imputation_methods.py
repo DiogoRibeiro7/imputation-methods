@@ -2,25 +2,25 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from imputation_showcase.imputation_methods import (
-    MeanImputer,
-    MedianImputer,
-    KNNImputerMethod,
-    PMMImputer,
-    MICEImputer,
-    RegressionImputer,
-    StochasticRegressionImputer,
-    LOCFImputer,
-    NOCBImputer,
-    HotDeckImputer,
-    MissForestImputer,
-    SoftImputeImputer,
-    BayesianPCAImputer,
+from imputation_methods import (
     AutoencoderImputer,
+    BayesianPCAImputer,
     GAINImputer,
     GaussianProcessImputer,
-    rmse,
+    HotDeckImputer,
+    KNNImputerMethod,
+    LOCFImputer,
+    MeanImputer,
+    MedianImputer,
+    MICEImputer,
+    MissForestImputer,
+    NOCBImputer,
+    PMMImputer,
+    RegressionImputer,
+    SoftImputeImputer,
+    StochasticRegressionImputer,
     mae,
+    rmse,
 )
 
 
@@ -209,10 +209,7 @@ def test_hot_deck_imputer_no_stratification() -> None:
 
 def test_hot_deck_empty_donors_in_group() -> None:
     """Test hot deck when a group has no donors."""
-    df = pd.DataFrame({
-        "group": [0, 0, 1, 1],
-        "a": [np.nan, np.nan, 3.0, 4.0]
-    })
+    df = pd.DataFrame({"group": [0, 0, 1, 1], "a": [np.nan, np.nan, 3.0, 4.0]})
     imputer = HotDeckImputer(stratify_cols=["group"], random_state=0)
     imputed = imputer.impute(df)
     # Should fall back to full column donors when group has none
@@ -289,8 +286,7 @@ def test_knn_imputer_k_variation() -> None:
 def test_multiple_imputers_preserve_index() -> None:
     """Test that imputers preserve DataFrame index."""
     df = pd.DataFrame(
-        {"a": [1, 2, np.nan, 4], "b": [5, np.nan, 7, 8]},
-        index=["w", "x", "y", "z"]
+        {"a": [1, 2, np.nan, 4], "b": [5, np.nan, 7, 8]}, index=["w", "x", "y", "z"]
     )
     imputers = [
         MeanImputer(),
@@ -328,11 +324,9 @@ def test_soft_impute_different_init_methods() -> None:
 
 def test_bayesian_pca_with_n_components() -> None:
     """Test Bayesian PCA with explicit number of components."""
-    df = pd.DataFrame({
-        "a": [1, np.nan, 3, 4],
-        "b": [4, 5, np.nan, 7],
-        "c": [7, 8, 9, np.nan]
-    })
+    df = pd.DataFrame(
+        {"a": [1, np.nan, 3, 4], "b": [4, 5, np.nan, 7], "c": [7, 8, 9, np.nan]}
+    )
     imputed = BayesianPCAImputer(n_components=2).impute(df)
     assert not imputed.isna().any().any()
 
