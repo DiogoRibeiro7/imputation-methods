@@ -1822,11 +1822,10 @@ before 1.0 removes the old names.</p>
 <li><strong>Class and function names</strong> <em>(done, unreleased)</em>. <code>KNNImputerMethod</code> is now
   <code>KNNImputer</code>, <code>BayesianPCAImputer</code> is <code>PPCAImputer</code>, and
   <code>predictive_mean_matching</code> is <code>pmm_impute</code>.</li>
-<li><strong>Explicit fallbacks.</strong> Thirteen error handlers quietly replace the requested
-  method with mean or median imputation, logging at most a warning (for example
-  when MICE, KNN or a regression fails to fit). Make this a choice, for example
-  <code>on_error="raise" | "fallback"</code>, so a result never comes from a different method
-  than the one the user asked for.</li>
+<li><strong>Explicit fallbacks</strong> <em>(done, unreleased)</em>. Imputers whose model can fail take
+  <code>on_error="raise" | "fallback"</code>. Falling back without asking emits a
+  <code>FutureWarning</code>, and the default becomes <code>"raise"</code> in 1.0, so a result never
+  comes from a different method than the one the user asked for.</li>
 <li><strong>Empty columns.</strong> Most imputers leave a column with no observed values as
   <code>NaN</code>, but <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>, <code>LocalMeanImputer</code> and
   <code>HybridImputer</code> fill it with 0, and <code>AutoencoderImputer</code> with a value

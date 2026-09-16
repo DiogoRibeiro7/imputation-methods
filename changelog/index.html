@@ -1591,6 +1591,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#changed" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1630,7 +1641,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#added_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1714,6 +1725,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#changed" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1753,7 +1775,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#added_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1815,6 +1837,17 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>on_error</code> parameter on the imputers whose model can fail to fit (<code>MICEImputer</code>,
+  <code>MissForestImputer</code>, <code>KNNImputer</code>, <code>RadiusNeighborsImputer</code>, <code>RegressionImputer</code>,
+  <code>PMMImputer</code>, <code>GaussianProcessImputer</code>, <code>RANSACImputer</code>, <code>SoftImputeImputer</code>,
+  <code>PPCAImputer</code>, <code>AutoencoderImputer</code>) and on their shortcuts:</li>
+<li><code>on_error="raise"</code> raises the new <code>ImputationError</code> (a <code>RuntimeError</code>), chained
+    to the underlying error.</li>
+<li><code>on_error="fallback"</code> uses mean or median imputation instead, as before, and
+    logs a warning.</li>
+</ul>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Consistent parameter names across imputers, following scikit-learn conventions:</li>
@@ -1839,10 +1872,14 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>The old class, function and parameter names above still work but emit a
   <code>FutureWarning</code> starting with <code>imputation-methods:</code>, and will be removed in 1.0.0.
   Run your code with <code>-W "error:imputation-methods:FutureWarning"</code> to find uses.</li>
+<li>Falling back to a simpler method without asking. When a model fails and <code>on_error</code>
+  isn't set, the imputer still falls back but now emits a <code>FutureWarning</code>; the
+  default will become <code>on_error="raise"</code> in 1.0.0. Unexpected errors that previously
+  raised a plain <code>RuntimeError</code> now raise <code>ImputationError</code>, a subclass.</li>
 </ul>
 <h2 id="010-2026-09-16">[0.1.0] - 2026-09-16<a class="headerlink" href="#010-2026-09-16" title="Permanent link">&para;</a></h2>
 <p>First release on PyPI, as <code>imputation-methods</code>.</p>
-<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>42 imputers behind one interface, <code>BaseImputer.impute(df) -&gt; DataFrame</code>:</li>
 <li><strong>Statistical</strong>: <code>MeanImputer</code>, <code>MedianImputer</code>, <code>ModeImputer</code>, <code>ConstantImputer</code>,

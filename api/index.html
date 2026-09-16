@@ -1701,6 +1701,10 @@
   them as <code>NaN</code>. <code>ConstantImputer</code> fills them with its constant, and
   <code>HybridImputer</code>, <code>BayesianRidgeImputer</code>, <code>HuberImputer</code>, <code>LocalMeanImputer</code> and
   <code>AutoencoderImputer</code> fall back to 0 (or a value reconstructed from 0). Drop or handle empty columns explicitly if that matters.</li>
+<li><strong>Errors</strong>: if a model can't be fitted (for example a singular matrix), imputers
+  with an <code>on_error</code> parameter either raise <code>ImputationError</code> (<code>on_error="raise"</code>)
+  or fall back to mean or median imputation (<code>on_error="fallback"</code>). Leaving it
+  unset falls back with a <code>FutureWarning</code>; from 1.0.0 the default is <code>"raise"</code>.</li>
 <li><strong>Row order</strong> matters only for the <a href="time-series/">time-series imputers</a>; sort
   your data first.</li>
 </ul>
