@@ -121,7 +121,7 @@ poetry run pytest
 poetry run pytest -v
 
 # Run specific test file
-poetry run pytest tests/test_imputation_methods.py
+poetry run pytest tests/test_statistical.py
 
 # Run tests matching pattern
 poetry run pytest -k "mean"

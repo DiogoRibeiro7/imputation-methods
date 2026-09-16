@@ -59,6 +59,15 @@ def frame() -> pd.DataFrame:
     return df
 
 
+@pytest.fixture
+def single_column() -> pd.DataFrame:
+    """One incomplete column, with gaps inside and at both ends."""
+    return pd.DataFrame(
+        {"a": [np.nan, 1.0, 2.0, np.nan, 4.0, 5.0, np.nan, 7.0, 8.0, np.nan]},
+        index=pd.RangeIndex(10, 20),
+    )
+
+
 @pytest.fixture(autouse=True)
 def _quiet_logs(caplog: pytest.LogCaptureFixture) -> None:
     caplog.set_level(logging.ERROR, logger="imputation_methods")
@@ -81,6 +90,33 @@ def test_fills_several_incomplete_columns(
     np.testing.assert_allclose(
         result[frame.columns].to_numpy(dtype=float)[observed],
         snapshot.to_numpy(dtype=float)[observed],
+    )
+
+
+@pytest.mark.parametrize(
+    "cls",
+    [imputer for imputer in IMPUTERS if imputer.__name__ != "GroupMeanImputer"],
+    ids=lambda c: c.__name__,
+)
+def test_handles_a_single_column(
+    cls: type[BaseImputer], single_column: pd.DataFrame
+) -> None:
+    """A lone column must not crash; multivariate methods may leave gaps."""
+    kwargs = {
+        key: value
+        for key, value in KWARGS.get(cls.__name__, {}).items()
+        if key != "stratify_cols"
+    }
+    snapshot = single_column.copy()
+
+    result = cls(**kwargs).impute(single_column)
+
+    pd.testing.assert_frame_equal(single_column, snapshot, obj="input")
+    pd.testing.assert_index_equal(result.index, single_column.index)
+    assert result.columns[0] == "a"
+    observed = snapshot["a"].notna().to_numpy()
+    np.testing.assert_allclose(
+        result["a"].to_numpy(dtype=float)[observed], snapshot["a"].to_numpy()[observed]
     )
 
 

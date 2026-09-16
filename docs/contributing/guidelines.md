@@ -170,7 +170,7 @@ poetry run pytest --cov
 poetry run pytest -m benchmark
 
 # Specific test
-poetry run pytest tests/test_imputation_methods.py -v
+poetry run pytest tests/test_statistical.py -v
 ```
 
 ### 4. Update Documentation
