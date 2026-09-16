@@ -127,6 +127,9 @@ for name, imputer in imputers.items():
 Full documentation, including guides on choosing a method and evaluating results:
 <https://diogoribeiro7.github.io/imputation-methods/>
 
+The [roadmap](https://github.com/DiogoRibeiro7/imputation-methods/blob/main/ROADMAP.md)
+describes what is planned before 1.0.
+
 The repository also has [example scripts](https://github.com/DiogoRibeiro7/imputation-methods/tree/main/examples)
 and [Jupyter notebooks](https://github.com/DiogoRibeiro7/imputation-methods/tree/main/notebooks).
 
