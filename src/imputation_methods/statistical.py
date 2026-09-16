@@ -10,6 +10,7 @@ import pandas as pd
 from scipy import stats
 
 from ._deprecation import renamed_parameters
+from ._utils import observed_median
 from .base import BaseImputer
 
 
@@ -71,7 +72,7 @@ class MedianImputer(BaseImputer):
         df = self._ensure_numeric(df)
         result = df.copy()
         for column in result.columns:
-            median_val = result[column].median()
+            median_val = observed_median(result[column])
             result[column] = result[column].fillna(median_val)
         return result
 
@@ -128,7 +129,7 @@ class ModeImputer(BaseImputer):
                     fill_value = mode_values[0]
                 else:
                     # Fallback to median if no mode found
-                    fill_value = result[column].median()
+                    fill_value = observed_median(result[column])
 
                 result[column] = result[column].fillna(fill_value)
 
@@ -303,11 +304,9 @@ class TrimmedMeanImputer(BaseImputer):
         result = df.copy()
 
         for column in result.columns:
-            if result[column].isna().any():
-                # Compute trimmed mean
-                trimmed_mean = stats.trim_mean(
-                    result[column].dropna(), self.trim_fraction
-                )
+            observed = result[column].dropna()
+            if result[column].isna().any() and not observed.empty:
+                trimmed_mean = stats.trim_mean(observed, self.trim_fraction)
                 result[column] = result[column].fillna(trimmed_mean)
 
         return result
@@ -469,7 +468,7 @@ class GroupMeanImputer(BaseImputer):
                     if self.strategy == "mean":
                         global_stat = df[column].mean()
                     else:  # median
-                        global_stat = df[column].median()
+                        global_stat = observed_median(df[column])
 
                     result[column] = result[column].fillna(global_stat)
 
@@ -540,7 +539,7 @@ class IndicatorImputer(BaseImputer):
                 if self.strategy == "mean":
                     fill_value = result[column].mean()
                 elif self.strategy == "median":
-                    fill_value = result[column].median()
+                    fill_value = observed_median(result[column])
                 else:  # zero
                     fill_value = 0
 

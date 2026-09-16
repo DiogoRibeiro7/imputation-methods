@@ -120,6 +120,23 @@ def test_handles_a_single_column(
     )
 
 
+# Imputers that fill with a constant chosen by the user, so they need no data.
+FILLS_EMPTY_COLUMNS = {"ConstantImputer"}
+
+
+@pytest.mark.parametrize(
+    "cls",
+    [cls for cls in IMPUTERS if cls.__name__ not in FILLS_EMPTY_COLUMNS],
+    ids=lambda c: c.__name__,
+)
+def test_column_without_observed_values_stays_missing(
+    cls: type[BaseImputer], frame: pd.DataFrame
+) -> None:
+    result = _build(cls).impute(frame.assign(empty=np.nan))
+
+    assert result["empty"].isna().all()
+
+
 @pytest.mark.parametrize(
     "cls",
     [

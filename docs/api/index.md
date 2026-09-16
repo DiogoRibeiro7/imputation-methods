@@ -20,10 +20,11 @@ Every imputer subclasses [`BaseImputer`](base.md) and exposes one method,
   modified. `IndicatorImputer` also appends one indicator column per input column.
 - **Configuration** happens in the constructor. Imputers with randomness accept a
   `random_state` for reproducible results.
-- **Columns with no observed values** carry no information, so most imputers leave
-  them as `NaN`. `ConstantImputer` fills them with its constant, and
-  `HybridImputer`, `BayesianRidgeImputer`, `HuberImputer`, `LocalMeanImputer` and
-  `AutoencoderImputer` fall back to 0 (or a value reconstructed from 0). Drop or handle empty columns explicitly if that matters.
+- **Columns with no observed values** carry no information, so every imputer that
+  learns from the data leaves them as `NaN`. Only imputers that fill in a constant
+  you choose, `ConstantImputer` and `IndicatorImputer(strategy="zero")`, fill them.
+  To use a fixed value for empty columns, fill them explicitly, for example with
+  `HybridImputer(methods=[..., ConstantImputer(0)])`.
 - **Errors**: if a model can't be fitted (for example a singular matrix), imputers
   with an `on_error` parameter either raise `ImputationError` (`on_error="raise"`)
   or fall back to mean or median imputation (`on_error="fallback"`). Leaving it

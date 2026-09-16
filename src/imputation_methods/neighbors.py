@@ -235,6 +235,9 @@ class LocalMeanImputer(BaseImputer):
 
         for column in result.columns:
             if result[column].isna().any():
+                if result[column].notna().sum() == 0:
+                    # No observed values to learn from: leave the column as NaN.
+                    continue
                 for idx in result[result[column].isna()].index:
                     # Get feature values for this row (excluding target column)
                     feature_cols = [c for c in result.columns if c != column]
@@ -246,10 +249,6 @@ class LocalMeanImputer(BaseImputer):
 
                     # Find distances to all complete observations
                     complete_mask = ~result[column].isna()
-                    if complete_mask.sum() == 0:
-                        result.loc[idx, column] = 0
-                        continue
-
                     complete_features = (
                         result.loc[complete_mask, feature_cols].fillna(0).values
                     )

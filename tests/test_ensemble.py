@@ -13,6 +13,7 @@ import imputation_methods
 from imputation_methods import (
     BaggingImputer,
     BaseImputer,
+    ConstantImputer,
     HybridImputer,
     InterpolationImputer,
     KNNImputer,
@@ -95,14 +96,21 @@ class TestHybridImputer:
 
         assert not result.isna().any().any()
 
-    def test_hybrid_all_nan_fallback(self):
-        """Test hybrid final fallback when all values missing."""
-        df = pd.DataFrame({"a": [np.nan, np.nan, np.nan]})
-        imputer = HybridImputer()
-        result = imputer.impute(df)
+    def test_hybrid_leaves_column_without_observations_missing(self):
+        """A column with no observed values stays NaN instead of becoming 0."""
+        df = pd.DataFrame({"a": [np.nan, np.nan, np.nan], "b": [1.0, np.nan, 3.0]})
+        result = HybridImputer().impute(df)
 
-        # Should fall back to 0
-        assert all(result["a"] == 0)
+        assert result["a"].isna().all()
+        assert result["b"].tolist() == [1.0, 2.0, 3.0]
+
+    def test_hybrid_can_fill_empty_columns_with_an_explicit_constant(self):
+        """Users who want a value for empty columns add it to the chain."""
+        df = pd.DataFrame({"a": [np.nan, np.nan, np.nan], "b": [1.0, np.nan, 3.0]})
+        result = HybridImputer(methods=[MeanImputer(), ConstantImputer(0)]).impute(df)
+
+        assert result["a"].tolist() == [0.0, 0.0, 0.0]
+        assert result["b"].tolist() == [1.0, 2.0, 3.0]
 
 
 class TestStackingImputer:

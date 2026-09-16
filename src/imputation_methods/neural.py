@@ -61,26 +61,30 @@ class AutoencoderImputer(BaseImputer):
             df: Dataframe with missing values.
 
         Returns:
-            Dataframe with imputed values predicted by the autoencoder.
+            Dataframe with imputed values predicted by the autoencoder. Columns
+            with no observed values are left as NaN and don't enter the model.
 
         Raises:
-            RuntimeError: If autoencoder training or prediction fails.
+            ImputationError: If autoencoder training or prediction fails
+                unexpectedly, or fails and ``on_error`` is ``"raise"``.
         """
         df = self._ensure_numeric(df)
+        modelled = df.columns[df.notna().any()]
+        if modelled.empty:
+            return df.copy()
         try:
-            filled = df.fillna(df.mean())
-            # Handle case where mean might be NaN (all values missing)
-            if filled.isna().any().any():
-                filled = filled.fillna(0)
+            filled = df[modelled].fillna(df[modelled].mean())
             target = filled.to_numpy()
             # scikit-learn expects a 1-D target when there is a single column.
             self._model.fit(filled, target.ravel() if target.shape[1] == 1 else target)
             reconstructed = pd.DataFrame(
-                self._model.predict(filled),
-                columns=df.columns,
+                self._model.predict(filled).reshape(len(df), len(modelled)),
+                columns=modelled,
                 index=df.index,
             )
-            return df.where(~df.isna(), reconstructed)
+            result = df.copy()
+            result[modelled] = df[modelled].where(df[modelled].notna(), reconstructed)
+            return result
         except (ValueError, np.linalg.LinAlgError) as e:
             raise_or_fall_back(
                 self.on_error,

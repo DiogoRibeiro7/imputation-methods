@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Consistent parameter names across imputers, following scikit-learn conventions:
   - `max_iter` for iteration budgets: `SoftImputeImputer(max_iters=...)` and
     `GAINImputer(iterations=...)` are now `max_iter=...`.
-  - `n_neighbors` for neighbour and donor counts: `KNNImputer(k=...)` and
+  - `n_neighbors` for neighbor and donor counts: `KNNImputer(k=...)` and
     `PMMImputer(k=...)` are now `n_neighbors=...`.
   - `n_std` for the number of standard deviations in
     `EndOfDistributionImputer(k=...)`.
@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (it is maximum-likelihood probabilistic PCA), `predictive_mean_matching` to
   `pmm_impute` and `bayesian_pca_impute` to `ppca_impute`.
 - Instance attributes use the new parameter names (e.g. `imputer.n_neighbors`).
+- **Behavior change:** a column with no observed values is now left as `NaN` by
+  every imputer that learns from the data. `BayesianRidgeImputer`, `HuberImputer`,
+  `LocalMeanImputer` and `HybridImputer` used to fill it with 0, and
+  `AutoencoderImputer` with values reconstructed from 0. `HybridImputer` therefore
+  no longer guarantees a result without `NaN` when a column is entirely empty; add
+  `ConstantImputer` to its `methods` to fill such columns with a fixed value.
 
 ### Deprecated
 
@@ -48,6 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   isn't set, the imputer still falls back but now emits a `FutureWarning`; the
   default will become `on_error="raise"` in 1.0.0. Unexpected errors that previously
   raised a plain `RuntimeError` now raise `ImputationError`, a subclass.
+
+### Fixed
+
+- `TrimmedMeanImputer` emitted a SciPy `SmallSampleWarning`, and `MedianImputer`,
+  `ModeImputer`, `IndicatorImputer`, `GroupMeanImputer` and `ColdDeckImputer` a NumPy
+  "Mean of empty slice" warning on older NumPy, for columns with no observed values.
 
 ## [0.1.0] - 2026-09-16
 
