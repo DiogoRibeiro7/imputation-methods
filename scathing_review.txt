@@ -1,9 +1,0 @@
-The previous commit introduces several glaring issues:
-
-1. The commit message "Applying previous commit." is meaningless. It provides no context and fails to convey any information about the changes. Meaningful commit messages are essential for maintaining an understandable project history.
-2. Massive changes to `poetry.lock` drown out the actual modifications, making code review unnecessarily difficult.
-3. Rather than refactoring long lines, `# fmt: off`/`fmt: on` markers litter the code to appease linters. This clutter suggests poor attention to style.
-4. Documentation and test updates still feel sloppy; the project root changed from `src/` to `imputation_showcase/`, yet references lingered across files and required follow-up fixes.
-5. Coverage initially failed because the dependency wasn't listed, pointing to a lack of thorough testing before committing.
-
-Overall, the commit reflects a rushed approach with little regard for maintainability or clarity.

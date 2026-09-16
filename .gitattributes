@@ -1,0 +1,10 @@
+# Store text files with LF and check them out with LF on every OS, so the
+# pre-commit line-ending hook and editors agree regardless of core.autocrlf.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+
+# Keep generated lock files out of diffs and language statistics.
+poetry.lock linguist-generated=true -diff
