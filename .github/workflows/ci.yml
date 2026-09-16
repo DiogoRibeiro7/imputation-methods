@@ -2,63 +2,157 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: "1"
 
 jobs:
-  build:
+  lint:
+    name: Lint and type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          python-version: '3.10'
-
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Cache Poetry dependencies
-        uses: actions/cache@v3
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          python-version: "3.13"
+          activate-environment: true
+      - name: Install
+        run: uv pip install -e . --group lint
+      - name: Ruff lint
+        run: ruff check --output-format=github .
+      - name: Ruff format
+        run: ruff format --check .
+      - name: Mypy
+        run: mypy
 
-      - name: Install dependencies
-        run: poetry install --no-root
-
-      - name: Lint
-        run: poetry run flake8 imputation_showcase tests
-
-      - name: Type check
-        run: poetry run mypy imputation_showcase
-
+  test:
+    name: >-
+      Test (Python ${{ matrix.python-version }}, ${{ matrix.os }}${{
+      matrix.resolution == 'lowest-direct' && ', minimum dependencies' || '' }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        resolution: [highest]
+        include:
+          - os: windows-latest
+            python-version: "3.13"
+            resolution: highest
+          - os: macos-latest
+            python-version: "3.13"
+            resolution: highest
+          # Oldest versions allowed by pyproject.toml, to keep lower bounds honest.
+          - os: ubuntu-latest
+            python-version: "3.10"
+            resolution: lowest-direct
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          activate-environment: true
+      - name: Install
+        run: uv pip install -e . --group test --resolution ${{ matrix.resolution }}
+      - name: Show versions
+        run: uv pip list
       - name: Test
-        run: poetry run pytest -v
-
-      - name: Coverage
-        run: |
-          poetry run coverage run -m pytest
-          poetry run coverage report
-          poetry run coverage xml
-
+        run: pytest --cov --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        if: >-
+          matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13' &&
+          matrix.resolution == 'highest'
+        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
         with:
-          files: ./coverage.xml
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
-      - name: Test Notebooks
+  docs:
+    name: Docs build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: "3.13"
+          activate-environment: true
+      - name: Install
+        run: uv pip install -e . --group docs
+      - name: Build
+        run: mkdocs build --strict
+
+  examples:
+    name: Notebooks and examples
+    runs-on: ubuntu-latest
+    env:
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: "3.13"
+          activate-environment: true
+      - name: Install
+        run: uv pip install -e ".[viz]" --group notebooks
+      - name: Execute notebooks
+        run: >-
+          jupyter nbconvert --to notebook --execute
+          --output-dir "$RUNNER_TEMP/notebooks" notebooks/*.ipynb
+      - name: Run example scripts
+        working-directory: ${{ runner.temp }}
         run: |
-          poetry run jupyter nbconvert \
-            --to notebook \
-            --execute \
-            --inplace \
-            notebooks/demo_imputation.ipynb
+          for script in "$GITHUB_WORKSPACE"/examples/*.py; do
+            echo "::group::$(basename "$script")"
+            python "$script"
+            echo "::endgroup::"
+          done
+
+  package:
+    name: Build and check distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: "3.13"
+      - name: Build sdist and wheel
+        run: uv build
+      - name: Check metadata
+        run: uvx twine check --strict dist/*
+      - name: Test the built wheel
+        run: |
+          uv venv .wheel-venv
+          VIRTUAL_ENV=.wheel-venv uv pip install dist/*.whl --group test
+          # Run from a directory without the source tree so the wheel is imported.
+          cp -r tests /tmp/wheel-tests
+          cd /tmp
+          "$GITHUB_WORKSPACE/.wheel-venv/bin/python" -c \
+            "import imputation_methods, sys; print(imputation_methods.__version__, imputation_methods.__file__)"
+          "$GITHUB_WORKSPACE/.wheel-venv/bin/python" -m pytest wheel-tests -q \
+            -p no:cacheprovider -m "not benchmark"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/
