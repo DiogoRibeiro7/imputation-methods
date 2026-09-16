@@ -2,7 +2,7 @@
 
 <!-- --8<-- [start:roadmap] -->
 
-`imputation-methods` 0.1.0 is the first public release. This page describes what has
+`imputation-methods` has not reached 1.0 yet. This page describes what has
 to happen before 1.0.0 and the order we plan to do it in. Releases are not tied
 to dates, and priorities may change based on feedback. If something here matters
 to you, or is missing, please
@@ -27,26 +27,26 @@ Until 1.0, minor releases (0.x) may contain breaking changes. Renamed or removed
 APIs keep working for at least one minor release and raise a `FutureWarning`
 that explains what to use instead.
 
-## 0.2: Consistent API
+## 0.2: Consistent API *(released in 0.2.0)*
 
 The renames go first, so their deprecation warnings run through several releases
 before 1.0 removes the old names.
 
-- **Parameter names** *(done, unreleased)*. One name per concept: `max_iter` for
+- **Parameter names** *(done)*. One name per concept: `max_iter` for
   iteration budgets, `n_neighbors` for neighbor and donor counts, `n_std` in
   `EndOfDistributionImputer`, and `strategy` for summary statistics. Old names
   work until 1.0 with a `FutureWarning`.
-- **Class and function names** *(done, unreleased)*. `KNNImputerMethod` is now
+- **Class and function names** *(done)*. `KNNImputerMethod` is now
   `KNNImputer`, `BayesianPCAImputer` is `PPCAImputer`, and
   `predictive_mean_matching` is `pmm_impute`.
-- **Explicit fallbacks** *(done, unreleased)*. Imputers whose model can fail take
+- **Explicit fallbacks** *(done)*. Imputers whose model can fail take
   `on_error="raise" | "fallback"`. Falling back without asking emits a
   `FutureWarning`, and the default becomes `"raise"` in 1.0, so a result never
   comes from a different method than the one the user asked for.
-- **Empty columns** *(done, unreleased)*. Every imputer that learns from the data
+- **Empty columns** *(done)*. Every imputer that learns from the data
   leaves a column with no observed values as `NaN`; only imputers that fill in a
   constant chosen by the user fill it.
-- **Output types** *(done, unreleased)*. Columns without missing values come back
+- **Output types** *(done)*. Columns without missing values come back
   unchanged; imputed columns come back as floating point (`float32`/`float64` keep
   their precision, nullable columns become `Float64`).
 

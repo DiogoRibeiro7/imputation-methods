@@ -7,7 +7,7 @@ abstract: >-
   (statistical, time-series, nearest-neighbor, regression, iterative,
   matrix-completion, neural and ensemble) behind a single pandas DataFrame
   interface, with metrics for evaluating imputations.
-version: 0.1.0
+version: 0.2.0
 date-released: "2026-09-16"
 license: MIT
 repository-code: "https://github.com/DiogoRibeiro7/imputation-methods"
