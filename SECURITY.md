@@ -7,7 +7,7 @@ Please upgrade to the newest release before reporting an issue.
 
 | Version | Supported |
 | --- | --- |
-| 0.1.x | Yes |
+| 0.2.x | Yes |
 
 ## Reporting a vulnerability
 

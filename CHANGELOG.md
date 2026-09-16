@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-16
+
+A consistent API: one name per concept, an explicit choice when a model fails, and
+one policy for empty columns and output dtypes across all 42 imputers. Old names
+keep working, with a `FutureWarning`, until 1.0.0.
+
 ### Added
 
 - `on_error` parameter on the imputers whose model can fail to fit (`MICEImputer`,
@@ -147,7 +153,8 @@ First release on PyPI, as `imputation-methods`.
 - `AutoencoderImputer` triggered a scikit-learn `DataConversionWarning` on
   single-column input.
 
-<!-- --8<-- [end:changelog] -->
-
-[Unreleased]: https://github.com/DiogoRibeiro7/imputation-methods/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/imputation-methods/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DiogoRibeiro7/imputation-methods/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/imputation-methods/releases/tag/v0.1.0
+
+<!-- --8<-- [end:changelog] -->
