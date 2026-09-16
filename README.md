@@ -11,9 +11,9 @@ for KNN, MICE, a Kalman filter or low-rank matrix completion by changing one lin
 and compare them with the same evaluation code.
 
 ```python
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
-completed = KNNImputerMethod(k=5).impute(df)
+completed = KNNImputer(n_neighbors=5).impute(df)
 ```
 
 - **One interface.** Every imputer takes a numeric `DataFrame` and returns a new one
@@ -45,7 +45,7 @@ Requires Python 3.10 or newer.
 import numpy as np
 import pandas as pd
 
-from imputation_methods import KNNImputerMethod, MeanImputer, knn_impute
+from imputation_methods import KNNImputer, MeanImputer, knn_impute
 
 df = pd.DataFrame(
     {
@@ -56,10 +56,10 @@ df = pd.DataFrame(
 )
 
 mean_filled = MeanImputer().impute(df)
-knn_filled = KNNImputerMethod(k=2).impute(df)
+knn_filled = KNNImputer(n_neighbors=2).impute(df)
 
 # Every imputer also has a functional shortcut.
-same_as_knn = knn_impute(df, k=2)
+same_as_knn = knn_impute(df, n_neighbors=2)
 ```
 
 Imputers are configured in the constructor. Those with a random component accept
@@ -72,10 +72,10 @@ Imputers are configured in the constructor. Those with a random component accept
 | Statistical | `MeanImputer`, `MedianImputer`, `ModeImputer`, `ConstantImputer`, `QuantileImputer`, `TrimmedMeanImputer`, `EndOfDistributionImputer`, `GroupMeanImputer`, `IndicatorImputer` |
 | Donor sampling | `RandomSamplingImputer`, `HotDeckImputer`, `ColdDeckImputer` |
 | Time series | `LOCFImputer`, `NOCBImputer`, `ForwardFillFallbackImputer`, `InterpolationImputer`, `MovingAverageImputer`, `WeightedMovingAverageImputer`, `LinearTrendImputer`, `PolynomialTrendImputer`, `SeasonalImputer`, `KalmanFilterImputer` |
-| Nearest neighbors | `KNNImputerMethod`, `RadiusNeighborsImputer`, `LocalMeanImputer` |
+| Nearest neighbors | `KNNImputer`, `RadiusNeighborsImputer`, `LocalMeanImputer` |
 | Regression | `RegressionImputer`, `StochasticRegressionImputer`, `PMMImputer` (predictive mean matching), `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`, `GaussianProcessImputer` |
 | Iterative | `MICEImputer`, `MissForestImputer`, `EMImputer` |
-| Matrix completion | `SoftImputeImputer`, `BayesianPCAImputer` (probabilistic PCA) |
+| Matrix completion | `SoftImputeImputer`, `PPCAImputer` (probabilistic PCA) |
 | Neural networks | `AutoencoderImputer`, `GAINImputer` (generative adversarial imputation) |
 | Ensembles | `HybridImputer` (fallback chain), `StackingImputer`, `BaggingImputer` (bootstrap aggregating) |
 
@@ -95,7 +95,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import load_diabetes
 
-from imputation_methods import KNNImputerMethod, MeanImputer, MICEImputer, mae, rmse
+from imputation_methods import KNNImputer, MeanImputer, MICEImputer, mae, rmse
 
 complete = load_diabetes(as_frame=True).data
 rng = np.random.default_rng(0)
@@ -104,7 +104,7 @@ incomplete = complete.mask(mask)
 
 imputers = {
     "mean": MeanImputer(),
-    "knn": KNNImputerMethod(k=5),
+    "knn": KNNImputer(n_neighbors=5),
     "mice": MICEImputer(random_state=0),
 }
 for name, imputer in imputers.items():

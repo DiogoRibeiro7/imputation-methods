@@ -68,10 +68,10 @@ poetry run ruff check --select I --fix .
 
 ```python
 # Good
-class KNNImputerMethod:
+class KNNImputer:
     pass
 
-class BayesianPCAImputer:
+class PPCAImputer:
     pass
 
 # Avoid

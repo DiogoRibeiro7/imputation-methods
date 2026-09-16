@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 from imputation_methods import (
-    KNNImputerMethod,
+    KNNImputer,
     MeanImputer,
     MedianImputer,
     MICEImputer,
@@ -205,10 +205,10 @@ def main():
     imputation_methods = {
         "Mean + Ridge": (MeanImputer(), Ridge(alpha=1.0)),
         "Median + Ridge": (MedianImputer(), Ridge(alpha=1.0)),
-        "KNN + Ridge": (KNNImputerMethod(k=5), Ridge(alpha=1.0)),
+        "KNN + Ridge": (KNNImputer(n_neighbors=5), Ridge(alpha=1.0)),
         "MICE + Ridge": (MICEImputer(random_state=42), Ridge(alpha=1.0)),
         "KNN + RF": (
-            KNNImputerMethod(k=5),
+            KNNImputer(n_neighbors=5),
             RandomForestRegressor(n_estimators=100, random_state=42),
         ),
     }

@@ -3,7 +3,7 @@
 Everything listed here can be imported directly from the top-level package:
 
 ```python
-from imputation_methods import MeanImputer, KNNImputerMethod, rmse
+from imputation_methods import MeanImputer, KNNImputer, rmse
 ```
 
 The submodules below only group related imputers; you don't need them for imports.
@@ -28,7 +28,7 @@ Every imputer subclasses [`BaseImputer`](base.md) and exposes one method,
   your data first.
 
 Each imputer also has a [functional shortcut](functional.md), for example
-`knn_impute(df, k=3)` for `KNNImputerMethod(k=3).impute(df)`.
+`knn_impute(df, n_neighbors=3)` for `KNNImputer(n_neighbors=3).impute(df)`.
 
 ## Modules
 
@@ -38,10 +38,10 @@ Each imputer also has a [functional shortcut](functional.md), for example
 | [Statistical](statistical.md) | `imputation_methods.statistical` | `MeanImputer`, `MedianImputer`, `ModeImputer`, `ConstantImputer`, `QuantileImputer`, `TrimmedMeanImputer`, `EndOfDistributionImputer`, `GroupMeanImputer`, `IndicatorImputer` |
 | [Donor sampling](sampling.md) | `imputation_methods.sampling` | `RandomSamplingImputer`, `HotDeckImputer`, `ColdDeckImputer` |
 | [Time series](time-series.md) | `imputation_methods.time_series` | `LOCFImputer`, `NOCBImputer`, `ForwardFillFallbackImputer`, `InterpolationImputer`, `MovingAverageImputer`, `WeightedMovingAverageImputer`, `LinearTrendImputer`, `PolynomialTrendImputer`, `SeasonalImputer`, `KalmanFilterImputer` |
-| [Nearest neighbors](neighbors.md) | `imputation_methods.neighbors` | `KNNImputerMethod`, `RadiusNeighborsImputer`, `LocalMeanImputer` |
+| [Nearest neighbors](neighbors.md) | `imputation_methods.neighbors` | `KNNImputer`, `RadiusNeighborsImputer`, `LocalMeanImputer` |
 | [Regression](regression.md) | `imputation_methods.regression` | `RegressionImputer`, `StochasticRegressionImputer`, `PMMImputer`, `BayesianRidgeImputer`, `HuberImputer`, `RANSACImputer`, `GaussianProcessImputer` |
 | [Iterative](iterative.md) | `imputation_methods.iterative` | `MICEImputer`, `EMImputer`, `MissForestImputer` |
-| [Matrix completion](matrix.md) | `imputation_methods.matrix` | `SoftImputeImputer`, `BayesianPCAImputer` |
+| [Matrix completion](matrix.md) | `imputation_methods.matrix` | `SoftImputeImputer`, `PPCAImputer` |
 | [Neural networks](neural.md) | `imputation_methods.neural` | `AutoencoderImputer`, `GAINImputer` |
 | [Ensembles](ensemble.md) | `imputation_methods.ensemble` | `HybridImputer`, `StackingImputer`, `BaggingImputer` |
 | [Functional API](functional.md) | `imputation_methods.functional` | `mean_impute`, `median_impute`, … (42 functions) |

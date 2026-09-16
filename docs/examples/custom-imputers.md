@@ -383,7 +383,7 @@ df_imputed = imputer.impute(df)
 Use built-in imputers within your custom logic:
 
 ```python
-from imputation_methods import BaseImputer, MeanImputer, KNNImputerMethod
+from imputation_methods import BaseImputer, MeanImputer, KNNImputer
 import pandas as pd
 
 class SmartImputer(BaseImputer):
@@ -393,7 +393,7 @@ class SmartImputer(BaseImputer):
 
     def __init__(self, threshold=0.3, k=5):
         self.threshold = threshold
-        self.knn_imputer = KNNImputerMethod(k=k)
+        self.knn_imputer = KNNImputer(n_neighbors=k)
         self.mean_imputer = MeanImputer()
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:

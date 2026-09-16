@@ -63,7 +63,7 @@ Always document why you chose a particular imputation method.
 IMPUTATION_CONFIG = {
     'version': '1.0',
     'date': '2024-11-20',
-    'method': 'KNNImputerMethod',
+    'method': 'KNNImputer',
     'parameters': {
         'k': 5
     },
@@ -114,7 +114,7 @@ train, test = train_test_split(df_imputed)
 train, test = train_test_split(df)
 
 # Impute each split separately (impute() only sees the rows it is given)
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 train_imputed = imputer.impute(train)
 test_imputed = imputer.impute(test)
 ```
@@ -147,10 +147,10 @@ class ImputationTransformer:
         return self.transform(X)
 
 # Create pipeline
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 pipeline = Pipeline([
-    ('impute', ImputationTransformer(KNNImputerMethod(k=5))),
+    ('impute', ImputationTransformer(KNNImputer(n_neighbors=5))),
     ('scale', StandardScaler()),
     ('model', RandomForestRegressor(random_state=42))
 ])
@@ -198,8 +198,8 @@ def prepare_for_imputation(df):
 df_processed, encoders, num_cols, cat_cols = prepare_for_imputation(df)
 
 # Impute
-from imputation_methods import KNNImputerMethod
-imputer = KNNImputerMethod(k=5)
+from imputation_methods import KNNImputer
+imputer = KNNImputer(n_neighbors=5)
 df_imputed = imputer.impute(df_processed)
 
 # Decode categorical variables back
@@ -267,10 +267,10 @@ class VersionedImputer:
         )
 
 # Usage
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 imputer = VersionedImputer(
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     version='1.0.0',
     metadata={
         'trained_on': 'training_data_2024_11',
@@ -332,10 +332,10 @@ class RobustImputer:
                 raise RuntimeError("All imputation strategies failed") from e2
 
 # Usage
-from imputation_methods import KNNImputerMethod, MeanImputer
+from imputation_methods import KNNImputer, MeanImputer
 
 robust_imputer = RobustImputer(
-    primary_imputer=KNNImputerMethod(k=5),
+    primary_imputer=KNNImputer(n_neighbors=5),
     fallback_imputer=MeanImputer(),
     timeout=10.0
 )
@@ -419,7 +419,7 @@ class MonitoredImputer:
 
 # Usage
 monitored_imputer = MonitoredImputer(
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     alert_missing_rate=0.4,
     alert_email="data-team@example.com"
 )
@@ -442,7 +442,7 @@ KNN is sensitive to feature scales:
 ```python
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputer
 
 # Scale before imputation. StandardScaler ignores NaNs when fitting
 # and keeps them in the output, so it only uses observed values.
@@ -452,7 +452,7 @@ df_scaled = pd.DataFrame(
 )
 
 # Now impute
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 df_imputed = imputer.impute(df_scaled)
 
 # Scale back if needed
@@ -490,7 +490,7 @@ def smart_impute_large_dataset(df, imputer, sample_size=10000):
         return pd.concat(chunks)
 
 # Usage
-df_imputed = smart_impute_large_dataset(large_df, KNNImputerMethod(k=5))
+df_imputed = smart_impute_large_dataset(large_df, KNNImputer(n_neighbors=5))
 ```
 
 ### 3. Parallelize When Possible
@@ -531,7 +531,7 @@ df_imputed = parallel_impute(df, MedianImputer(), n_jobs=4)
 import unittest
 import pandas as pd
 import numpy as np
-from imputation_methods import MeanImputer, KNNImputerMethod
+from imputation_methods import MeanImputer, KNNImputer
 
 class TestImputationPipeline(unittest.TestCase):
     """Test imputation logic."""
@@ -551,7 +551,7 @@ class TestImputationPipeline(unittest.TestCase):
 
     def test_imputation_preserves_shape(self):
         """Test that imputation preserves DataFrame shape."""
-        imputer = KNNImputerMethod(k=2)
+        imputer = KNNImputer(n_neighbors=2)
         result = imputer.impute(self.df)
         self.assertEqual(result.shape, self.df.shape)
 
@@ -604,8 +604,8 @@ def test_end_to_end_pipeline():
     )
 
     # Impute
-    from imputation_methods import KNNImputerMethod
-    imputer = KNNImputerMethod(k=5)
+    from imputation_methods import KNNImputer
+    imputer = KNNImputer(n_neighbors=5)
     X_train_imputed = imputer.impute(X_train)
     X_test_imputed = imputer.impute(X_test)
 
@@ -651,7 +651,7 @@ df_imputed = imputer.impute(df_with_categorical)  # Will raise error
 
 ```python
 # WRONG for KNN
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 # Using same imputer on features with vastly different scales
 ```
 

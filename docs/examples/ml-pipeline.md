@@ -30,7 +30,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Ridge
 from sklearn.metrics import r2_score, mean_squared_error
-from imputation_methods import KNNImputerMethod, MICEImputer, MeanImputer
+from imputation_methods import KNNImputer, MICEImputer, MeanImputer
 
 # Load data with missing values
 df = pd.read_csv('housing_data.csv')
@@ -43,7 +43,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Impute
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 X_train_imputed = imputer.impute(X_train)
 X_test_imputed = imputer.impute(X_test)
 
@@ -128,7 +128,7 @@ class ImputedPipeline:
 
 # Usage
 pipeline = ImputedPipeline(
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     model=Ridge(alpha=1.0),
     scaler=True
 )
@@ -144,7 +144,7 @@ Evaluate multiple imputation strategies:
 
 ```python
 from imputation_methods import (
-    MeanImputer, MedianImputer, KNNImputerMethod,
+    MeanImputer, MedianImputer, KNNImputer,
     MICEImputer, MissForestImputer
 )
 from sklearn.ensemble import RandomForestRegressor
@@ -153,9 +153,9 @@ from sklearn.ensemble import RandomForestRegressor
 imputation_methods = {
     'Mean + Ridge': (MeanImputer(), Ridge(alpha=1.0)),
     'Median + Ridge': (MedianImputer(), Ridge(alpha=1.0)),
-    'KNN + Ridge': (KNNImputerMethod(k=5), Ridge(alpha=1.0)),
+    'KNN + Ridge': (KNNImputer(n_neighbors=5), Ridge(alpha=1.0)),
     'MICE + Ridge': (MICEImputer(random_state=42), Ridge(alpha=1.0)),
-    'KNN + RF': (KNNImputerMethod(k=5), RandomForestRegressor(n_estimators=100, random_state=42)),
+    'KNN + RF': (KNNImputer(n_neighbors=5), RandomForestRegressor(n_estimators=100, random_state=42)),
 }
 
 # Evaluate each combination
@@ -280,7 +280,7 @@ class ImputationTransformer(BaseEstimator, TransformerMixin):
 from sklearn.ensemble import GradientBoostingRegressor
 
 pipeline = Pipeline([
-    ('impute', ImputationTransformer(KNNImputerMethod(k=5))),
+    ('impute', ImputationTransformer(KNNImputer(n_neighbors=5))),
     ('scale', StandardScaler()),
     ('model', GradientBoostingRegressor(random_state=42))
 ])
@@ -338,7 +338,7 @@ def cv_evaluate_imputation(X, y, imputer, model, cv=5):
 # Evaluate with CV
 scores = cv_evaluate_imputation(
     X, y,
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     model=Ridge(alpha=1.0),
     cv=5
 )
@@ -354,7 +354,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 # Train Random Forest
 pipeline = ImputedPipeline(
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     model=RandomForestRegressor(n_estimators=100, random_state=42),
     scaler=False  # RF doesn't need scaling
 )
@@ -389,7 +389,7 @@ import joblib
 
 # Train final model
 final_pipeline = ImputedPipeline(
-    imputer=KNNImputerMethod(k=5),
+    imputer=KNNImputer(n_neighbors=5),
     model=RandomForestRegressor(n_estimators=200, random_state=42),
     scaler=True
 )
@@ -446,7 +446,7 @@ class AdaptiveImputationPipeline:
 
 # Usage
 adaptive_pipeline = AdaptiveImputationPipeline(
-    primary_imputer=KNNImputerMethod(k=5),
+    primary_imputer=KNNImputer(n_neighbors=5),
     fallback_imputer=MeanImputer(),
     model=Ridge(alpha=1.0)
 )

@@ -32,20 +32,13 @@ that explains what to use instead.
 The renames go first, so their deprecation warnings run through several releases
 before 1.0 removes the old names.
 
-- **Parameter names.** Use one name per concept across all imputers:
-  - The iteration budget is currently `max_iter` in five imputers, `max_iters` in
-    `SoftImputeImputer` and `iterations` in `GAINImputer`.
-  - The neighbor count is `k` in `KNNImputerMethod` and `PMMImputer` but
-    `n_neighbors` in `LocalMeanImputer`. `EndOfDistributionImputer` also uses `k`,
-    for a number of standard deviations.
-  - `method` means a summary statistic in `GroupMeanImputer`,
-    `MovingAverageImputer` and `SeasonalImputer`, but the interpolation kind in
-    `InterpolationImputer`.
-- **Class and function names.**
-  - Rename `KNNImputerMethod`, the only class not ending in `Imputer`.
-  - Rename `BayesianPCAImputer`, which implements maximum-likelihood probabilistic
-    PCA without priors.
-  - Rename `predictive_mean_matching`, the only shortcut not named `*_impute`.
+- **Parameter names** *(done, unreleased)*. One name per concept: `max_iter` for
+  iteration budgets, `n_neighbors` for neighbor and donor counts, `n_std` in
+  `EndOfDistributionImputer`, and `strategy` for summary statistics. Old names
+  work until 1.0 with a `FutureWarning`.
+- **Class and function names** *(done, unreleased)*. `KNNImputerMethod` is now
+  `KNNImputer`, `BayesianPCAImputer` is `PPCAImputer`, and
+  `predictive_mean_matching` is `pmm_impute`.
 - **Explicit fallbacks.** Thirteen error handlers quietly replace the requested
   method with mean or median imputation, logging at most a warning (for example
   when MICE, KNN or a regression fails to fit). Make this a choice, for example

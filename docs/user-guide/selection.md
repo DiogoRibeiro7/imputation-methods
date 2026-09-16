@@ -65,7 +65,7 @@ df_imputed = imputer.impute(df)
 **Recommended:** LOCF, NOCB, or KNN
 
 ```python
-from imputation_methods import LOCFImputer, NOCBImputer, KNNImputerMethod
+from imputation_methods import LOCFImputer, NOCBImputer, KNNImputer
 
 # For slowly changing variables
 imputer = LOCFImputer()
@@ -74,7 +74,7 @@ imputer = LOCFImputer()
 imputer = NOCBImputer()
 
 # For better accuracy with multiple sensors
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 
 df_imputed = imputer.impute(df)
 ```
@@ -90,7 +90,7 @@ df_imputed = imputer.impute(df)
 if time_interval <= '15min' and change_rate == 'slow':
     imputer = LOCFImputer()
 elif num_sensors > 3:
-    imputer = KNNImputerMethod(k=5)
+    imputer = KNNImputer(n_neighbors=5)
 ```
 
 ### 3. Machine Learning Pipelines
@@ -98,10 +98,10 @@ elif num_sensors > 3:
 **Recommended:** KNN, MICE, or MissForest
 
 ```python
-from imputation_methods import KNNImputerMethod, MICEImputer, MissForestImputer
+from imputation_methods import KNNImputer, MICEImputer, MissForestImputer
 
 # General purpose - good balance
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 
 # For complex relationships
 imputer = MICEImputer(random_state=42)
@@ -136,7 +136,7 @@ class ImputationStep:
         return self.imputer.impute(X)
 
 pipeline = Pipeline([
-    ('impute', ImputationStep(KNNImputerMethod(k=5))),
+    ('impute', ImputationStep(KNNImputer(n_neighbors=5))),
     ('scale', StandardScaler()),
     ('classify', RandomForestClassifier())
 ])
@@ -155,7 +155,7 @@ from imputation_methods import MICEImputer, PMMImputer
 imputer = MICEImputer(random_state=42)
 
 # More robust to model misspecification
-imputer = PMMImputer(k=5, random_state=42)
+imputer = PMMImputer(n_neighbors=5, random_state=42)
 
 df_imputed = imputer.impute(df)
 ```
@@ -173,13 +173,13 @@ df_imputed = imputer.impute(df)
 **Recommended:** Bayesian PCA, SoftImpute, or Autoencoder
 
 ```python
-from imputation_methods import BayesianPCAImputer, SoftImputeImputer, AutoencoderImputer
+from imputation_methods import PPCAImputer, SoftImputeImputer, AutoencoderImputer
 
 # For low-rank structure (e.g., recommendations)
-imputer = SoftImputeImputer(max_iters=100)
+imputer = SoftImputeImputer(max_iter=100)
 
 # Probabilistic approach (n_components is capped at n_columns - 1)
-imputer = BayesianPCAImputer(n_components=10)
+imputer = PPCAImputer(n_components=10)
 
 # For very large datasets with non-linearity
 imputer = AutoencoderImputer(
@@ -196,7 +196,7 @@ df_imputed = imputer.impute(df)
 from sklearn.decomposition import PCA
 from imputation_methods import MeanImputer
 
-# PCA needs complete data: fill with the mean first. BayesianPCAImputer
+# PCA needs complete data: fill with the mean first. PPCAImputer
 # standardizes columns, so standardize here too.
 df_filled = MeanImputer().impute(df)
 df_filled = (df_filled - df_filled.mean()) / df_filled.std()
@@ -209,7 +209,7 @@ pca.fit(df_filled)
 cumsum = np.cumsum(pca.explained_variance_ratio_)
 n_components = int(np.argmax(cumsum >= 0.90) + 1)
 
-imputer = BayesianPCAImputer(n_components=n_components)
+imputer = PPCAImputer(n_components=n_components)
 ```
 
 ### 6. Production Systems
@@ -217,13 +217,13 @@ imputer = BayesianPCAImputer(n_components=n_components)
 **Recommended:** KNN or Mean/Median
 
 ```python
-from imputation_methods import KNNImputerMethod, MeanImputer
+from imputation_methods import KNNImputer, MeanImputer
 
 # For real-time systems
 imputer = MeanImputer()  # Fastest
 
 # For batch processing with higher accuracy
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 
 # Save the imputer configuration for consistency (imputers hold no fitted
 # state: impute() re-estimates everything from the data it receives)
@@ -295,10 +295,10 @@ else:
 Use methods that leverage relationships:
 
 ```python
-from imputation_methods import KNNImputerMethod, MICEImputer, RegressionImputer
+from imputation_methods import KNNImputer, MICEImputer, RegressionImputer
 
 # For moderate datasets
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 
 # For multiple variables with missingness
 imputer = MICEImputer()
@@ -316,8 +316,8 @@ Most difficult; consider domain-specific approaches or models that account for m
 df['was_missing'] = df['feature'].isna().astype(int)
 
 # Then impute
-from imputation_methods import KNNImputerMethod
-imputer = KNNImputerMethod(k=5)
+from imputation_methods import KNNImputer
+imputer = KNNImputer(n_neighbors=5)
 df[['feature']] = imputer.impute(df[['feature']])
 ```
 
@@ -326,7 +326,7 @@ df[['feature']] = imputer.impute(df[['feature']])
 **Small (<1,000 rows):**
 ```python
 # Can use any method, prefer simpler ones
-from imputation_methods import MeanImputer, KNNImputerMethod, MICEImputer
+from imputation_methods import MeanImputer, KNNImputer, MICEImputer
 
 imputer = MICEImputer()  # Even complex methods are fast
 ```
@@ -334,15 +334,15 @@ imputer = MICEImputer()  # Even complex methods are fast
 **Medium (1,000-100,000 rows):**
 ```python
 # Balance accuracy and speed
-from imputation_methods import KNNImputerMethod, PMMImputer
+from imputation_methods import KNNImputer, PMMImputer
 
-imputer = KNNImputerMethod(k=5)  # Good default
+imputer = KNNImputer(n_neighbors=5)  # Good default
 ```
 
 **Large (>100,000 rows):**
 ```python
 # Prioritize speed
-from imputation_methods import KNNImputerMethod, MeanImputer, MedianImputer
+from imputation_methods import KNNImputer, MeanImputer, MedianImputer
 
 imputer = MeanImputer()  # O(n) complexity
 
@@ -350,7 +350,7 @@ imputer = MeanImputer()  # O(n) complexity
 # this imputes only the sampled rows (e.g. for a quick method comparison).
 sample_size = 10000
 df_sample = df.sample(n=sample_size, random_state=42)
-imputer = KNNImputerMethod(k=5)
+imputer = KNNImputer(n_neighbors=5)
 df_sample_imputed = imputer.impute(df_sample)
 ```
 
@@ -381,7 +381,7 @@ When unsure, compare multiple methods:
 
 ```python
 from imputation_methods import (
-    MeanImputer, KNNImputerMethod, MICEImputer,
+    MeanImputer, KNNImputer, MICEImputer,
     MissForestImputer, rmse
 )
 from sklearn.model_selection import cross_val_score
@@ -396,8 +396,8 @@ df_missing[mask] = np.nan
 
 methods = {
     'Mean': MeanImputer(),
-    'KNN-3': KNNImputerMethod(k=3),
-    'KNN-5': KNNImputerMethod(k=5),
+    'KNN-3': KNNImputer(n_neighbors=3),
+    'KNN-5': KNNImputer(n_neighbors=5),
     'MICE': MICEImputer(random_state=42),
     'MissForest': MissForestImputer(random_state=42)
 }
@@ -458,7 +458,7 @@ best_score = -np.inf
 best_k = 5
 
 for k in k_values:
-    imputer = KNNImputerMethod(k=k)
+    imputer = KNNImputer(n_neighbors=k)
     X_imputed = imputer.impute(X_train)
     model = Ridge()
     score = cross_val_score(model, X_imputed, y_train, cv=5).mean()
@@ -475,7 +475,7 @@ print(f"Best k: {best_k} with score: {best_score:.4f}")
 ```python
 # Try different numbers of components
 for n_comp in [2, 5, 10, 15]:
-    imputer = BayesianPCAImputer(n_components=n_comp)
+    imputer = PPCAImputer(n_components=n_comp)
     df_imputed = imputer.impute(df_train)
     # Evaluate reconstruction quality
     score = evaluate_reconstruction(df_train, df_imputed)

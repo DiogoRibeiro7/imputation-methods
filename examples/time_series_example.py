@@ -16,7 +16,7 @@ import pandas as pd
 import seaborn as sns
 
 from imputation_methods import (
-    KNNImputerMethod,
+    KNNImputer,
     LOCFImputer,
     MeanImputer,
     NOCBImputer,
@@ -172,7 +172,7 @@ def main():
         "LOCF": LOCFImputer(),
         "NOCB": NOCBImputer(),
         "Mean": MeanImputer(),
-        "KNN": KNNImputerMethod(k=5),
+        "KNN": KNNImputer(n_neighbors=5),
     }
 
     imputed_results = {}

@@ -20,11 +20,10 @@ from sklearn.metrics import r2_score
 
 from imputation_methods import (
     AutoencoderImputer,
-    BayesianPCAImputer,
     GAINImputer,
     GaussianProcessImputer,
     HotDeckImputer,
-    KNNImputerMethod,
+    KNNImputer,
     LOCFImputer,
     MeanImputer,
     MedianImputer,
@@ -32,6 +31,7 @@ from imputation_methods import (
     MissForestImputer,
     NOCBImputer,
     PMMImputer,
+    PPCAImputer,
     RegressionImputer,
     SoftImputeImputer,
     StochasticRegressionImputer,
@@ -198,19 +198,19 @@ def main():
         "Median": MedianImputer(),
         "LOCF": LOCFImputer(),
         "NOCB": NOCBImputer(),
-        "KNN-3": KNNImputerMethod(k=3),
-        "KNN-5": KNNImputerMethod(k=5),
+        "KNN-3": KNNImputer(n_neighbors=3),
+        "KNN-5": KNNImputer(n_neighbors=5),
         "Regression": RegressionImputer(),
         "Stochastic Reg": StochasticRegressionImputer(random_state=42),
-        "PMM": PMMImputer(k=5, random_state=42),
+        "PMM": PMMImputer(n_neighbors=5, random_state=42),
         "Hot Deck": HotDeckImputer(random_state=42),
     }
 
     methods_slow = {
         "MICE": MICEImputer(random_state=42),
         "MissForest": MissForestImputer(random_state=42),
-        "SoftImpute": SoftImputeImputer(max_iters=50),
-        "Bayesian PCA": BayesianPCAImputer(n_components=3),
+        "SoftImpute": SoftImputeImputer(max_iter=50),
+        "Bayesian PCA": PPCAImputer(n_components=3),
         "Autoencoder": AutoencoderImputer(
             hidden_layer_sizes=(10,), max_iter=100, random_state=42
         ),
