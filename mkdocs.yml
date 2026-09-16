@@ -131,4 +131,5 @@ nav:
       - Guidelines: contributing/guidelines.md
       - Development Setup: contributing/development.md
       - Code Style: contributing/code-style.md
+  - Roadmap: roadmap.md
   - Changelog: changelog.md
