@@ -17,7 +17,7 @@ Examples:
 from importlib.metadata import PackageNotFoundError, version
 
 from ._deprecation import renamed_module_attributes
-from .base import BaseImputer
+from .base import BaseImputer, ImputationError
 from .ensemble import BaggingImputer, HybridImputer, StackingImputer
 from .functional import (
     autoencoder_impute,
@@ -126,6 +126,7 @@ __all__ = [
     "HotDeckImputer",
     "HuberImputer",
     "HybridImputer",
+    "ImputationError",
     "IndicatorImputer",
     "InterpolationImputer",
     "KNNImputer",

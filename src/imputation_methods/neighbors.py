@@ -10,8 +10,8 @@ from sklearn.impute import KNNImputer as _SklearnKNNImputer
 from sklearn.neighbors import RadiusNeighborsRegressor
 
 from ._deprecation import renamed_module_attributes, renamed_parameters
-from ._utils import fit_transform_non_empty
-from .base import BaseImputer
+from ._utils import OnError, check_on_error, fit_transform_non_empty, raise_or_fall_back
+from .base import BaseImputer, ImputationError
 from .statistical import MeanImputer
 
 logger = logging.getLogger(__name__)
@@ -31,11 +31,15 @@ class KNNImputer(BaseImputer):
     """
 
     @renamed_parameters(k="n_neighbors")
-    def __init__(self, n_neighbors: int = 5) -> None:
+    def __init__(self, n_neighbors: int = 5, on_error: OnError = None) -> None:
         """Initialize the imputer.
 
         Args:
             n_neighbors: Number of neighbors to consider.
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation. The default, ``None``, falls back with a
+                ``FutureWarning``; it will change to ``"raise"`` in 1.0.0.
 
         Raises:
             ValueError: If n_neighbors is not a positive integer.
@@ -48,6 +52,7 @@ class KNNImputer(BaseImputer):
             raise ValueError(f"n_neighbors must be positive, got {n_neighbors}")
         self.n_neighbors = n_neighbors
         self._imputer = _SklearnKNNImputer(n_neighbors=n_neighbors)
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using the fitted KNN strategy.
@@ -69,12 +74,15 @@ class KNNImputer(BaseImputer):
         try:
             return fit_transform_non_empty(self._imputer, df)
         except ValueError as e:
-            logger.warning(
-                "KNN imputation failed (%s); falling back to mean imputation", e
+            raise_or_fall_back(
+                self.on_error,
+                imputer=type(self).__name__,
+                error=e,
+                fallback="mean imputation",
             )
             return MeanImputer().impute(df)
         except Exception as e:
-            raise RuntimeError(f"KNN imputation failed: {e}") from e
+            raise ImputationError(f"{type(self).__name__} failed: {e}") from e
 
 
 class RadiusNeighborsImputer(BaseImputer):
@@ -104,7 +112,11 @@ class RadiusNeighborsImputer(BaseImputer):
     """
 
     def __init__(
-        self, radius: float = 1.0, weights: str = "distance", metric: str = "euclidean"
+        self,
+        radius: float = 1.0,
+        weights: str = "distance",
+        metric: str = "euclidean",
+        on_error: OnError = None,
     ) -> None:
         """Initialize the radius neighbors imputer.
 
@@ -112,10 +124,16 @@ class RadiusNeighborsImputer(BaseImputer):
             radius: Distance threshold
             weights: Weighting function
             metric: Distance metric
+            on_error: What to do if the model can't be fitted: ``"raise"`` an
+                :class:`~imputation_methods.ImputationError`, or ``"fallback"``
+                to use mean imputation for that column. The default, ``None``,
+                falls back with a ``FutureWarning``; it will change to
+                ``"raise"`` in 1.0.0.
         """
         self.radius = radius
         self.weights = weights
         self.metric = metric
+        self.on_error = check_on_error(on_error)
 
     def impute(self, df: pd.DataFrame) -> pd.DataFrame:
         """Impute using radius neighbors.
@@ -156,8 +174,14 @@ class RadiusNeighborsImputer(BaseImputer):
                         model.fit(X_train, y_train)
                         predictions = model.predict(X_predict)
                         result.loc[predict_mask, column] = predictions
-                    except Exception:
-                        # Fall back to mean if radius neighbors fails
+                    except Exception as e:
+                        raise_or_fall_back(
+                            self.on_error,
+                            imputer=type(self).__name__,
+                            error=e,
+                            fallback="mean imputation",
+                            column=column,
+                        )
                         result.loc[predict_mask, column] = result[column].mean()
 
         return result

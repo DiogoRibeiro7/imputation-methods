@@ -7,6 +7,10 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 
+class ImputationError(RuntimeError):
+    """An imputer's model could not be fitted and ``on_error="raise"`` was set."""
+
+
 class BaseImputer(ABC):
     """Base class for all imputation methods.
 

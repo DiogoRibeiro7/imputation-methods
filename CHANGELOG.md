@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `on_error` parameter on the imputers whose model can fail to fit (`MICEImputer`,
+  `MissForestImputer`, `KNNImputer`, `RadiusNeighborsImputer`, `RegressionImputer`,
+  `PMMImputer`, `GaussianProcessImputer`, `RANSACImputer`, `SoftImputeImputer`,
+  `PPCAImputer`, `AutoencoderImputer`) and on their shortcuts:
+  - `on_error="raise"` raises the new `ImputationError` (a `RuntimeError`), chained
+    to the underlying error.
+  - `on_error="fallback"` uses mean or median imputation instead, as before, and
+    logs a warning.
+
 ### Changed
 
 - Consistent parameter names across imputers, following scikit-learn conventions:
@@ -33,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The old class, function and parameter names above still work but emit a
   `FutureWarning` starting with `imputation-methods:`, and will be removed in 1.0.0.
   Run your code with `-W "error:imputation-methods:FutureWarning"` to find uses.
+- Falling back to a simpler method without asking. When a model fails and `on_error`
+  isn't set, the imputer still falls back but now emits a `FutureWarning`; the
+  default will become `on_error="raise"` in 1.0.0. Unexpected errors that previously
+  raised a plain `RuntimeError` now raise `ImputationError`, a subclass.
 
 ## [0.1.0] - 2026-09-16
 

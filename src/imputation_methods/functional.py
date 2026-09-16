@@ -12,6 +12,7 @@ import pandas as pd
 from sklearn.gaussian_process.kernels import RBF
 
 from ._deprecation import renamed_module_attributes, renamed_parameters
+from ._utils import OnError
 from .base import BaseImputer
 from .ensemble import BaggingImputer, HybridImputer, StackingImputer
 from .iterative import EMImputer, MICEImputer, MissForestImputer
@@ -69,30 +70,36 @@ def median_impute(df: pd.DataFrame) -> pd.DataFrame:
 
 
 @renamed_parameters(k="n_neighbors")
-def knn_impute(df: pd.DataFrame, n_neighbors: int = 5) -> pd.DataFrame:
+def knn_impute(
+    df: pd.DataFrame, n_neighbors: int = 5, on_error: OnError = None
+) -> pd.DataFrame:
     """Wrapper for :class:`KNNImputer`."""
-    return KNNImputer(n_neighbors=n_neighbors).impute(df)
+    return KNNImputer(n_neighbors=n_neighbors, on_error=on_error).impute(df)
 
 
 @renamed_parameters(k="n_neighbors")
 def pmm_impute(
-    df: pd.DataFrame, n_neighbors: int = 5, random_state: int | None = None
+    df: pd.DataFrame,
+    n_neighbors: int = 5,
+    random_state: int | None = None,
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`PMMImputer`."""
-    return PMMImputer(n_neighbors=n_neighbors, random_state=random_state).impute(df)
+    return PMMImputer(
+        n_neighbors=n_neighbors, random_state=random_state, on_error=on_error
+    ).impute(df)
 
 
 def mice_impute(
-    df: pd.DataFrame,
-    random_state: int | None = None,
+    df: pd.DataFrame, random_state: int | None = None, on_error: OnError = None
 ) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`MICEImputer`."""
-    return MICEImputer(random_state=random_state).impute(df)
+    return MICEImputer(random_state=random_state, on_error=on_error).impute(df)
 
 
-def regression_impute(df: pd.DataFrame) -> pd.DataFrame:
+def regression_impute(df: pd.DataFrame, on_error: OnError = None) -> pd.DataFrame:
     """Backwards-compatible wrapper for :class:`RegressionImputer`."""
-    return RegressionImputer().impute(df)
+    return RegressionImputer(on_error=on_error).impute(df)
 
 
 def stochastic_regression_impute(
@@ -125,10 +132,10 @@ def hot_deck_impute(
 
 
 def miss_forest_impute(
-    df: pd.DataFrame, random_state: int | None = None
+    df: pd.DataFrame, random_state: int | None = None, on_error: OnError = None
 ) -> pd.DataFrame:
     """Wrapper for :class:`MissForestImputer`."""
-    return MissForestImputer(random_state=random_state).impute(df)
+    return MissForestImputer(random_state=random_state, on_error=on_error).impute(df)
 
 
 def ppca_impute(
@@ -137,6 +144,7 @@ def ppca_impute(
     min_obs: int = 1,
     max_iter: int = 500,
     tol: float = 1e-6,
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`PPCAImputer`."""
     return PPCAImputer(
@@ -144,6 +152,7 @@ def ppca_impute(
         min_obs=min_obs,
         max_iter=max_iter,
         tol=tol,
+        on_error=on_error,
     ).impute(df)
 
 
@@ -154,6 +163,7 @@ def soft_impute(
     init_fill_method: str = "zero",
     shrinkage_value: float | None = None,
     convergence_threshold: float = 1e-3,
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`SoftImputeImputer`."""
     return SoftImputeImputer(
@@ -161,6 +171,7 @@ def soft_impute(
         init_fill_method=init_fill_method,
         shrinkage_value=shrinkage_value,
         convergence_threshold=convergence_threshold,
+        on_error=on_error,
     ).impute(df)
 
 
@@ -169,12 +180,14 @@ def autoencoder_impute(
     hidden_layer_sizes: tuple[int, ...] = (10,),
     max_iter: int = 200,
     random_state: int | None = None,
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`AutoencoderImputer`."""
     return AutoencoderImputer(
         hidden_layer_sizes=hidden_layer_sizes,
         max_iter=max_iter,
         random_state=random_state,
+        on_error=on_error,
     ).impute(df)
 
 
@@ -204,12 +217,11 @@ def gaussian_process_impute(
     kernel: RBF | None = None,
     alpha: float = 1e-10,
     random_state: int | None = None,
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`GaussianProcessImputer`."""
     return GaussianProcessImputer(
-        kernel=kernel,
-        alpha=alpha,
-        random_state=random_state,
+        kernel=kernel, alpha=alpha, random_state=random_state, on_error=on_error
     ).impute(df)
 
 
@@ -424,11 +436,12 @@ def radius_neighbors_impute(
     radius: float = 1.0,
     weights: str = "distance",
     metric: str = "euclidean",
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`RadiusNeighborsImputer`."""
-    return RadiusNeighborsImputer(radius=radius, weights=weights, metric=metric).impute(
-        df
-    )
+    return RadiusNeighborsImputer(
+        radius=radius, weights=weights, metric=metric, on_error=on_error
+    ).impute(df)
 
 
 def local_mean_impute(
@@ -453,6 +466,7 @@ def ransac_impute(
     random_state: int | None = None,
     min_samples: int | None = None,
     residual_threshold: float | None = None,
+    on_error: OnError = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`RANSACImputer`."""
     return RANSACImputer(
@@ -460,6 +474,7 @@ def ransac_impute(
         residual_threshold=residual_threshold,
         max_trials=max_trials,
         random_state=random_state,
+        on_error=on_error,
     ).impute(df)
 
 
