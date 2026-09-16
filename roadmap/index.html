@@ -1565,10 +1565,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#02-consistent-api" class="md-nav__link">
+  <a href="#02-consistent-api-released-in-020" class="md-nav__link">
     <span class="md-ellipsis">
       
-        0.2: Consistent API
+        0.2: Consistent API (released in 0.2.0)
       
     </span>
   </a>
@@ -1703,10 +1703,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#02-consistent-api" class="md-nav__link">
+  <a href="#02-consistent-api-released-in-020" class="md-nav__link">
     <span class="md-ellipsis">
       
-        0.2: Consistent API
+        0.2: Consistent API (released in 0.2.0)
       
     </span>
   </a>
@@ -1789,7 +1789,7 @@
 
 
 <h1 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h1>
-<p><code>imputation-methods</code> 0.1.0 is the first public release. This page describes what has
+<p><code>imputation-methods</code> has not reached 1.0 yet. This page describes what has
 to happen before 1.0.0 and the order we plan to do it in. Releases are not tied
 to dates, and priorities may change based on feedback. If something here matters
 to you, or is missing, please
@@ -1811,25 +1811,25 @@ when:</p>
 <p>Until 1.0, minor releases (0.x) may contain breaking changes. Renamed or removed
 APIs keep working for at least one minor release and raise a <code>FutureWarning</code>
 that explains what to use instead.</p>
-<h2 id="02-consistent-api">0.2: Consistent API<a class="headerlink" href="#02-consistent-api" title="Permanent link">&para;</a></h2>
+<h2 id="02-consistent-api-released-in-020">0.2: Consistent API <em>(released in 0.2.0)</em><a class="headerlink" href="#02-consistent-api-released-in-020" title="Permanent link">&para;</a></h2>
 <p>The renames go first, so their deprecation warnings run through several releases
 before 1.0 removes the old names.</p>
 <ul>
-<li><strong>Parameter names</strong> <em>(done, unreleased)</em>. One name per concept: <code>max_iter</code> for
+<li><strong>Parameter names</strong> <em>(done)</em>. One name per concept: <code>max_iter</code> for
   iteration budgets, <code>n_neighbors</code> for neighbor and donor counts, <code>n_std</code> in
   <code>EndOfDistributionImputer</code>, and <code>strategy</code> for summary statistics. Old names
   work until 1.0 with a <code>FutureWarning</code>.</li>
-<li><strong>Class and function names</strong> <em>(done, unreleased)</em>. <code>KNNImputerMethod</code> is now
+<li><strong>Class and function names</strong> <em>(done)</em>. <code>KNNImputerMethod</code> is now
   <code>KNNImputer</code>, <code>BayesianPCAImputer</code> is <code>PPCAImputer</code>, and
   <code>predictive_mean_matching</code> is <code>pmm_impute</code>.</li>
-<li><strong>Explicit fallbacks</strong> <em>(done, unreleased)</em>. Imputers whose model can fail take
+<li><strong>Explicit fallbacks</strong> <em>(done)</em>. Imputers whose model can fail take
   <code>on_error="raise" | "fallback"</code>. Falling back without asking emits a
   <code>FutureWarning</code>, and the default becomes <code>"raise"</code> in 1.0, so a result never
   comes from a different method than the one the user asked for.</li>
-<li><strong>Empty columns</strong> <em>(done, unreleased)</em>. Every imputer that learns from the data
+<li><strong>Empty columns</strong> <em>(done)</em>. Every imputer that learns from the data
   leaves a column with no observed values as <code>NaN</code>; only imputers that fill in a
   constant chosen by the user fill it.</li>
-<li><strong>Output types</strong> <em>(done, unreleased)</em>. Columns without missing values come back
+<li><strong>Output types</strong> <em>(done)</em>. Columns without missing values come back
   unchanged; imputed columns come back as floating point (<code>float32</code>/<code>float64</code> keep
   their precision, nullable columns become <code>Float64</code>).</li>
 </ul>
