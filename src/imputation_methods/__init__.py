@@ -62,11 +62,11 @@ from .functional import (
     trimmed_mean_impute,
     weighted_moving_average_impute,
 )
-from .iterative import EMImputer, GAINImputer, MICEImputer, MissForestImputer
+from .iterative import EMImputer, MICEImputer, MissForestImputer
 from .matrix import BayesianPCAImputer, SoftImputeImputer
 from .metrics import mae, rmse
 from .neighbors import KNNImputerMethod, LocalMeanImputer, RadiusNeighborsImputer
-from .neural import AutoencoderImputer
+from .neural import AutoencoderImputer, GAINImputer
 from .regression import (
     BayesianRidgeImputer,
     GaussianProcessImputer,

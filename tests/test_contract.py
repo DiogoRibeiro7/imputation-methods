@@ -16,7 +16,8 @@ KWARGS: dict[str, dict[str, object]] = {
     "GroupMeanImputer": {"group_col": "g"},
     "HotDeckImputer": {"stratify_cols": ["g"], "random_state": 0},
     "AutoencoderImputer": {"max_iter": 50, "random_state": 0},
-    "BaggingImputer": {"n_estimators": 2},
+    "BaggingImputer": {"n_estimators": 2, "random_state": 0},
+    "GAINImputer": {"iterations": 200, "random_state": 0},
     "MissForestImputer": {"random_state": 0},
     "RadiusNeighborsImputer": {"radius": 10.0},
 }
@@ -86,6 +87,7 @@ def test_fills_several_incomplete_columns(
 @pytest.mark.parametrize(
     "cls",
     [
+        imputation_methods.BaggingImputer,
         imputation_methods.EMImputer,
         imputation_methods.GAINImputer,
         imputation_methods.GaussianProcessImputer,
@@ -101,11 +103,14 @@ def test_empty_column_does_not_change_other_columns(
     cls: type[BaseImputer], frame: pd.DataFrame
 ) -> None:
     with_empty = frame.assign(empty=np.nan)
-    kwargs = (
-        {"random_state": 0}
-        if "random_state" in inspect.signature(cls).parameters
-        else {}
-    )
+    kwargs = {
+        **(
+            {"random_state": 0}
+            if "random_state" in inspect.signature(cls).parameters
+            else {}
+        ),
+        **KWARGS.get(cls.__name__, {}),
+    }
 
     expected = cls(**kwargs).impute(frame)
     result = cls(**kwargs).impute(with_empty)

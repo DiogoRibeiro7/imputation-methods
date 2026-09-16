@@ -13,10 +13,10 @@ from sklearn.gaussian_process.kernels import RBF
 
 from .base import BaseImputer
 from .ensemble import BaggingImputer, HybridImputer, StackingImputer
-from .iterative import EMImputer, GAINImputer, MICEImputer, MissForestImputer
+from .iterative import EMImputer, MICEImputer, MissForestImputer
 from .matrix import BayesianPCAImputer, SoftImputeImputer
 from .neighbors import KNNImputerMethod, LocalMeanImputer, RadiusNeighborsImputer
-from .neural import AutoencoderImputer
+from .neural import AutoencoderImputer, GAINImputer
 from .regression import (
     BayesianRidgeImputer,
     GaussianProcessImputer,
@@ -164,10 +164,22 @@ def autoencoder_impute(
 
 def gain_impute(
     df: pd.DataFrame,
+    batch_size: int = 128,
+    hint_rate: float = 0.9,
+    alpha: float = 100.0,
+    iterations: int = 10000,
+    learning_rate: float = 0.001,
     random_state: int | None = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`GAINImputer`."""
-    return GAINImputer(random_state=random_state).impute(df)
+    return GAINImputer(
+        batch_size=batch_size,
+        hint_rate=hint_rate,
+        alpha=alpha,
+        iterations=iterations,
+        learning_rate=learning_rate,
+        random_state=random_state,
+    ).impute(df)
 
 
 def gaussian_process_impute(
@@ -358,11 +370,15 @@ def bagging_impute(
     df: pd.DataFrame,
     base_imputer: BaseImputer | None = None,
     n_estimators: int = 10,
+    max_samples: float = 0.8,
     random_state: int | None = None,
 ) -> pd.DataFrame:
     """Wrapper for :class:`BaggingImputer`."""
     return BaggingImputer(
-        base_imputer=base_imputer, n_estimators=n_estimators, random_state=random_state
+        base_imputer=base_imputer,
+        n_estimators=n_estimators,
+        max_samples=max_samples,
+        random_state=random_state,
     ).impute(df)
 
 
