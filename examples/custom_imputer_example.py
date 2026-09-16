@@ -10,15 +10,15 @@ Use Cases:
 - Conditional imputation based on data patterns
 """
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
 from scipy import stats
 
-from imputation_showcase.imputation_methods import BaseImputer, MeanImputer, rmse
+from imputation_methods import BaseImputer, MeanImputer, rmse
 
-sns.set_style('whitegrid')
+sns.set_style("whitegrid")
 
 
 # Example 1: Mode Imputer for categorical-like data
@@ -115,8 +115,7 @@ class RobustImputer(BaseImputer):
         for column in result.columns:
             # Calculate trimmed mean
             trimmed_mean = stats.trim_mean(
-                result[column].dropna(),
-                self.trim_proportion
+                result[column].dropna(), self.trim_proportion
             )
             result[column] = result[column].fillna(trimmed_mean)
 
@@ -186,7 +185,9 @@ class GroupImputer(BaseImputer):
                 for column in result.columns:
                     if column != self.group_col:
                         group_mean = result.loc[mask, column].mean()
-                        result.loc[mask, column] = result.loc[mask, column].fillna(group_mean)
+                        result.loc[mask, column] = result.loc[mask, column].fillna(
+                            group_mean
+                        )
 
         return result
 
@@ -194,50 +195,54 @@ class GroupImputer(BaseImputer):
 def demonstrate_custom_imputers():
     """Demonstrate all custom imputers."""
 
-    print("="*80)
+    print("=" * 80)
     print("Custom Imputer Examples")
-    print("="*80)
+    print("=" * 80)
 
     # Generate test data
     np.random.seed(42)
     n = 100
 
     # Create data with different characteristics
-    df_complete = pd.DataFrame({
-        'normal': np.random.normal(50, 10, n),
-        'skewed': np.random.exponential(10, n),
-        'discrete': np.random.choice([1, 2, 3, 4, 5], n),
-        'outliers': np.concatenate([np.random.normal(100, 10, 95), [200, 250, 300, 350, 400]]),
-        'group': np.random.choice([1, 2, 3], n),
-    })
+    df_complete = pd.DataFrame(
+        {
+            "normal": np.random.normal(50, 10, n),
+            "skewed": np.random.exponential(10, n),
+            "discrete": np.random.choice([1, 2, 3, 4, 5], n),
+            "outliers": np.concatenate(
+                [np.random.normal(100, 10, 95), [200, 250, 300, 350, 400]]
+            ),
+            "group": np.random.choice([1, 2, 3], n),
+        }
+    )
 
     # Introduce missing values
     df_missing = df_complete.copy()
     for col in df_missing.columns:
-        if col != 'group':
+        if col != "group":
             mask = np.random.rand(n) < 0.15
             df_missing.loc[mask, col] = np.nan
 
     print("\n1. Testing Mode Imputer (for discrete data):")
     print("-" * 40)
     mode_imputer = ModeImputer()
-    df_mode = mode_imputer.impute(df_missing[['discrete']])
+    df_mode = mode_imputer.impute(df_missing[["discrete"]])
     print(f"   Original mode: {df_complete['discrete'].mode()[0]}")
     print(f"   Imputed with mode: {df_mode['discrete'].mode()[0]}")
-    print(f"   ✓ Mode imputation complete")
+    print("   ✓ Mode imputation complete")
 
     print("\n2. Testing Conditional Imputer:")
     print("-" * 40)
     conditional_imputer = ConditionalImputer()
-    df_conditional = conditional_imputer.impute(df_missing[['normal', 'skewed']])
+    conditional_imputer.impute(df_missing[["normal", "skewed"]])
     print("   ✓ Conditional imputation complete")
 
     print("\n3. Testing Robust Imputer (trimmed mean):")
     print("-" * 40)
     robust_imputer = RobustImputer(trim_proportion=0.1)
-    df_robust = robust_imputer.impute(df_missing[['outliers']])
-    mean_value = df_complete['outliers'].mean()
-    trimmed_mean_value = stats.trim_mean(df_complete['outliers'], 0.1)
+    robust_imputer.impute(df_missing[["outliers"]])
+    mean_value = df_complete["outliers"].mean()
+    trimmed_mean_value = stats.trim_mean(df_complete["outliers"], 0.1)
     print(f"   Regular mean: {mean_value:.2f}")
     print(f"   Trimmed mean: {trimmed_mean_value:.2f}")
     print(f"   Difference: {abs(mean_value - trimmed_mean_value):.2f}")
@@ -246,86 +251,102 @@ def demonstrate_custom_imputers():
     print("\n4. Testing Hybrid Imputer (adaptive strategy):")
     print("-" * 40)
     hybrid_imputer = HybridImputer(skewness_threshold=1.0)
-    df_hybrid = hybrid_imputer.impute(df_missing[['normal', 'skewed', 'discrete']])
+    hybrid_imputer.impute(df_missing[["normal", "skewed", "discrete"]])
     print("   ✓ Hybrid imputation complete")
 
     print("\n5. Testing Group Imputer:")
     print("-" * 40)
-    group_imputer = GroupImputer(group_col='group')
-    df_group = group_imputer.impute(df_missing)
+    group_imputer = GroupImputer(group_col="group")
+    group_imputer.impute(df_missing)
     print("   ✓ Group-based imputation complete")
 
     # Compare all methods on normal data
     print("\n6. Performance Comparison:")
-    print("="*80)
+    print("=" * 80)
 
     methods = {
-        'Mean (standard)': MeanImputer(),
-        'Mode': ModeImputer(),
-        'Conditional': ConditionalImputer(),
-        'Robust': RobustImputer(),
-        'Hybrid': HybridImputer(),
+        "Mean (standard)": MeanImputer(),
+        "Mode": ModeImputer(),
+        "Conditional": ConditionalImputer(),
+        "Robust": RobustImputer(),
+        "Hybrid": HybridImputer(),
     }
 
-    comparison_data = df_missing[['normal', 'skewed']].copy()
-    comparison_complete = df_complete[['normal', 'skewed']].copy()
+    comparison_data = df_missing[["normal", "skewed"]].copy()
+    comparison_complete = df_complete[["normal", "skewed"]].copy()
 
     results = []
     for name, imputer in methods.items():
         imputed = imputer.impute(comparison_data)
         rmse_score = rmse(comparison_complete, imputed)
-        results.append({'Method': name, 'RMSE': rmse_score})
+        results.append({"Method": name, "RMSE": rmse_score})
 
-    results_df = pd.DataFrame(results).sort_values('RMSE')
+    results_df = pd.DataFrame(results).sort_values("RMSE")
     print(results_df.to_string(index=False))
 
     # Visualize comparison
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    _, axes = plt.subplots(2, 2, figsize=(14, 10))
 
     # Original distributions
-    axes[0, 0].hist(df_complete['normal'], bins=20, alpha=0.7, label='Normal', edgecolor='black')
-    axes[0, 0].set_title('Normal Distribution Data', fontweight='bold')
-    axes[0, 0].set_xlabel('Value')
-    axes[0, 0].set_ylabel('Frequency')
+    axes[0, 0].hist(
+        df_complete["normal"], bins=20, alpha=0.7, label="Normal", edgecolor="black"
+    )
+    axes[0, 0].set_title("Normal Distribution Data", fontweight="bold")
+    axes[0, 0].set_xlabel("Value")
+    axes[0, 0].set_ylabel("Frequency")
     axes[0, 0].legend()
 
-    axes[0, 1].hist(df_complete['skewed'], bins=20, alpha=0.7, color='orange', label='Skewed', edgecolor='black')
-    axes[0, 1].set_title('Skewed Distribution Data', fontweight='bold')
-    axes[0, 1].set_xlabel('Value')
-    axes[0, 1].set_ylabel('Frequency')
+    axes[0, 1].hist(
+        df_complete["skewed"],
+        bins=20,
+        alpha=0.7,
+        color="orange",
+        label="Skewed",
+        edgecolor="black",
+    )
+    axes[0, 1].set_title("Skewed Distribution Data", fontweight="bold")
+    axes[0, 1].set_xlabel("Value")
+    axes[0, 1].set_ylabel("Frequency")
     axes[0, 1].legend()
 
     # Performance comparison
-    axes[1, 0].barh(results_df['Method'], results_df['RMSE'])
-    axes[1, 0].set_xlabel('RMSE (Lower is Better)', fontsize=11)
-    axes[1, 0].set_title('Imputation Method Comparison', fontsize=12, fontweight='bold')
-    axes[1, 0].grid(True, alpha=0.3, axis='x')
-    for i, v in enumerate(results_df['RMSE']):
-        axes[1, 0].text(v, i, f' {v:.3f}', va='center', fontsize=9)
+    axes[1, 0].barh(results_df["Method"], results_df["RMSE"])
+    axes[1, 0].set_xlabel("RMSE (Lower is Better)", fontsize=11)
+    axes[1, 0].set_title("Imputation Method Comparison", fontsize=12, fontweight="bold")
+    axes[1, 0].grid(True, alpha=0.3, axis="x")
+    for i, v in enumerate(results_df["RMSE"]):
+        axes[1, 0].text(v, i, f" {v:.3f}", va="center", fontsize=9)
 
     # Outlier comparison
     mean_imputer = MeanImputer()
     robust_imputer = RobustImputer()
 
-    df_mean_outliers = mean_imputer.impute(df_missing[['outliers']])
-    df_robust_outliers = robust_imputer.impute(df_missing[['outliers']])
+    df_mean_outliers = mean_imputer.impute(df_missing[["outliers"]])
+    df_robust_outliers = robust_imputer.impute(df_missing[["outliers"]])
 
-    axes[1, 1].boxplot([df_complete['outliers'], df_mean_outliers['outliers'],
-                        df_robust_outliers['outliers']],
-                       labels=['Original', 'Mean', 'Robust'])
-    axes[1, 1].set_title('Handling Outliers: Mean vs Robust', fontweight='bold')
-    axes[1, 1].set_ylabel('Value')
-    axes[1, 1].grid(True, alpha=0.3, axis='y')
+    axes[1, 1].boxplot(
+        [
+            df_complete["outliers"],
+            df_mean_outliers["outliers"],
+            df_robust_outliers["outliers"],
+        ]
+    )
+    # Label via set_xticks: boxplot(labels=...) was removed in Matplotlib 3.11 and
+    # its replacement, tick_labels=, does not exist before 3.9.
+    axes[1, 1].set_xticks([1, 2, 3], ["Original", "Mean", "Robust"])
+    axes[1, 1].set_title("Handling Outliers: Mean vs Robust", fontweight="bold")
+    axes[1, 1].set_ylabel("Value")
+    axes[1, 1].grid(True, alpha=0.3, axis="y")
 
     plt.tight_layout()
-    plt.savefig('examples/custom_imputer_comparison.png', dpi=150, bbox_inches='tight')
+    plt.savefig("examples/custom_imputer_comparison.png", dpi=150, bbox_inches="tight")
     print("\n   Saved: examples/custom_imputer_comparison.png")
     plt.close()
 
     # Key insights
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("KEY INSIGHTS FOR CUSTOM IMPUTERS")
-    print("="*80)
+    print("=" * 80)
     print("""
 1. When to Create Custom Imputers:
    - Domain-specific knowledge suggests a better approach

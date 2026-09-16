@@ -1,6 +1,6 @@
 # Practical Examples
 
-This directory contains practical, ready-to-run examples demonstrating real-world applications of the imputation-showcase library.
+This directory contains practical, ready-to-run examples demonstrating real-world applications of the imputation-methods library.
 
 ## Available Examples
 
@@ -81,6 +81,8 @@ Demonstrates how to extend the library with your own imputation strategies.
 4. **HybridImputer** - Adaptive strategy based on distribution
 5. **GroupImputer** - Group-based imputation (e.g., by category)
 
+These are simplified teaching versions defined in the script. The library itself ships built-in `ModeImputer`, `TrimmedMeanImputer` (compare `RobustImputer`) and `GroupMeanImputer` (compare `GroupImputer`). Its `HybridImputer` is a different method: a fallback chain that tries several imputers in turn.
+
 **Run:**
 ```bash
 poetry run python examples/custom_imputer_example.py
@@ -94,6 +96,8 @@ poetry run python examples/custom_imputer_example.py
 ---
 
 ## Running All Examples
+
+Run the examples from the repository root: each script saves its figures to `examples/` relative to the current working directory.
 
 To run all examples in sequence:
 
@@ -114,14 +118,14 @@ done
 
 All examples require:
 - Python 3.10+
-- imputation-showcase package installed
-- Dependencies: pandas, numpy, matplotlib, seaborn, scikit-learn
+- imputation-methods installed with the `viz` extra
+- Dependencies: pandas, numpy, scipy, scikit-learn, matplotlib, seaborn
 
 Install with:
 ```bash
-poetry install
-# or
-pip install -e .
+pip install "imputation-methods[viz]"
+# or, from a source checkout
+poetry install --extras viz
 ```
 
 ## Example Output
@@ -204,7 +208,7 @@ All examples follow these best practices:
    - Ground truth for validation
 
 2. **Evaluation**
-   - Multiple metrics (RMSE, MAE, R²)
+   - Metrics against ground truth (RMSE, R²)
    - Visual comparisons
    - Statistical summaries
 
@@ -223,9 +227,9 @@ All examples follow these best practices:
 ### Using Example Code in Production
 
 ```python
-# Example: Adapting the ML pipeline pattern
+# Example: Adapting the ML pipeline pattern (run from the repository root)
 from examples.ml_pipeline_example import ImputedPipeline
-from imputation_showcase.imputation_methods import KNNImputerMethod
+from imputation_methods import KNNImputerMethod
 from sklearn.ensemble import GradientBoostingRegressor
 
 # Create your pipeline
@@ -256,7 +260,7 @@ predictions = pipeline.predict(X_test)
 
 **Solution:** Reduce dataset size in generation function
 ```python
-df = generate_data(n_samples=100)  # Smaller dataset
+df = generate_housing_data(n_samples=100)  # Smaller dataset (ml_pipeline_example.py)
 ```
 
 ### Issue: Memory Error
@@ -271,18 +275,18 @@ methods = {
 
 ### Issue: Plots Not Saving
 
-**Solution:** Check directory permissions
+**Solution:** Run the scripts from the repository root (they save to `examples/` relative to the current directory), and check directory permissions
 ```bash
 chmod +w examples/
 ```
 
 ### Issue: Import Errors
 
-**Solution:** Ensure package is installed
+**Solution:** Ensure the package is installed with the `viz` extra
 ```bash
-poetry install
-# or
-pip install -e .
+pip install "imputation-methods[viz]"
+# or, from a source checkout
+poetry install --extras viz
 ```
 
 ## Performance Benchmarks
@@ -291,7 +295,7 @@ Approximate runtime on standard laptop (i5, 8GB RAM):
 
 | Example | Dataset Size | Runtime | Memory |
 |---------|--------------|---------|--------|
-| time_series_example.py | 720 samples | ~15s | <100MB |
+| time_series_example.py | 168 samples | ~15s | <100MB |
 | ml_pipeline_example.py | 1000 samples | ~30s | <150MB |
 | custom_imputer_example.py | 100 samples | ~10s | <100MB |
 
@@ -344,21 +348,12 @@ if __name__ == "__main__":
 
 ## Citation
 
-If you use these examples in your work:
-
-```bibtex
-@software{imputation_showcase_examples,
-  author = {Ribeiro, Diogo},
-  title = {Imputation Showcase: Practical Examples},
-  year = {2024},
-  url = {https://github.com/DiogoRibeiro7/imputation-showcase}
-}
-```
+If you use these examples in your work, please cite the project using the metadata in [CITATION.cff](../CITATION.cff). GitHub's "Cite this repository" button generates BibTeX and APA entries from it.
 
 ## Support
 
 Questions about the examples?
-- Open an issue: [GitHub Issues](https://github.com/DiogoRibeiro7/imputation-showcase/issues)
+- Open an issue: [GitHub Issues](https://github.com/DiogoRibeiro7/imputation-methods/issues)
 - Email: [diogo.debastos.ribeiro@gmail.com](mailto:diogo.debastos.ribeiro@gmail.com)
 
 ---

@@ -1,6 +1,6 @@
-# Imputation Showcase Notebooks
+# imputation-methods Notebooks
 
-This directory contains Jupyter notebooks demonstrating various aspects of the imputation-showcase library.
+This directory contains Jupyter notebooks demonstrating various aspects of the imputation-methods library.
 
 ## Available Notebooks
 
@@ -24,7 +24,7 @@ Learn the fundamentals of missing data imputation:
 **Level:** Intermediate to Advanced
 **Duration:** 30-45 minutes
 
-Comprehensive comparison of all imputation methods:
+Comparison of common imputation methods (mean, median, KNN, MICE, hot deck):
 - Testing on different missing data patterns (MCAR, MAR, MNAR)
 - Performance benchmarking (accuracy vs speed)
 - Method selection guidelines
@@ -41,8 +41,8 @@ Comprehensive comparison of all imputation methods:
 
 Quick demonstration of key methods:
 - Simple example with diabetes dataset
-- Visual comparison of imputation results
-- Performance metrics
+- Missingness heatmap
+- RMSE comparison
 - Pros and cons summary
 
 **Best for:** Quick reference, presentations, teaching
@@ -53,16 +53,16 @@ Quick demonstration of key methods:
 
 ### Prerequisites
 
-Ensure you have installed the package and its dependencies:
+Ensure you have installed the package with the `viz` extra, plus Jupyter:
 
 ```bash
-poetry install
+pip install "imputation-methods[viz]" jupyter
 ```
 
-Or if using pip:
+Or, from a source checkout:
 
 ```bash
-pip install -e .
+poetry install --extras viz --with notebooks
 ```
 
 ### Running the Notebooks
@@ -119,10 +119,12 @@ All notebooks include:
 
 **Solution:** Ensure all dependencies are installed:
 ```bash
-poetry install
+poetry install --extras viz --with notebooks
 # or
-pip install -r requirements.txt
+pip install "imputation-methods[viz]" jupyter
 ```
+
+If the package is installed but the import still fails, the notebook kernel is probably running a different Python environment; check with `import sys; print(sys.executable)`.
 
 ### Issue: Plotting Not Showing
 
@@ -144,14 +146,14 @@ Feel free to modify the notebooks for your own use:
 
 Found an issue or have a suggestion for improving the notebooks?
 
-1. Open an issue on [GitHub](https://github.com/DiogoRibeiro7/imputation-showcase/issues)
+1. Open an issue on [GitHub](https://github.com/DiogoRibeiro7/imputation-methods/issues)
 2. Submit a pull request with improvements
 3. See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines
 
 ## Additional Resources
 
 - **Documentation:** [README.md](../README.md)
-- **API Reference:** [imputation_methods.py](../imputation_showcase/imputation_methods.py)
+- **API Reference:** [src/imputation_methods/](../src/imputation_methods/)
 - **Figures:** [figures/](../figures/) - Static visualizations
 - **Tests:** [tests/](../tests/) - Unit tests for reference
 
@@ -165,25 +167,16 @@ These notebooks are tested with each release to ensure they work correctly. If y
 
 ## Citation
 
-If you use these notebooks in your research or teaching, please cite:
-
-```bibtex
-@software{imputation_showcase_notebooks,
-  author = {Ribeiro, Diogo},
-  title = {Imputation Showcase Tutorials},
-  year = {2024},
-  url = {https://github.com/DiogoRibeiro7/imputation-showcase}
-}
-```
+If you use these notebooks in your research or teaching, please cite the project using the metadata in [CITATION.cff](../CITATION.cff). GitHub's "Cite this repository" button generates BibTeX and APA entries from it.
 
 ## License
 
-These notebooks are part of the imputation-showcase project and are licensed under the MIT License. See [LICENSE](../LICENSE) for details.
+These notebooks are part of the imputation-methods project and are licensed under the MIT License. See [LICENSE](../LICENSE) for details.
 
 ---
 
 **Happy Learning!** 📚✨
 
 For questions or support, please:
-- Open an issue on [GitHub](https://github.com/DiogoRibeiro7/imputation-showcase/issues)
+- Open an issue on [GitHub](https://github.com/DiogoRibeiro7/imputation-methods/issues)
 - Email: [diogo.debastos.ribeiro@gmail.com](mailto:diogo.debastos.ribeiro@gmail.com)
