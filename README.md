@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/project-logo.png" alt="imputation-methods project logo" width="160" height="160">
+</p>
+
 # imputation-methods
 
 [![PyPI](https://img.shields.io/pypi/v/imputation-methods)](https://pypi.org/project/imputation-methods/)
